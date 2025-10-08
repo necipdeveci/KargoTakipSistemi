@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace kargotakipsistemi;
+
+public class Personel
+{
+    [Key]
+    public int PersonelId { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    public string Ad { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    public string Soyad { get; set; }
+
+    [Required]
+    [MaxLength(100)]
+    public string Mail { get; set; }
+
+    [Required]
+    [MaxLength(128)]
+    public string Sifre { get; set; }
+
+    [Required]
+    [MaxLength(15)]
+    public string Tel { get; set; }
+
+    public DateTime? DogumTarihi { get; set; }
+
+    [MaxLength(10)]
+    public string Cinsiyet { get; set; }
+
+    [ForeignKey("Rol")]
+    public int RolId { get; set; }
+    public Rol Rol { get; set; }
+
+    [ForeignKey("Sube")]
+    public int SubeId { get; set; }
+    public Sube Sube { get; set; }
+
+    [ForeignKey("Arac")]
+    public int? AracId { get; set; }
+    public Arac Arac { get; set; }
+
+    [ForeignKey("Adres")]
+    public int? AdresId { get; set; }
+    public Adres Adres { get; set; }
+
+    public bool Aktif { get; set; } = true;
+
+    public DateTime? IseGirisTarihi { get; set; }
+    public DateTime? IstenCikisTarihi { get; set; }
+
+    public decimal? Maas { get; set; }
+
+    [MaxLength(5)]
+    public string EhliyetSinifi { get; set; }
+
+    public ICollection<Gonderi> GonderilerKurye { get; set; }
+    public ICollection<MusteriDestek> MusteriDestekler { get; set; }
+    public ICollection<IadeIptalIslemi> IadeIptalIslemleri { get; set; }
+    public ICollection<Adres> Adresler { get; set; }
+}

@@ -1,0 +1,302 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+namespace kargotakipsistemi
+{
+
+    public class KtsContext : DbContext
+    {
+
+        public DbSet<Il> Iller { get; set; }
+        public DbSet<Ilce> Ilceler { get; set; }
+        public DbSet<Mahalle> Mahalleler { get; set; }
+        public DbSet<Adres> Adresler { get; set; }
+        public DbSet<Rol> Roller { get; set; }
+        public DbSet<Sube> Subeler { get; set; }
+        public DbSet<Arac> Araclar { get; set; }
+        public DbSet<Musteri> Musteriler { get; set; }
+        public DbSet<MusteriAdres> MusteriAdresleri { get; set; }
+        public DbSet<Gonderi> Gonderiler { get; set; }
+        public DbSet<GonderiDurumGecmis> GonderiDurumGecmisi { get; set; }
+        public DbSet<MusteriDestek> MusteriDestekleri { get; set; }
+        public DbSet<OdemeFatura> OdemeFaturalari { get; set; }
+        public DbSet<IadeIptalIslemi> IadeIptalIslemleri { get; set; }
+        public DbSet<Personel> Personeller { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=NECIPDEV\\SQLEXPRESS;Database=ktsdb;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Ilce - Il (Cascade)
+            modelBuilder.Entity<Ilce>()
+                .HasOne(i => i.Il)
+                .WithMany(il => il.Ilceler)
+                .HasForeignKey(i => i.IlId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Mahalle - Ilce (Cascade)
+            modelBuilder.Entity<Mahalle>()
+                .HasOne(m => m.Ilce)
+                .WithMany(i => i.Mahalleler)
+                .HasForeignKey(m => m.IlceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Sube - Il (NoAction)
+            modelBuilder.Entity<Sube>()
+                .HasOne(s => s.Il)
+                .WithMany(il => il.Subeler)
+                .HasForeignKey(s => s.IlId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Sube - Ilce (Cascade)
+            modelBuilder.Entity<Sube>()
+                .HasOne(s => s.Ilce)
+                .WithMany(ilce => ilce.Subeler)
+                .HasForeignKey(s => s.IlceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Arac - Sube (Cascade)
+            modelBuilder.Entity<Arac>()
+                .HasOne(a => a.Sube)
+                .WithMany(s => s.Araclar)
+                .HasForeignKey(a => a.SubeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Personel - Rol (Cascade)
+            modelBuilder.Entity<Personel>()
+                .HasOne(p => p.Rol)
+                .WithMany(r => r.Personeller)
+                .HasForeignKey(p => p.RolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Personel - Sube (Cascade)
+            modelBuilder.Entity<Personel>()
+                .HasOne(p => p.Sube)
+                .WithMany(s => s.Personeller)
+                .HasForeignKey(p => p.SubeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Personel - Arac (Cascade)
+            modelBuilder.Entity<Personel>()
+                .HasOne(p => p.Arac)
+                .WithMany(a => a.Personeller)
+                .HasForeignKey(p => p.AracId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Personel - Adres (Cascade)
+            modelBuilder.Entity<Personel>()
+                .HasOne(p => p.Adres)
+                .WithMany()
+                .HasForeignKey(p => p.AdresId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Adres - Il (Cascade)
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Il)
+                .WithMany(il => il.Adresler)
+                .HasForeignKey(a => a.IlId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Adres - Ilce (Cascade)
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Ilce)
+                .WithMany(ilce => ilce.Adresler)
+                .HasForeignKey(a => a.IlceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Adres - Mahalle (Cascade)
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Mahalle)
+                .WithMany(m => m.Adresler)
+                .HasForeignKey(a => a.MahalleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Adres - Musteri (Cascade)
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Musteri)
+                .WithMany(m => m.Adresler)
+                .HasForeignKey(a => a.MusteriId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Adres - Personel (Cascade)
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Personel)
+                .WithMany(p => p.Adresler)
+                .HasForeignKey(a => a.PersonelId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // MusteriAdres - Musteri (Cascade)
+            modelBuilder.Entity<MusteriAdres>()
+                .HasOne(ma => ma.Musteri)
+                .WithMany(m => m.MusteriAdresleri)
+                .HasForeignKey(ma => ma.MusteriId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // MusteriAdres - Adres (Cascade)
+            modelBuilder.Entity<MusteriAdres>()
+                .HasOne(ma => ma.Adres)
+                .WithMany(a => a.MusteriAdresleri)
+                .HasForeignKey(ma => ma.AdresId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Gonderi - Musteri (Cascade)
+            modelBuilder.Entity<Gonderi>()
+                .HasOne(g => g.Gonderen)
+                .WithMany(m => m.GonderilerGonderen)
+                .HasForeignKey(g => g.GonderenId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Gonderi>()
+                .HasOne(g => g.Alici)
+                .WithMany(m => m.GonderilerAlici)
+                .HasForeignKey(g => g.AliciId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Gonderi - Adres (Cascade)
+            modelBuilder.Entity<Gonderi>()
+                .HasOne(g => g.GonderenAdres)
+                .WithMany(a => a.GonderilerGonderenAdres)
+                .HasForeignKey(g => g.GonderenAdresId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Gonderi>()
+                .HasOne(g => g.AliciAdres)
+                .WithMany(a => a.GonderilerAliciAdres)
+                .HasForeignKey(g => g.AliciAdresId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Gonderi - Personel (Kurye) (Cascade)
+            modelBuilder.Entity<Gonderi>()
+                .HasOne(g => g.Kurye)
+                .WithMany(p => p.GonderilerKurye)
+                .HasForeignKey(g => g.KuryeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // GonderiDurumGecmis - Gonderi (Cascade)
+            modelBuilder.Entity<GonderiDurumGecmis>()
+                .HasOne(gdg => gdg.Gonderi)
+                .WithMany()
+                .HasForeignKey(gdg => gdg.GonderiId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // GonderiDurumGecmis - Sube (Cascade)
+            modelBuilder.Entity<GonderiDurumGecmis>()
+                .HasOne(gdg => gdg.Sube)
+                .WithMany()
+                .HasForeignKey(gdg => gdg.SubeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // GonderiDurumGecmis - Personel (Cascade)
+            modelBuilder.Entity<GonderiDurumGecmis>()
+                .HasOne(gdg => gdg.Personel)
+                .WithMany()
+                .HasForeignKey(gdg => gdg.PersonelId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // GonderiDurumGecmis - Arac (Cascade)
+            modelBuilder.Entity<GonderiDurumGecmis>()
+                .HasOne(gdg => gdg.Arac)
+                .WithMany()
+                .HasForeignKey(gdg => gdg.AracId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // MusteriDestek - Musteri (Cascade)
+            modelBuilder.Entity<MusteriDestek>()
+                .HasOne(md => md.Gonderen)
+                .WithMany(m => m.MusteriDestekGonderen)
+                .HasForeignKey(md => md.GonderenId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MusteriDestek>()
+                .HasOne(md => md.Alici)
+                .WithMany(m => m.MusteriDestekAlici)
+                .HasForeignKey(md => md.AliciId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // MusteriDestek - Gonderi (Cascade)
+            modelBuilder.Entity<MusteriDestek>()
+                .HasOne(md => md.Gonderi)
+                .WithMany()
+                .HasForeignKey(md => md.GonderiId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // MusteriDestek - Personel (Cascade)
+            modelBuilder.Entity<MusteriDestek>()
+                .HasOne(md => md.Personel)
+                .WithMany(p => p.MusteriDestekler)
+                .HasForeignKey(md => md.PersonelId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OdemeFatura - Gonderi (Cascade)
+            modelBuilder.Entity<OdemeFatura>()
+                .HasOne(of => of.Gonderi)
+                .WithMany()
+                .HasForeignKey(of => of.GonderiId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OdemeFatura - Musteri (Cascade)
+            modelBuilder.Entity<OdemeFatura>()
+                .HasOne(of => of.Musteri)
+                .WithMany(m => m.OdemeFaturalari)
+                .HasForeignKey(of => of.MusteriId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OdemeFatura - Adres (FaturaAdres) (Cascade)
+            modelBuilder.Entity<OdemeFatura>()
+                .HasOne(of => of.FaturaAdres)
+                .WithMany(a => a.OdemeFaturalar)
+                .HasForeignKey(of => of.FaturaAdresId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // IadeIptalIslemi - Gonderi (Cascade)
+            modelBuilder.Entity<IadeIptalIslemi>()
+                .HasOne(ii => ii.Gonderi)
+                .WithMany()
+                .HasForeignKey(ii => ii.GonderiId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // IadeIptalIslemi - Musteri (Cascade)
+            modelBuilder.Entity<IadeIptalIslemi>()
+                .HasOne(ii => ii.Musteri)
+                .WithMany(m => m.IadeIptalIslemleri)
+                .HasForeignKey(ii => ii.MusteriId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // IadeIptalIslemi - Sube (Cascade)
+            modelBuilder.Entity<IadeIptalIslemi>()
+                .HasOne(ii => ii.Sube)
+                .WithMany(s => s.IadeIptalIslemleri)
+                .HasForeignKey(ii => ii.SubeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // IadeIptalIslemi - Personel (Cascade)
+            modelBuilder.Entity<IadeIptalIslemi>()
+                .HasOne(ii => ii.Personel)
+                .WithMany(p => p.IadeIptalIslemleri)
+                .HasForeignKey(ii => ii.PersonelId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // UNIQUE ve varsayılan değerler örneği:
+            modelBuilder.Entity<Gonderi>()
+                .HasIndex(g => g.TakipNo)
+                .IsUnique();
+
+            modelBuilder.Entity<Gonderi>()
+                .Property(g => g.KayitTarihi)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<GonderiDurumGecmis>()
+                .Property(g => g.Tarih)
+                .HasDefaultValueSql("GETDATE()");
+
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+}

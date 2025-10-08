@@ -1,0 +1,33 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+public class OdemeFatura
+{
+    public int Id { get; set; }
+    public int GonderiId { get; set; }
+    public int MusteriId { get; set; }
+    [Required, MaxLength(20)]
+    public string Tip { get; set; }
+    [MaxLength(50)]
+    public string OdemeTipi { get; set; }
+    public decimal Tutar { get; set; }
+    public decimal? ToplamTutar { get; set; }
+    public decimal? IndirimTutari { get; set; }
+    public decimal? EkMasraf { get; set; }
+    [MaxLength(5)]
+    public string ParaBirimi { get; set; }
+    public DateTime Tarih { get; set; }
+    public DateTime? OdemeTarihi { get; set; }
+    public DateTime? VadeTarihi { get; set; }
+    [MaxLength(50)]
+    public string Durum { get; set; }
+    [MaxLength(30)]
+    public string OdemeDurumu { get; set; }
+    public int? FaturaAdresId { get; set; }
+    [MaxLength(255)]
+    public string Aciklama { get; set; }
+    [MaxLength(30)]
+    public string OdemeNo { get; set; }
+    [MaxLength(100)]
+    public string AliciAd { get; set; }
+}

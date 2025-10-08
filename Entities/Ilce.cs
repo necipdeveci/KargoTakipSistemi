@@ -1,0 +1,16 @@
+namespace kargotakipsistemi.Entities
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    public class Ilce
+    {
+        public int IlceId { get; set; }
+        public int IlId { get; set; }
+        [Required, MaxLength(50)]
+        public string IlceAd { get; set; }
+        public Il Il { get; set; }
+        public ICollection<Mahalle> Mahalleler { get; set; }
+        public ICollection<Adres> Adresler { get; set; }
+        public ICollection<Sube> Subeler { get; set; }
+    }
+}

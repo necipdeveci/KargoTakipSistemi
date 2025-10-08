@@ -1,0 +1,36 @@
+namespace kargotakipsistemi.Entities
+{
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
+    public class GonderiDurumGecmis
+    {
+        public int Id { get; set; }
+        public int GonderiId { get; set; }
+        [Required, MaxLength(50)]
+        public string DurumAd { get; set; }
+        [MaxLength(100)]
+        public string Aciklama { get; set; }
+        public DateTime Tarih { get; set; }
+        [MaxLength(30)]
+        public string IslemTipi { get; set; }
+        public bool SonDurumMu { get; set; } = false;
+        [MaxLength(30)]
+        public string IslemSonucu { get; set; }
+        [MaxLength(50)]
+        public string TeslimatKodu { get; set; }
+        [MaxLength(100)]
+        public string IlgiliKisiAd { get; set; }
+        [MaxLength(15)]
+        public string IlgiliKisiTel { get; set; }
+        public int? SubeId { get; set; }
+        public int? PersonelId { get; set; }
+        public int? AracId { get; set; }
+        public DateTime? IslemBaslangicTarihi { get; set; }
+        public DateTime? IslemBitisTarihi { get; set; }
+        public Gonderi Gonderi { get; set; }
+        public Sube Sube { get; set; }
+        public Personel Personel { get; set; }
+        public Arac Arac { get; set; }
+    }
+}

@@ -1,0 +1,22 @@
+namespace kargotakipsistemi.Entities
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    public class Arac
+    {
+        public int AracId { get; set; }
+        [Required, MaxLength(20)]
+        public string Plaka { get; set; }
+        [Required, MaxLength(50)]
+        public string AracTip { get; set; }
+        public int SubeId { get; set; }
+        public decimal? KapasiteKg { get; set; }
+        [MaxLength(20)]
+        public string Durum { get; set; }
+        [MaxLength(50)]
+        public string GpsKodu { get; set; }
+        public Sube Sube { get; set; }
+        public ICollection<Personel> Personeller { get; set; }
+        public ICollection<GonderiDurumGecmis> GonderiDurumGecmisi { get; set; }
+    }
+}

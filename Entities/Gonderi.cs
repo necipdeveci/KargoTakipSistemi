@@ -1,0 +1,39 @@
+namespace kargotakipsistemi.Entities
+{
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    public class Gonderi
+    {
+        public int GonderiId { get; set; }
+        [Required, MaxLength(20)]
+        public string TakipNo { get; set; }
+        public int GonderenId { get; set; }
+        public int AliciId { get; set; }
+        public int? GonderenAdresId { get; set; }
+        public int? AliciAdresId { get; set; }
+        public DateTime GonderiTarihi { get; set; }
+        public DateTime TahminiTeslimTarihi { get; set; }
+        public DateTime? TeslimTarihi { get; set; }
+        [MaxLength(100)]
+        public string TeslimEdilenKisi { get; set; }
+        [MaxLength(50)]
+        public string TeslimatTipi { get; set; }
+        public int? KuryeId { get; set; }
+        public decimal Agirlik { get; set; }
+        [Required, MaxLength(50)]
+        public string Boyut { get; set; }
+        public decimal Ucret { get; set; }
+        public decimal? IndirimTutar { get; set; }
+        public decimal? EkMasraf { get; set; }
+        public DateTime KayitTarihi { get; set; }
+        public DateTime? GuncellemeTarihi { get; set; }
+        public DateTime? IptalTarihi { get; set; }
+        [MaxLength(20)]
+        public string IadeDurumu { get; set; }
+        public Musteri Gonderen { get; set; }
+        public Musteri Alici { get; set; }
+        public Adres GonderenAdres { get; set; }
+        public Adres AliciAdres { get; set; }
+        public Personel Kurye { get; set; }
+    }
+}

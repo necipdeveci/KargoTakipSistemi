@@ -1,0 +1,12 @@
+﻿namespace kargotakipsistemi.Entities
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    public class Rol
+    {
+        public int RolId { get; set; }
+        [Required, MaxLength(50)]
+        public string RolAd { get; set; }
+        public ICollection<Personel> Personeller { get; set; }
+    }
+}}

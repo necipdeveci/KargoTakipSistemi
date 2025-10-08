@@ -1,0 +1,12 @@
+﻿namespace kargotakipsistemi.Entities
+{
+    using System.ComponentModel.DataAnnotations;
+    public class Mahalle
+    {
+        public int MahalleId { get; set; }
+        public int IlceId { get; set; }
+        [Required, MaxLength(50)]
+        public string MahalleAd { get; set; }
+        public Ilce Ilce { get; set; }
+    }
+}

@@ -1,0 +1,43 @@
+namespace kargotakipsistemi.Entities
+{
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    public class MusteriDestek
+    {
+        [Key]
+        public int KayitId { get; set; }
+        public int GonderenId { get; set; }
+        public int AliciId { get; set; }
+        public int GonderiId { get; set; }
+        [Required, MaxLength(100)]
+        public string Konu { get; set; }
+        [Required, MaxLength(255)]
+        public string Aciklama { get; set; }
+        public DateTime Tarih { get; set; }
+        [Required, MaxLength(50)]
+        public string Durum { get; set; }
+        [MaxLength(30)]
+        public string Kategori { get; set; }
+        [MaxLength(20)]
+        public string Kanal { get; set; }
+        public int? PersonelId { get; set; }
+        public DateTime? CevapTarihi { get; set; }
+        public DateTime? CozumTarihi { get; set; }
+        [MaxLength(30)]
+        public string CozumDurumu { get; set; }
+        [MaxLength(255)]
+        public string CozumAciklama { get; set; }
+        [MaxLength(20)]
+        public string IslemSonucu { get; set; }
+        [MaxLength(100)]
+        public string IlgiliKisiAd { get; set; }
+        [MaxLength(15)]
+        public string IlgiliKisiTel { get; set; }
+        [MaxLength(255)]
+        public string DosyaLinki { get; set; }
+        public Musteri Gonderen { get; set; }
+        public Musteri Alici { get; set; }
+        public Gonderi Gonderi { get; set; }
+        public Personel Personel { get; set; }
+    }
+}

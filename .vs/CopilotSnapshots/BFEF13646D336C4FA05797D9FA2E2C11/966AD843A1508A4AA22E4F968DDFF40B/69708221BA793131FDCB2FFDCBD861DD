@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using kargotakipsistemi.Entities;
+
+namespace kargotakipsistemi
+{
+    public class KtsContext : DbContext
+    {
+        public DbSet<Il> Iller { get; set; }
+        public DbSet<Ilce> Ilceler { get; set; }
+        public DbSet<Mahalle> Mahalleler { get; set; }
+        public DbSet<Adres> Adresler { get; set; }
+        public DbSet<Rol> Roller { get; set; }
+        public DbSet<Sube> Subeler { get; set; }
+        public DbSet<Arac> Araclar { get; set; }
+        public DbSet<Musteri> Musteriler { get; set; }
+        public DbSet<MusteriAdres> MusteriAdresleri { get; set; }
+        public DbSet<Gonderi> Gonderiler { get; set; }
+        public DbSet<GonderiDurumGecmis> GonderiDurumGecmisi { get; set; }
+        public DbSet<MusteriDestek> MusteriDestekleri { get; set; }
+        public DbSet<OdemeFatura> OdemeFaturalari { get; set; }
+        public DbSet<IadeIptalIslem> IadeIptalIslemleri { get; set; }
+        public DbSet<Personel> Personeller { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=NECIPDEV\\SQLEXPRESS;Database=ktsdb;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+    }
+}

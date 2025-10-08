@@ -1,0 +1,67 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace kargotakipsistemi;
+
+public class Adres
+{
+    [Key]
+    public int AdresId { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    public string AdresBaslik { get; set; }
+
+    [Required]
+    [MaxLength(255)]
+    public string AcikAdres { get; set; }
+
+    [ForeignKey("Il")]
+    public int IlId { get; set; }
+    public Il Il { get; set; }
+
+    [ForeignKey("Ilce")]
+    public int IlceId { get; set; }
+    public Ilce Ilce { get; set; }
+
+    [ForeignKey("Mahalle")]
+    public int MahalleId { get; set; }
+    public Mahalle Mahalle { get; set; }
+
+    [Required]
+    [MaxLength(10)]
+    public string PostaKodu { get; set; }
+
+    [MaxLength(30)]
+    public string AdresTipi { get; set; }
+
+    [ForeignKey("Musteri")]
+    public int? MusteriId { get; set; }
+    public Musteri Musteri { get; set; }
+
+    [ForeignKey("Personel")]
+    public int? PersonelId { get; set; }
+    public Personel Personel { get; set; }
+
+    public bool Aktif { get; set; } = true;
+
+    [MaxLength(10)]
+    public string KapiNo { get; set; }
+
+    [MaxLength(50)]
+    public string BinaAdi { get; set; }
+
+    [MaxLength(10)]
+    public string Kat { get; set; }
+
+    [MaxLength(10)]
+    public string Daire { get; set; }
+
+    [MaxLength(255)]
+    public string EkAciklama { get; set; }
+}

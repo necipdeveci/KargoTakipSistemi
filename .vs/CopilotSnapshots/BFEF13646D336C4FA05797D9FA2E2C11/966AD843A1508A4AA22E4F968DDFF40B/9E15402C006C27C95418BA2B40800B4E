@@ -1,0 +1,28 @@
+﻿namespace kargotakipsistemi.Entities
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    public class Sube
+    {
+        public int SubeId { get; set; }
+        [Required, MaxLength(100)]
+        public string SubeAd { get; set; }
+        [Required, MaxLength(30)]
+        public string SubeTip { get; set; }
+        public int IlId { get; set; }
+        public int IlceId { get; set; }
+        [Required, MaxLength(255)]
+        public string AcikAdres { get; set; }
+        [Required, MaxLength(15)]
+        public string Tel { get; set; }
+        [MaxLength(100)]
+        public string Email { get; set; }
+        [MaxLength(50)]
+        public string CalismaSaatleri { get; set; }
+        public int? Kapasite { get; set; }
+        public Il Il { get; set; }
+        public Ilce Ilce { get; set; }
+        public ICollection<Arac> Araclar { get; set; }
+        public ICollection<Personel> Personeller { get; set; }
+    }
+}
