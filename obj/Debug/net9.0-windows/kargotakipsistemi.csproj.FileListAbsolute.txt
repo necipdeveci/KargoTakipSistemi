@@ -122,7 +122,6 @@ C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\bin\Debug
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\bin\Debug\net9.0-windows\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\bin\Debug\net9.0-windows\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.csproj.AssemblyReference.cache
-C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.Form1.resources
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.csproj.GenerateResource.cache
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.AssemblyInfoInputs.cache
@@ -134,3 +133,7 @@ C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.pdb
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.genruntimeconfig.cache
 C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\ref\kargotakipsistemi.dll
+C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.sourcelink.json
+C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.LoginForm.resources
+C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.MainForm.resources
+C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\kargotakipsistemi\obj\Debug\net9.0-windows\kargotakipsistemi.AdresEkleForm.resources
