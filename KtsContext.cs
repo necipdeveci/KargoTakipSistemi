@@ -96,12 +96,12 @@ namespace kargotakipsistemi
                 .HasForeignKey(s => s.IlceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Arac - Sube (Restrict)
+            // Arac - Sube (Cascade)
             modelBuilder.Entity<Arac>()
                 .HasOne(a => a.Sube)
                 .WithMany(s => s.Araclar)
                 .HasForeignKey(a => a.SubeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Personel - Rol (Restrict)
             modelBuilder.Entity<Personel>()

@@ -1,0 +1,54 @@
+# Visual Studio ile ilgili dosyalar ve klasörler
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Derleme çıktıları
+bin/
+obj/
+out/
+
+# NuGet paketleri
+*.nupkg
+*.snupkg
+packages/
+# Paket geri yükleme klasörü
+.nuget/
+
+# Geliştirici ayarları ve analiz dosyaları
+*.psess
+*.vsp
+*.pdb
+*.cache
+*.dbmdl
+*.log
+
+# Test Sonuçları
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Rider ve ReSharper
+.idea/
+*.DotSettings.user
+_ReSharper*/
+resharper-host/
+
+# Diğer
+*.tmp
+~$*
+*.tlog
+*.ide
+*.vspscc
+*.vssscc
+
+# OS dosyaları
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Kişisel ayarlar ve OneDrive
+OneDriveTemp/
