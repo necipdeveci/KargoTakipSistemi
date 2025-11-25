@@ -21,4 +21,8 @@
     <Folder Include="Resources\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="C:\Users\necip\OneDrive\Masaüstü\Proje_Metod_Fonksiyon_Ozet.txt" Link="Proje_Metod_Fonksiyon_Ozet.txt" />
+  </ItemGroup>
+
 </Project>

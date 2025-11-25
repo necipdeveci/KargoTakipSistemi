@@ -1,0 +1,70 @@
+Proje: kargotakipsistemi
+Hedef Çatý: .NET 9 (WinForms)
+
+Bu dosya proje genelinde tanýmlý metot ve fonksiyonlarýn kýsa özetlerini içerir.
+
+Program.cs
+- Program.Main(): Uygulamanýn giriþ noktasýdýr. Uygulama yapýlandýrmasýný baþlatýr ve LoginForm’u açar.
+
+KtsContext.cs (Entity Framework Core DbContext)
+- KtsContext.OnConfiguring(DbContextOptionsBuilder): SQL Server veritabaný baðlantý dizesini ayarlar.
+- KtsContext.OnModelCreating(ModelBuilder): Tüm varlýklar arasýndaki iliþkileri, yabancý anahtarlarý ve silme davranýþlarýný (Cascade/Restrict/SetNull) yapýlandýrýr.
+
+LoginForm.cs
+- LoginForm.LoginForm(): Form bileþenlerini baþlatýr.
+- LoginForm.button1_Click(object, EventArgs): Giriþ butonu týklandýðýnda LoginForm’u gizler ve MainForm’u gösterir.
+
+AdresEkleForm.cs
+- AdresEkleForm.AdresEkleForm(): Form bileþenlerini baþlatýr.
+
+MainForm.cs
+- MainForm.MainForm(): Formu ve bileþenleri baþlatýr, il combobox deðiþim olayýný dinlemeye baþlar.
+- MainForm.VeriCek<T>(DataGridView, Func<KtsContext, IQueryable<T>>): Verilen EF Core sorgusunu çalýþtýrýr, sonuçlarý listeye dönüþtürür ve belirtilen DataGridView’e veri kaynaðý olarak baðlar.
+- MainForm.ComboBoxVeriCek<T>(ComboBox, Func<KtsContext, IQueryable<T>>, string displayMember, string valueMember): Verilen sorgunun sonuçlarýný hedef ComboBox’a yükler (Display/Value alanlarý ayarlanýr).
+- MainForm.cb_subeIl_SelectedIndexChanged(object, EventArgs): Ýl combobox’ýndaki seçime göre ilçe combobox’ýný (cb_subeIlce) filtreler ve yeniden doldurur.
+- MainForm.KontrolleriTemizle(params Control[]): Gönderilen kontrolleri varsayýlan durumlarýna sýfýrlar (TextBox.Clear, ComboBox.SelectedIndex=-1, NumericUpDown.Minimum, CheckBox false, DateTimePicker Now).
+- MainForm.MainForm_Load(object, EventArgs): Form yüklenirken tüm grid ve comboboxlarý veritabanýndan doldurur, sabit listeleri (cinsiyet, þube tipleri, çalýþma saatleri, araç tipleri, araç durumlarý) ekler.
+- MainForm.dgv_personeller_SelectionChanged(object, EventArgs): Personeller gridinde seçilen satýrý form alanlarýna yansýtýr; seçili personelin kimliðini saklar.
+- MainForm.dgv_subeler_SelectionChanged(object, EventArgs): Þubeler gridinde seçilen satýrý form alanlarýna yansýtýr; seçili þubenin kimliðini saklar.
+- MainForm.dgv_araclar_SelectionChanged(object, EventArgs): Araçlar gridinde seçilen satýrý form alanlarýna yansýtýr; seçili aracýn kimliðini saklar.
+- MainForm.btn_personelKaydet_Click(object, EventArgs): Seçili personele göre güncelleme veya yeni personel ekleme yapar. Alanlarý nesneye aktarýr, basit doðrulamalar (ör. Ehliyet sýnýfý uzunluðu) yapar, kaydeder ve listeyi yeniler.
+- MainForm.btn_subeAra_Click(object, EventArgs): Þubeler gridini þube tipine göre filtreler; filtre boþsa tüm þubeleri listeler.
+- MainForm.btn_subeKaydet_Click(object, EventArgs): Þube ekleme/güncelleme iþlemlerini yapar, kayýt sonrasý grid ve þube tipi filtre listesini günceller; ayrýca araç altýndaki þube combobox’ýný tazeler.
+- MainForm.btn_subeKayitSil_Click(object, EventArgs): Seçili þubeyi siler; grid ve filtre listesini günceller. Seçim yoksa uyarý verir.
+- MainForm.btn_subeFormTemizle_Click(object, EventArgs): Þube formuna ait kontrolleri temizler.
+- MainForm.btn_aracAra_Click(object, EventArgs): Araç tipine göre araçlar gridini filtreler; filtre boþsa tüm araçlarý listeler.
+- MainForm.btn_aracKaydet_Click(object, EventArgs): Araç ekleme/güncelleme iþlemlerini yapar; kayýt sonrasý grid ve araç tipi filtre listesini günceller.
+- MainForm.btn_aracSil_Click(object, EventArgs): Seçili aracý siler; grid ve filtre listesini günceller. Seçim yoksa uyarý verir.
+- MainForm.btn_aracFormTemizle_Click(object, EventArgs): Araç formuna ait kontrolleri temizler.
+- MainForm.btn_tempSifre_Click(object, EventArgs): Rastgele harf/rakam kombinasyonu ile geçici bir personel þifresi üretir ve þifre alanýna yazar.
+- MainForm.button2_Click(object, EventArgs): Rastgele harf/rakam kombinasyonu ile takip numarasý üretir ve ilgili alana yazar.
+- MainForm.btnMusterAdresYonet_Click(object, EventArgs): Müþteri adres yönetimi için AdresEkleForm’u açar.
+- MainForm.btnPersonelAdresYonet_Click(object, EventArgs): Personel adres yönetimi için AdresEkleForm’u açar.
+- MainForm.tabControl1_SelectedIndexChanged(object, EventArgs): Olay tanýmlý ancak þu an boþ; sekme deðiþiminde ek iþlem için yer tutucu.
+- MainForm.groupBox2_Enter(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.MainForm_FormClosing(object, FormClosingEventArgs): Yer tutucu; form kapanýþýnda ek iþlem yok.
+- MainForm.groupBox1_Enter(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.label2_Click(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.label12_Click(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.splitContainer1_Panel1_Paint(object, PaintEventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.splitContainer1_Panel2_Paint(object, PaintEventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.dataGridView1_CellContentClick(object, DataGridViewCellEventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.dateTimePicker4_ValueChanged(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.groupBox12_Enter(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.textBox22_TextChanged(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.aliciAdresCb_SelectedIndexChanged_1(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.button29_Click(object, EventArgs): Yer tutucu; ek iþlem yok.
+- MainForm.label85_Click(object, EventArgs): Yer tutucu; ek iþlem yok.
+
+Entities (Varlýk Sýnýflarý) — Öne çýkan üyeler
+- Il.IlIdVeAd (okunur özellik): Arayüzde görüntüleme için "Id - Ad" biçiminde metin üretir.
+  Diðer entity sýnýflarý aðýrlýklý olarak özellik (property) içerir; davranýþ/metot içermez.
+
+Migrations (EF Core otomatik üretilen)
+- 20251008091329_mig123.Up(MigrationBuilder): Veritabaný þemasýný oluþturur (tablolar, sütunlar, iliþkiler ve indeksler).
+- 20251008091329_mig123.Down(MigrationBuilder): Þema deðiþikliklerini geri alýr.
+- 20251101131731_mig2.Up/Down: Ýlgili sonraki þema deðiþikliklerini uygular/geri alýr.
+
+Notlar
+- Veri eriþimi için tüm listeleme ve filtreleme iþlemleri EF Core üzerinden yapýlýr; UI baðlama DataGridView/ComboBox seviyesinde gerçekleþir.
+- Yardýmcý metotlar (VeriCek, ComboBoxVeriCek, KontrolleriTemizle) tekrar eden UI ve veri baðlama kodunu sadeleþtirir.

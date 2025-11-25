@@ -110,9 +110,9 @@
             tabPage6 = new TabPage();
             splitContainer3 = new SplitContainer();
             groupBox10 = new GroupBox();
-            button10 = new Button();
+            cb_personelFiltre = new ComboBox();
+            btn_personelAra = new Button();
             dgv_personeller = new DataGridView();
-            textBox10 = new TextBox();
             label27 = new Label();
             groupBox12 = new GroupBox();
             btnPersonelAdresYonet = new Button();
@@ -141,8 +141,8 @@
             tb_personelTel = new TextBox();
             tb_personelSoyad = new TextBox();
             tb_personelAd = new TextBox();
-            button11 = new Button();
-            button12 = new Button();
+            btn_personelFormTemizle = new Button();
+            btn_personelKayitSil = new Button();
             btn_personelKaydet = new Button();
             label31 = new Label();
             label32 = new Label();
@@ -150,6 +150,7 @@
             tabPage7 = new TabPage();
             splitContainer4 = new SplitContainer();
             groupBox13 = new GroupBox();
+            cb_subeFiltre = new ComboBox();
             btn_subeAra = new Button();
             dgv_subeler = new DataGridView();
             label42 = new Label();
@@ -360,7 +361,6 @@
             label103 = new Label();
             textBox45 = new TextBox();
             label115 = new Label();
-            cb_subeFiltre = new ComboBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -1278,9 +1278,9 @@
             // 
             // groupBox10
             // 
-            groupBox10.Controls.Add(button10);
+            groupBox10.Controls.Add(cb_personelFiltre);
+            groupBox10.Controls.Add(btn_personelAra);
             groupBox10.Controls.Add(dgv_personeller);
-            groupBox10.Controls.Add(textBox10);
             groupBox10.Controls.Add(label27);
             groupBox10.Dock = DockStyle.Bottom;
             groupBox10.Location = new Point(0, -26);
@@ -1290,14 +1290,22 @@
             groupBox10.TabStop = false;
             groupBox10.Text = "Personeller";
             // 
-            // button10
+            // cb_personelFiltre
             // 
-            button10.Location = new Point(312, 28);
-            button10.Name = "button10";
-            button10.Size = new Size(115, 23);
-            button10.TabIndex = 0;
-            button10.Text = "Ara";
-            button10.UseVisualStyleBackColor = true;
+            cb_personelFiltre.FormattingEnabled = true;
+            cb_personelFiltre.Location = new Point(119, 30);
+            cb_personelFiltre.Name = "cb_personelFiltre";
+            cb_personelFiltre.Size = new Size(136, 22);
+            cb_personelFiltre.TabIndex = 2;
+            // 
+            // btn_personelAra
+            // 
+            btn_personelAra.Location = new Point(312, 28);
+            btn_personelAra.Name = "btn_personelAra";
+            btn_personelAra.Size = new Size(115, 23);
+            btn_personelAra.TabIndex = 0;
+            btn_personelAra.Text = "Ara";
+            btn_personelAra.UseVisualStyleBackColor = true;
             // 
             // dgv_personeller
             // 
@@ -1306,13 +1314,7 @@
             dgv_personeller.Name = "dgv_personeller";
             dgv_personeller.Size = new Size(807, 589);
             dgv_personeller.TabIndex = 0;
-            // 
-            // textBox10
-            // 
-            textBox10.Location = new Point(119, 26);
-            textBox10.Name = "textBox10";
-            textBox10.Size = new Size(165, 22);
-            textBox10.TabIndex = 1;
+            dgv_personeller.SelectionChanged += dgv_personeller_SelectionChanged;
             // 
             // label27
             // 
@@ -1351,8 +1353,8 @@
             groupBox12.Controls.Add(tb_personelTel);
             groupBox12.Controls.Add(tb_personelSoyad);
             groupBox12.Controls.Add(tb_personelAd);
-            groupBox12.Controls.Add(button11);
-            groupBox12.Controls.Add(button12);
+            groupBox12.Controls.Add(btn_personelFormTemizle);
+            groupBox12.Controls.Add(btn_personelKayitSil);
             groupBox12.Controls.Add(btn_personelKaydet);
             groupBox12.Controls.Add(label31);
             groupBox12.Controls.Add(label32);
@@ -1367,6 +1369,7 @@
             // 
             // btnPersonelAdresYonet
             // 
+            btnPersonelAdresYonet.Enabled = false;
             btnPersonelAdresYonet.Location = new Point(229, 357);
             btnPersonelAdresYonet.Name = "btnPersonelAdresYonet";
             btnPersonelAdresYonet.Size = new Size(194, 30);
@@ -1410,6 +1413,7 @@
             // 
             // dtp_personelIstencikis
             // 
+            dtp_personelIstencikis.Enabled = false;
             dtp_personelIstencikis.Location = new Point(191, 289);
             dtp_personelIstencikis.Name = "dtp_personelIstencikis";
             dtp_personelIstencikis.Size = new Size(200, 22);
@@ -1490,6 +1494,7 @@
             cb_personelSube.Name = "cb_personelSube";
             cb_personelSube.Size = new Size(121, 22);
             cb_personelSube.TabIndex = 20;
+            cb_personelSube.SelectedIndexChanged += cb_personelSube_SelectedIndexChanged;
             // 
             // label35
             // 
@@ -1580,23 +1585,25 @@
             tb_personelAd.Size = new Size(153, 22);
             tb_personelAd.TabIndex = 1;
             // 
-            // button11
+            // btn_personelFormTemizle
             // 
-            button11.Location = new Point(191, 471);
-            button11.Name = "button11";
-            button11.Size = new Size(116, 40);
-            button11.TabIndex = 7;
-            button11.Text = "Formu Temizle";
-            button11.UseVisualStyleBackColor = true;
+            btn_personelFormTemizle.Location = new Point(191, 471);
+            btn_personelFormTemizle.Name = "btn_personelFormTemizle";
+            btn_personelFormTemizle.Size = new Size(116, 40);
+            btn_personelFormTemizle.TabIndex = 7;
+            btn_personelFormTemizle.Text = "Formu Temizle";
+            btn_personelFormTemizle.UseVisualStyleBackColor = true;
+            btn_personelFormTemizle.Click += btn_personelFormTemizle_Click;
             // 
-            // button12
+            // btn_personelKayitSil
             // 
-            button12.Location = new Point(285, 409);
-            button12.Name = "button12";
-            button12.Size = new Size(153, 40);
-            button12.TabIndex = 6;
-            button12.Text = "Kaydı Sil";
-            button12.UseVisualStyleBackColor = true;
+            btn_personelKayitSil.Location = new Point(285, 409);
+            btn_personelKayitSil.Name = "btn_personelKayitSil";
+            btn_personelKayitSil.Size = new Size(153, 40);
+            btn_personelKayitSil.TabIndex = 6;
+            btn_personelKayitSil.Text = "Kaydı Sil";
+            btn_personelKayitSil.UseVisualStyleBackColor = true;
+            btn_personelKayitSil.Click += btn_personelKayitSil_Click;
             // 
             // btn_personelKaydet
             // 
@@ -1676,6 +1683,14 @@
             groupBox13.TabIndex = 0;
             groupBox13.TabStop = false;
             groupBox13.Text = "Personeller";
+            // 
+            // cb_subeFiltre
+            // 
+            cb_subeFiltre.FormattingEnabled = true;
+            cb_subeFiltre.Location = new Point(124, 30);
+            cb_subeFiltre.Name = "cb_subeFiltre";
+            cb_subeFiltre.Size = new Size(121, 22);
+            cb_subeFiltre.TabIndex = 2;
             // 
             // btn_subeAra
             // 
@@ -1860,7 +1875,7 @@
             // 
             // btn_subeFormTemizle
             // 
-            btn_subeFormTemizle.Location = new Point(191, 624);
+            btn_subeFormTemizle.Location = new Point(186, 338);
             btn_subeFormTemizle.Name = "btn_subeFormTemizle";
             btn_subeFormTemizle.Size = new Size(116, 40);
             btn_subeFormTemizle.TabIndex = 7;
@@ -1870,7 +1885,7 @@
             // 
             // btn_subeKayitSil
             // 
-            btn_subeKayitSil.Location = new Point(285, 562);
+            btn_subeKayitSil.Location = new Point(280, 276);
             btn_subeKayitSil.Name = "btn_subeKayitSil";
             btn_subeKayitSil.Size = new Size(153, 40);
             btn_subeKayitSil.TabIndex = 6;
@@ -1880,7 +1895,7 @@
             // 
             // btn_subeKaydet
             // 
-            btn_subeKaydet.Location = new Point(37, 562);
+            btn_subeKaydet.Location = new Point(32, 276);
             btn_subeKaydet.Name = "btn_subeKaydet";
             btn_subeKaydet.Size = new Size(187, 40);
             btn_subeKaydet.TabIndex = 5;
@@ -2100,7 +2115,7 @@
             // 
             // btn_aracFormTemizle
             // 
-            btn_aracFormTemizle.Location = new Point(191, 624);
+            btn_aracFormTemizle.Location = new Point(192, 289);
             btn_aracFormTemizle.Name = "btn_aracFormTemizle";
             btn_aracFormTemizle.Size = new Size(116, 40);
             btn_aracFormTemizle.TabIndex = 7;
@@ -2110,7 +2125,7 @@
             // 
             // btn_aracSil
             // 
-            btn_aracSil.Location = new Point(285, 562);
+            btn_aracSil.Location = new Point(286, 227);
             btn_aracSil.Name = "btn_aracSil";
             btn_aracSil.Size = new Size(153, 40);
             btn_aracSil.TabIndex = 6;
@@ -2120,7 +2135,7 @@
             // 
             // btn_aracKaydet
             // 
-            btn_aracKaydet.Location = new Point(37, 562);
+            btn_aracKaydet.Location = new Point(38, 227);
             btn_aracKaydet.Name = "btn_aracKaydet";
             btn_aracKaydet.Size = new Size(187, 40);
             btn_aracKaydet.TabIndex = 5;
@@ -3704,14 +3719,6 @@
             label115.TabIndex = 3;
             label115.Text = "Konu";
             // 
-            // cb_subeFiltre
-            // 
-            cb_subeFiltre.FormattingEnabled = true;
-            cb_subeFiltre.Location = new Point(124, 30);
-            cb_subeFiltre.Name = "cb_subeFiltre";
-            cb_subeFiltre.Size = new Size(121, 22);
-            cb_subeFiltre.TabIndex = 2;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 18F);
@@ -3932,9 +3939,8 @@
         private TabPage tabPage6;
         private SplitContainer splitContainer3;
         private GroupBox groupBox10;
-        private Button button10;
+        private Button btn_personelAra;
         private DataGridView dgv_personeller;
-        private TextBox textBox10;
         private Label label27;
         private GroupBox groupBox12;
         private CheckBox ckb_personelAktif;
@@ -3962,8 +3968,8 @@
         private TextBox tb_personelTel;
         private TextBox tb_personelSoyad;
         private TextBox tb_personelAd;
-        private Button button11;
-        private Button button12;
+        private Button btn_personelFormTemizle;
+        private Button btn_personelKayitSil;
         private Button btn_personelKaydet;
         private Label label31;
         private Label label32;
@@ -4182,5 +4188,6 @@
         private TextBox textBox43;
         private ComboBox cb_aracFiltre;
         private ComboBox cb_subeFiltre;
+        private ComboBox cb_personelFiltre;
     }
 }

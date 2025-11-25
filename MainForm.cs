@@ -34,10 +34,8 @@ public partial class MainForm : Form
         }
     }
 
-    private int? secilenPersonelId = null;
-
-
     //dgv_personeller_SelectionChanged seçim değiştiğinde yapılacak işlemler
+    private int? secilenPersonelId = null;
     private void dgv_personeller_SelectionChanged(object sender, EventArgs e)
     {
         if (dgv_personeller.SelectedRows.Count > 0)
@@ -58,8 +56,10 @@ public partial class MainForm : Form
             tb_personelEhliyet.Text = seciliSatir.Cells["EhliyetSinifi"].Value.ToString();
             nud_personelMaas.Value = Convert.ToDecimal(seciliSatir.Cells["Maas"].Value);
             dtp_personelIsegiris.Value = Convert.ToDateTime(seciliSatir.Cells["IsegirisTarihi"].Value);
-            dtp_personelIstencikis.Value = Convert.ToDateTime(seciliSatir.Cells["IstencikisTarihi"].Value);
+            dtp_personelIstencikis.Value = Convert.ToDateTime(seciliSatir.Cells["IstencikisTarihi"].Value) == null ? DateTime.Now : Convert.ToDateTime(seciliSatir.Cells["IstencikisTarihi"].Value);
+            dtp_personelIstencikis.Enabled = true;
             ckb_personelAktif.Checked = Convert.ToBoolean(seciliSatir.Cells["Aktif"].Value);
+            btnPersonelAdresYonet.Enabled = true;
         }
         else
         {
@@ -67,6 +67,7 @@ public partial class MainForm : Form
         }
     }
 
+    //bir cb de seçilen indexden diğer bir cbye ilişkili veri çekme
 
 
 
@@ -78,6 +79,21 @@ public partial class MainForm : Form
             cb.DataSource = sorgu(context).ToList();
             cb.DisplayMember = displayMember;
             cb.ValueMember = valueMember;
+        }
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_personelSube != null)
+        {
+            int secilenSubeId;
+            if (cb_personelSube.SelectedValue is int)
+                secilenSubeId = (int)cb_personelSube.SelectedValue;
+            else if (cb_personelSube.SelectedValue is Sube sube)
+                secilenSubeId = sube.SubeId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+            ComboBoxVeriCek(cb_personelArac, ctx => ctx.Araclar.Where(x => x.SubeId == secilenSubeId), "AracTip", "AracId");
         }
     }
 
@@ -120,18 +136,14 @@ public partial class MainForm : Form
     //----------------------------------------------------------------
     private void MainForm_Load(object sender, EventArgs e)
     {
-        //personeller
+        //
         VeriCek(dgv_personeller, ctx => ctx.Personeller);
         ComboBoxVeriCek(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
-        ComboBoxVeriCek(cb_personelArac, ctx => ctx.Araclar, "Plaka", "AracId");
         ComboBoxVeriCek(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
-
-
         cb_personelCinsiyet.Items.Add("Erkek");
         cb_personelCinsiyet.Items.Add("Kadın");
-
-
-        //subeler
+        cb_personelCinsiyet.SelectedIndex = 0;
+        //
         VeriCek(dgv_subeler, ctx =>
             ctx.Subeler
                 .Include(s => s.Araclar)
@@ -162,7 +174,6 @@ public partial class MainForm : Form
             cb_subeFiltre.Items.Clear();
             cb_subeFiltre.Items.AddRange(tipler.ToArray());
         }
-
         cb_subeTip.Items.Add("Merkez");
         cb_subeTip.Items.Add("Şube");
         cb_subeTip.Items.Add("Dağıtım Noktası");
@@ -170,7 +181,6 @@ public partial class MainForm : Form
         cb_subeTip.Items.Add("Transfer Merkezi");
         cb_subeTip.Items.Add("Kargo Kabul");
         cb_subeTip.Items.Add("Teslimat Noktası");
-
         cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
         cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
         cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
@@ -179,8 +189,7 @@ public partial class MainForm : Form
         cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
         cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
 
-
-        //araclar
+        //
         VeriCek(dgv_araclar, ctx =>
         ctx.Araclar
         .Include(a => a.Sube)
@@ -206,7 +215,6 @@ public partial class MainForm : Form
             cb_aracFiltre.Items.Clear();
             cb_aracFiltre.Items.AddRange(tipler.ToArray());
         }
-
         cb_aracTip.Items.Add("Kamyonet");
         cb_aracTip.Items.Add("Panelvan");
         cb_aracTip.Items.Add("Tır");
@@ -214,19 +222,12 @@ public partial class MainForm : Form
         cb_aracTip.Items.Add("Otomobil");
         cb_aracTip.Items.Add("Motosiklet");
         cb_aracTip.Items.Add("Diğer");
-
         cb_aracDurum.Items.Add("Aktif");
         cb_aracDurum.Items.Add("Bakımda");
         cb_aracDurum.Items.Add("Arızalı");
         cb_aracDurum.Items.Add("Pasif");
         cb_aracDurum.Items.Add("Serviste");
         cb_aracDurum.Items.Add("Kullanımda");
-
-
-
-
-
-
     }
 
     //subeler dgv seçim değiştiğinde yapılacak işlemler
@@ -287,7 +288,6 @@ public partial class MainForm : Form
             Personel personel;
             if (secilenPersonelId.HasValue)
             {
-                // Güncelleme işlemi
                 personel = context.Personeller.Find(secilenPersonelId.Value);
                 if (personel == null)
                 {
@@ -297,9 +297,8 @@ public partial class MainForm : Form
             }
             else
             {
-                // Ekleme işlemi
                 personel = new Personel();
-                personel.Sifre = tb_personelSifre.Text; // Sadece eklemede şifre alınır
+                personel.Sifre = tb_personelSifre.Text;
                 context.Personeller.Add(personel);
             }
 
@@ -310,20 +309,13 @@ public partial class MainForm : Form
             personel.EhliyetSinifi = tb_personelEhliyet.Text;
 
             personel.Maas = nud_personelMaas.Value;
-            personel.Cinsiyet = cb_personelCinsiyet.SelectedItem != null ? cb_personelCinsiyet.SelectedItem.ToString() : null;
+            personel.Cinsiyet = cb_personelCinsiyet.SelectedItem.ToString();
             personel.Rol = cb_personelRol.SelectedItem as Rol;
             personel.Arac = cb_personelArac.SelectedItem as Arac;
             personel.Sube = cb_personelSube.SelectedItem as Sube;
 
             personel.IseGirisTarihi = dtp_personelIsegiris.Value;
-            if (ckb_personelAktif.Checked == false) // veya başka bir kontrol ile
-            {
-                personel.IstenCikisTarihi = dtp_personelIstencikis.Value;
-            }
-            else
-            {
-                personel.IstenCikisTarihi = null;
-            }
+            personel.IstenCikisTarihi = null;
             if (tb_personelEhliyet.Text.Length > 5)
             {
                 MessageBox.Show("Ehliyet sınıfı en fazla 5 karakter olmalıdır.");
@@ -332,8 +324,72 @@ public partial class MainForm : Form
             personel.Aktif = ckb_personelAktif.Checked;
 
             context.SaveChanges();
-            VeriCek(dgv_personeller, ctx => ctx.Personeller); // Listeyi güncelle
+            VeriCek(dgv_personeller, ctx => ctx.Personeller);
         }
+    }
+    private void btn_personelKayitSil_Click(object sender, EventArgs e)
+    {
+        if (secilenPersonelId.HasValue)
+        {
+            using (var context = new KtsContext())
+            {
+                var personel = context.Personeller.Find(secilenPersonelId.Value);
+                if (personel != null)
+                {
+                    context.Personeller.Remove(personel);
+                    context.SaveChanges();
+                    VeriCek(dgv_personeller, ctx =>
+                    ctx.Personeller
+                        .Include(p => p.Rol)
+                        .Include(p => p.Arac)
+                        .Include(p => p.Sube)
+                        .Select(p => new
+                        {
+                            p.PersonelId,
+                            p.Ad,
+                            p.Soyad,
+                            p.Mail,
+                            p.Tel,
+                            p.Cinsiyet,
+                            p.EhliyetSinifi,
+                            p.Maas,
+                            p.IseGirisTarihi,
+                            p.IstenCikisTarihi,
+                            p.Aktif,
+                            Rol = p.Rol != null ? p.Rol.RolAd : "",
+                            Arac = p.Arac != null ? p.Arac.AracTip : "",
+                            Sube = p.Sube != null ? p.Sube.SubeAd : ""
+                        })
+                );
+
+                    var roller = context.Personeller
+                        .Select(p => p.Rol.RolAd)
+                        .Distinct()
+                        .ToList();
+                    cb_subeFiltre.Items.Clear();
+                    cb_subeFiltre.Items.AddRange(roller.ToArray());
+                }
+                else
+                {
+                    MessageBox.Show("Silinecek şube bulunamadı.");
+                }
+            }
+        }
+        else
+        {
+            MessageBox.Show("Lütfen silmek için bir şube seçin.");
+        }
+    }
+
+    private void btn_personelFormTemizle_Click(object sender, EventArgs e)
+    {
+        KontrolleriTemizle(tb_personelAd, tb_personelSoyad, tb_personelMail, tb_personelTel, tb_personelEhliyet, nud_personelMaas, cb_personelCinsiyet, cb_personelRol, cb_personelArac, cb_personelSube, dtp_personelIsegiris);
+    }
+
+    private void btnPersonelAdresYonet_Click(object sender, EventArgs e)
+    {
+        var form = new AdresEkleForm((int)secilenPersonelId, "Personel");
+        form.ShowDialog();
     }
 
     private void btn_subeAra_Click(object sender, EventArgs e)
@@ -394,7 +450,6 @@ public partial class MainForm : Form
             Sube sube;
             if (secilenSubeId.HasValue)
             {
-                // Güncelleme işlemi
                 sube = context.Subeler.Find(secilenSubeId.Value);
                 if (sube == null)
                 {
@@ -404,7 +459,6 @@ public partial class MainForm : Form
             }
             else
             {
-                // Ekleme işlemi
                 sube = new Sube();
                 context.Subeler.Add(sube);
             }
@@ -416,8 +470,6 @@ public partial class MainForm : Form
             sube.AcikAdres = tbm_subeAcikAdres.Text;
             sube.CalismaSaatleri = cb_subeCalismaSaat.SelectedItem?.ToString();
             sube.Kapasite = (int?)nud_subeKapasite.Value;
-
-            // İl ve ilçe ID'sini almak için:
             if (cb_subeIl.SelectedValue is int ilId)
                 sube.IlId = ilId;
             else if (cb_subeIl.SelectedItem is Il il)
@@ -565,7 +617,6 @@ public partial class MainForm : Form
             Arac arac;
             if (secilenAracId.HasValue)
             {
-                // Güncelleme işlemi
                 arac = context.Araclar.Find(secilenAracId.Value);
                 if (arac == null)
                 {
@@ -575,7 +626,6 @@ public partial class MainForm : Form
             }
             else
             {
-                // Ekleme işlemi
                 arac = new Arac();
                 context.Araclar.Add(arac);
             }
@@ -588,7 +638,7 @@ public partial class MainForm : Form
             if (cb_aracSube.SelectedValue is int subeId)
             {
                 arac.SubeId = subeId;
-                arac.Sube = context.Subeler.Find(subeId); // Şube nesnesini ata
+                arac.Sube = context.Subeler.Find(subeId);
             }
             context.SaveChanges();
             VeriCek(dgv_araclar, ctx =>
@@ -744,15 +794,11 @@ public partial class MainForm : Form
 
     private void btnMusterAdresYonet_Click(object sender, EventArgs e)
     {
-        AdresEkleForm adresYonetim = new AdresEkleForm();
-        adresYonetim.Show();
+        AdresEkleForm form = new AdresEkleForm(9, "Personel");
+        form.ShowDialog();
     }
 
-    private void btnPersonelAdresYonet_Click(object sender, EventArgs e)
-    {
-        AdresEkleForm adresYonetim = new AdresEkleForm();
-        adresYonetim.Show();
-    }
+
 
     private void aliciAdresCb_SelectedIndexChanged_1(object sender, EventArgs e)
     {
@@ -768,6 +814,4 @@ public partial class MainForm : Form
     {
 
     }
-
-
 }
