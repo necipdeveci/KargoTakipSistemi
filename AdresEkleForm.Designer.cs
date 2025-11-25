@@ -260,7 +260,7 @@
             // 
             // btn_adresKayitSil
             // 
-            btn_adresKayitSil.Location = new Point(23, 455);
+            btn_adresKayitSil.Location = new Point(137, 455);
             btn_adresKayitSil.Name = "btn_adresKayitSil";
             btn_adresKayitSil.Size = new Size(90, 30);
             btn_adresKayitSil.TabIndex = 14;
@@ -297,7 +297,7 @@
             // 
             // btn_adresKaydet
             // 
-            btn_adresKaydet.Location = new Point(144, 455);
+            btn_adresKaydet.Location = new Point(23, 455);
             btn_adresKaydet.Name = "btn_adresKaydet";
             btn_adresKaydet.Size = new Size(90, 30);
             btn_adresKaydet.TabIndex = 13;
@@ -329,6 +329,7 @@
             cb_adresIlce.Name = "cb_adresIlce";
             cb_adresIlce.Size = new Size(121, 22);
             cb_adresIlce.TabIndex = 5;
+            cb_adresIlce.SelectedIndexChanged += cb_adresIlce_SelectedIndexChanged;
             // 
             // btn_adresFormTemizle
             // 

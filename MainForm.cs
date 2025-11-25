@@ -56,7 +56,20 @@ public partial class MainForm : Form
             tb_personelEhliyet.Text = seciliSatir.Cells["EhliyetSinifi"].Value.ToString();
             nud_personelMaas.Value = Convert.ToDecimal(seciliSatir.Cells["Maas"].Value);
             dtp_personelIsegiris.Value = Convert.ToDateTime(seciliSatir.Cells["IsegirisTarihi"].Value);
-            dtp_personelIstencikis.Value = Convert.ToDateTime(seciliSatir.Cells["IstencikisTarihi"].Value) == null ? DateTime.Now : Convert.ToDateTime(seciliSatir.Cells["IstencikisTarihi"].Value);
+            if (seciliSatir.Cells["IstencikisTarihi"].Value == null || seciliSatir.Cells["IstencikisTarihi"].Value == DBNull.Value)
+            {
+                dtp_personelIstencikis.Value = DateTime.Now;
+            }
+            else
+            {
+                DateTime dt = Convert.ToDateTime(seciliSatir.Cells["IstencikisTarihi"].Value);
+                if (dt < dtp_personelIstencikis.MinDate)
+                    dtp_personelIstencikis.Value = dtp_personelIstencikis.MinDate;
+                else if (dt > dtp_personelIstencikis.MaxDate)
+                    dtp_personelIstencikis.Value = dtp_personelIstencikis.MaxDate;
+                else
+                    dtp_personelIstencikis.Value = dt;
+            }
             dtp_personelIstencikis.Enabled = true;
             ckb_personelAktif.Checked = Convert.ToBoolean(seciliSatir.Cells["Aktif"].Value);
             btnPersonelAdresYonet.Enabled = true;

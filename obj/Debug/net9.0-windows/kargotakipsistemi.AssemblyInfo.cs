@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("kargotakipsistemi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+af3b21a3c8986f215452b29cee6fd240f1b8ee50")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ea5160fae0fae207951867538f72ee2aea804e0")]
 [assembly: System.Reflection.AssemblyProductAttribute("kargotakipsistemi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("kargotakipsistemi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

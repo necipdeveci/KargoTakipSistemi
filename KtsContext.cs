@@ -28,7 +28,7 @@ namespace kargotakipsistemi
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=NECIPDEV\\SQLEXPRESS;Database=ktsdb;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=ktsdb;Trusted_Connection=True;TrustServerCertificate=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

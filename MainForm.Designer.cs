@@ -3731,7 +3731,6 @@
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "MainForm";
-            WindowState = FormWindowState.Maximized;
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             tabControl1.ResumeLayout(false);
