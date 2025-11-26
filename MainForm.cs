@@ -34,6 +34,84 @@ public partial class MainForm : Form
         }
     }
 
+    private bool PersonelAlanlariGecerliMi()
+    {
+        // Ad
+        if (string.IsNullOrWhiteSpace(tb_personelAd.Text) || tb_personelAd.Text.Length > 50)
+        {
+            MessageBox.Show("Ad alanı zorunlu ve en fazla 50 karakter olmalıdır.");
+            return false;
+        }
+        // Soyad
+        if (string.IsNullOrWhiteSpace(tb_personelSoyad.Text) || tb_personelSoyad.Text.Length > 50)
+        {
+            MessageBox.Show("Soyad alanı zorunlu ve en fazla 50 karakter olmalıdır.");
+            return false;
+        }
+        // Mail
+        if (string.IsNullOrWhiteSpace(tb_personelMail.Text) || tb_personelMail.Text.Length > 100)
+        {
+            MessageBox.Show("Mail alanı zorunlu ve en fazla 100 karakter olmalıdır.");
+            return false;
+        }
+        // Şifre
+        if (string.IsNullOrWhiteSpace(tb_personelSifre.Text) || tb_personelSifre.Text.Length > 128)
+        {
+            MessageBox.Show("Şifre alanı zorunlu ve en fazla 128 karakter olmalıdır.");
+            return false;
+        }
+        // Tel
+        if (string.IsNullOrWhiteSpace(tb_personelTel.Text) || tb_personelTel.Text.Length > 15)
+        {
+            MessageBox.Show("Telefon alanı zorunlu ve en fazla 15 karakter olmalıdır.");
+            return false;
+        }
+        // Cinsiyet
+        if (cb_personelCinsiyet.SelectedIndex < 0)
+        {
+            MessageBox.Show("Cinsiyet seçilmelidir.");
+            return false;
+        }
+        // Rol
+        if (cb_personelRol.SelectedIndex < 0)
+        {
+            MessageBox.Show("Rol seçilmelidir.");
+            return false;
+        }
+        // Şube
+        if (cb_personelSube.SelectedIndex < 0)
+        {
+            MessageBox.Show("Şube seçilmelidir.");
+            return false;
+        }
+        // Ehliyet Sınıfı (isteğe bağlı, ama karakter sınırı var)
+        if (tb_personelEhliyet.Text.Length > 5)
+        {
+            MessageBox.Show("Ehliyet sınıfı en fazla 5 karakter olmalıdır.");
+            return false;
+        }
+        // Doğum Tarihi (isteğe bağlı, mantıklı bir tarih olmalı)
+        if (dtp_personelDogumTarih.Value > DateTime.Now)
+        {
+            MessageBox.Show("Doğum tarihi bugünden ileri olamaz.");
+            return false;
+        }
+        // Arac (isteğe bağlı, seçili ise kontrol)
+        if (cb_personelArac.SelectedIndex >= 0 && cb_personelArac.SelectedItem == null)
+        {
+            MessageBox.Show("Araç seçimi geçersiz.");
+            return false;
+        }
+        // Maaş (isteğe bağlı, minimum kontrolü)
+        if (nud_personelMaas.Value < 0)
+        {
+            MessageBox.Show("Maaş negatif olamaz.");
+            return false;
+        }
+
+        return true;
+    }
+
     //dgv_personeller_SelectionChanged seçim değiştiğinde yapılacak işlemler
     private int? secilenPersonelId = null;
     private void dgv_personeller_SelectionChanged(object sender, EventArgs e)
@@ -41,21 +119,35 @@ public partial class MainForm : Form
         if (dgv_personeller.SelectedRows.Count > 0)
         {
             var seciliSatir = dgv_personeller.SelectedRows[0];
-            secilenPersonelId = Convert.ToInt32(seciliSatir.Cells["PersonelId"].Value);
+            secilenPersonelId = seciliSatir.Cells["PersonelId"].Value != DBNull.Value
+                ? Convert.ToInt32(seciliSatir.Cells["PersonelId"].Value)
+                : (int?)null;
 
-            tb_personelAd.Text = seciliSatir.Cells["Ad"].Value.ToString();
-            tb_personelSoyad.Text = seciliSatir.Cells["Soyad"].Value.ToString();
-            tb_personelMail.Text = seciliSatir.Cells["Mail"].Value.ToString();
-            tb_personelTel.Text = seciliSatir.Cells["Tel"].Value.ToString();
+            tb_personelAd.Text = seciliSatir.Cells["Ad"].Value?.ToString() ?? "";
+            tb_personelSoyad.Text = seciliSatir.Cells["Soyad"].Value?.ToString() ?? "";
+            tb_personelMail.Text = seciliSatir.Cells["Mail"].Value?.ToString() ?? "";
+            tb_personelTel.Text = seciliSatir.Cells["Tel"].Value?.ToString() ?? "";
+
+            // Şifreyi yıldızla göster
+            string sifre = seciliSatir.Cells["Sifre"].Value?.ToString() ?? "";
+            tb_personelSifre.Text = sifre.Length > 4 ? new string('*', sifre.Length) : sifre;
             tb_personelSifre.ReadOnly = true;
+
             string cinsiyet = seciliSatir.Cells["Cinsiyet"].Value?.ToString();
-            if (!string.IsNullOrEmpty(cinsiyet))
-                cb_personelCinsiyet.SelectedItem = cinsiyet;
-            else
-                cb_personelCinsiyet.SelectedIndex = -1; // Seçim yok
-            tb_personelEhliyet.Text = seciliSatir.Cells["EhliyetSinifi"].Value.ToString();
-            nud_personelMaas.Value = Convert.ToDecimal(seciliSatir.Cells["Maas"].Value);
-            dtp_personelIsegiris.Value = Convert.ToDateTime(seciliSatir.Cells["IsegirisTarihi"].Value);
+            cb_personelCinsiyet.SelectedIndex = !string.IsNullOrEmpty(cinsiyet)
+                ? cb_personelCinsiyet.Items.IndexOf(cinsiyet)
+                : -1;
+
+            tb_personelEhliyet.Text = seciliSatir.Cells["EhliyetSinifi"].Value?.ToString() ?? "";
+
+            nud_personelMaas.Value = seciliSatir.Cells["Maas"].Value != DBNull.Value
+                ? Convert.ToDecimal(seciliSatir.Cells["Maas"].Value)
+                : nud_personelMaas.Minimum;
+
+            dtp_personelIsegiris.Value = seciliSatir.Cells["IsegirisTarihi"].Value != DBNull.Value
+                ? Convert.ToDateTime(seciliSatir.Cells["IsegirisTarihi"].Value)
+                : DateTime.Now;
+
             if (seciliSatir.Cells["IstencikisTarihi"].Value == null || seciliSatir.Cells["IstencikisTarihi"].Value == DBNull.Value)
             {
                 dtp_personelIstencikis.Value = DateTime.Now;
@@ -71,7 +163,10 @@ public partial class MainForm : Form
                     dtp_personelIstencikis.Value = dt;
             }
             dtp_personelIstencikis.Enabled = true;
-            ckb_personelAktif.Checked = Convert.ToBoolean(seciliSatir.Cells["Aktif"].Value);
+
+            ckb_personelAktif.Checked = seciliSatir.Cells["Aktif"].Value != DBNull.Value
+                && Convert.ToBoolean(seciliSatir.Cells["Aktif"].Value);
+
             btnPersonelAdresYonet.Enabled = true;
         }
         else
@@ -97,16 +192,13 @@ public partial class MainForm : Form
 
     private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (cb_personelSube != null)
+        if (cb_personelSube.SelectedValue != null)
         {
             int secilenSubeId;
-            if (cb_personelSube.SelectedValue is int)
-                secilenSubeId = (int)cb_personelSube.SelectedValue;
-            else if (cb_personelSube.SelectedValue is Sube sube)
-                secilenSubeId = sube.SubeId;
-            else
-                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
-            ComboBoxVeriCek(cb_personelArac, ctx => ctx.Araclar.Where(x => x.SubeId == secilenSubeId), "AracTip", "AracId");
+            if (int.TryParse(cb_personelSube.SelectedValue.ToString(), out secilenSubeId))
+            {
+                ComboBoxVeriCek(cb_personelArac, ctx => ctx.Araclar.Where(x => x.SubeId == secilenSubeId), "AracTip", "AracId");
+            }
         }
     }
 
@@ -150,12 +242,46 @@ public partial class MainForm : Form
     private void MainForm_Load(object sender, EventArgs e)
     {
         //
-        VeriCek(dgv_personeller, ctx => ctx.Personeller);
+        VeriCek(dgv_personeller, ctx =>
+    ctx.Personeller
+        .Include(p => p.Rol)
+        .Include(p => p.Sube)
+        .Include(p => p.Arac)
+        .Include(p => p.Adresler)
+        .Select(p => new
+        {
+            p.PersonelId,
+            p.Ad,
+            p.Soyad,
+            p.Mail,
+            Sifre = p.Sifre.Length > 4 ? new string('*', p.Sifre.Length) : p.Sifre,
+            p.Tel,
+            p.DogumTarihi,
+            p.Cinsiyet,
+            p.RolId,
+            RolAd = p.Rol != null ? p.Rol.RolAd : "",
+            p.SubeId,
+            SubeAd = p.Sube != null ? p.Sube.SubeAd : "",
+            p.AracId,
+            AracTip = p.Arac != null ? p.Arac.AracTip : "",
+            p.Aktif,
+            p.IseGirisTarihi,
+            p.IstenCikisTarihi,
+            p.Maas,
+            p.EhliyetSinifi,
+            Adresler = p.Adresler != null && p.Adresler.Any()
+                ? string.Join(", ", p.Adresler.Select(a => a.AdresBaslik))
+                : ""
+        })
+);
         ComboBoxVeriCek(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = 0;
         ComboBoxVeriCek(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = 0;
         cb_personelCinsiyet.Items.Add("Erkek");
         cb_personelCinsiyet.Items.Add("Kadın");
         cb_personelCinsiyet.SelectedIndex = 0;
+
         //
         VeriCek(dgv_subeler, ctx =>
             ctx.Subeler
@@ -235,6 +361,7 @@ public partial class MainForm : Form
         cb_aracTip.Items.Add("Otomobil");
         cb_aracTip.Items.Add("Motosiklet");
         cb_aracTip.Items.Add("Diğer");
+
         cb_aracDurum.Items.Add("Aktif");
         cb_aracDurum.Items.Add("Bakımda");
         cb_aracDurum.Items.Add("Arızalı");
@@ -296,8 +423,11 @@ public partial class MainForm : Form
 
     private void btn_personelKaydet_Click(object sender, EventArgs e)
     {
+        if (!PersonelAlanlariGecerliMi())
+            return;
         using (var context = new KtsContext())
         {
+            
             Personel personel;
             if (secilenPersonelId.HasValue)
             {
@@ -320,6 +450,7 @@ public partial class MainForm : Form
             personel.Mail = tb_personelMail.Text;
             personel.Tel = tb_personelTel.Text;
             personel.EhliyetSinifi = tb_personelEhliyet.Text;
+            personel.DogumTarihi = dtp_personelDogumTarih.Value;
 
             personel.Maas = nud_personelMaas.Value;
             personel.Cinsiyet = cb_personelCinsiyet.SelectedItem.ToString();
@@ -396,7 +527,62 @@ public partial class MainForm : Form
 
     private void btn_personelFormTemizle_Click(object sender, EventArgs e)
     {
-        KontrolleriTemizle(tb_personelAd, tb_personelSoyad, tb_personelMail, tb_personelTel, tb_personelEhliyet, nud_personelMaas, cb_personelCinsiyet, cb_personelRol, cb_personelArac, cb_personelSube, dtp_personelIsegiris);
+                KontrolleriTemizle(
+            tb_personelAd,
+            tb_personelSoyad,
+            tb_personelMail,
+            tb_personelSifre,
+            tb_personelTel,
+            tb_personelEhliyet,
+            dtp_personelDogumTarih,
+            nud_personelMaas,
+            cb_personelCinsiyet,
+            cb_personelRol,
+            cb_personelSube,
+            cb_personelArac,
+            dtp_personelIsegiris,
+            dtp_personelIstencikis,
+            ckb_personelAktif
+        );
+
+        VeriCek(dgv_personeller, ctx =>
+            ctx.Personeller
+                .Include(p => p.Rol)
+                .Include(p => p.Sube)
+                .Include(p => p.Arac)
+                .Include(p => p.Adresler)
+                .Select(p => new
+                {
+                    p.PersonelId,
+                    p.Ad,
+                    p.Soyad,
+                    p.Mail,
+                    p.Sifre,
+                    p.Tel,
+                    p.DogumTarihi,
+                    p.Cinsiyet,
+                    p.RolId,
+                    RolAd = p.Rol != null ? p.Rol.RolAd : "",
+                    p.SubeId,
+                    SubeAd = p.Sube != null ? p.Sube.SubeAd : "",
+                    p.AracId,
+                    AracTip = p.Arac != null ? p.Arac.AracTip : "",
+                    p.Aktif,
+                    p.IseGirisTarihi,
+                    p.IstenCikisTarihi,
+                    p.Maas,
+                    p.EhliyetSinifi,
+                    Adresler = p.Adresler != null && p.Adresler.Any()
+                        ? string.Join(", ", p.Adresler.Select(a => a.AdresBaslik))
+                        : ""
+                })
+        );
+
+        ComboBoxVeriCek(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId"); 
+        ComboBoxVeriCek(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId"); 
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
     }
 
     private void btnPersonelAdresYonet_Click(object sender, EventArgs e)

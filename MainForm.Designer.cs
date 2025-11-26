@@ -115,6 +115,8 @@
             dgv_personeller = new DataGridView();
             label27 = new Label();
             groupBox12 = new GroupBox();
+            dtp_personelDogumTarih = new DateTimePicker();
+            label30 = new Label();
             btnPersonelAdresYonet = new Button();
             ckb_personelAktif = new CheckBox();
             label41 = new Label();
@@ -1327,6 +1329,8 @@
             // 
             // groupBox12
             // 
+            groupBox12.Controls.Add(dtp_personelDogumTarih);
+            groupBox12.Controls.Add(label30);
             groupBox12.Controls.Add(btnPersonelAdresYonet);
             groupBox12.Controls.Add(ckb_personelAktif);
             groupBox12.Controls.Add(label41);
@@ -1366,6 +1370,23 @@
             groupBox12.TabIndex = 0;
             groupBox12.TabStop = false;
             groupBox12.Text = "Personel Bilgileri";
+            // 
+            // dtp_personelDogumTarih
+            // 
+            dtp_personelDogumTarih.Checked = false;
+            dtp_personelDogumTarih.Location = new Point(257, 59);
+            dtp_personelDogumTarih.Name = "dtp_personelDogumTarih";
+            dtp_personelDogumTarih.Size = new Size(202, 22);
+            dtp_personelDogumTarih.TabIndex = 38;
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.Location = new Point(257, 39);
+            label30.Name = "label30";
+            label30.Size = new Size(98, 14);
+            label30.TabIndex = 37;
+            label30.Text = "Doğum Tarihi:";
             // 
             // btnPersonelAdresYonet
             // 
@@ -1407,6 +1428,7 @@
             // nud_personelMaas
             // 
             nud_personelMaas.Location = new Point(277, 218);
+            nud_personelMaas.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nud_personelMaas.Name = "nud_personelMaas";
             nud_personelMaas.Size = new Size(120, 22);
             nud_personelMaas.TabIndex = 32;
@@ -1771,6 +1793,7 @@
             // nud_subeKapasite
             // 
             nud_subeKapasite.Location = new Point(113, 238);
+            nud_subeKapasite.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nud_subeKapasite.Name = "nud_subeKapasite";
             nud_subeKapasite.Size = new Size(128, 22);
             nud_subeKapasite.TabIndex = 45;
@@ -2083,6 +2106,7 @@
             // nud_aracKapasite
             // 
             nud_aracKapasite.Location = new Point(141, 118);
+            nud_aracKapasite.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nud_aracKapasite.Name = "nud_aracKapasite";
             nud_aracKapasite.Size = new Size(100, 22);
             nud_aracKapasite.TabIndex = 45;
@@ -4188,5 +4212,7 @@
         private ComboBox cb_aracFiltre;
         private ComboBox cb_subeFiltre;
         private ComboBox cb_personelFiltre;
+        private DateTimePicker dtp_personelDogumTarih;
+        private Label label30;
     }
 }

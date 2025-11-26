@@ -22,7 +22,6 @@ namespace kargotakipsistemi.Entities
         public int RolId { get; set; }
         public int SubeId { get; set; }
         public int? AracId { get; set; }
-        public int? AdresId { get; set; }
         public bool Aktif { get; set; } = true;
         public DateTime? IseGirisTarihi { get; set; }
         public DateTime? IstenCikisTarihi { get; set; }
