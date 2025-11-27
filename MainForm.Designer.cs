@@ -120,7 +120,6 @@
             btnPersonelAdresYonet = new Button();
             ckb_personelAktif = new CheckBox();
             label41 = new Label();
-            tb_personelEhliyet = new TextBox();
             nud_personelMaas = new NumericUpDown();
             dtp_personelIstencikis = new DateTimePicker();
             label40 = new Label();
@@ -363,6 +362,7 @@
             label103 = new Label();
             textBox45 = new TextBox();
             label115 = new Label();
+            cb_personelEhliyet = new ComboBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -1329,12 +1329,12 @@
             // 
             // groupBox12
             // 
+            groupBox12.Controls.Add(cb_personelEhliyet);
             groupBox12.Controls.Add(dtp_personelDogumTarih);
             groupBox12.Controls.Add(label30);
             groupBox12.Controls.Add(btnPersonelAdresYonet);
             groupBox12.Controls.Add(ckb_personelAktif);
             groupBox12.Controls.Add(label41);
-            groupBox12.Controls.Add(tb_personelEhliyet);
             groupBox12.Controls.Add(nud_personelMaas);
             groupBox12.Controls.Add(dtp_personelIstencikis);
             groupBox12.Controls.Add(label40);
@@ -1417,13 +1417,6 @@
             label41.Size = new Size(105, 14);
             label41.TabIndex = 34;
             label41.Text = "Ehliyet Sınıf:";
-            // 
-            // tb_personelEhliyet
-            // 
-            tb_personelEhliyet.Location = new Point(148, 317);
-            tb_personelEhliyet.Name = "tb_personelEhliyet";
-            tb_personelEhliyet.Size = new Size(107, 22);
-            tb_personelEhliyet.TabIndex = 33;
             // 
             // nud_personelMaas
             // 
@@ -3743,6 +3736,14 @@
             label115.TabIndex = 3;
             label115.Text = "Konu";
             // 
+            // cb_personelEhliyet
+            // 
+            cb_personelEhliyet.FormattingEnabled = true;
+            cb_personelEhliyet.Location = new Point(148, 317);
+            cb_personelEhliyet.Name = "cb_personelEhliyet";
+            cb_personelEhliyet.Size = new Size(103, 22);
+            cb_personelEhliyet.TabIndex = 39;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 18F);
@@ -3968,7 +3969,6 @@
         private GroupBox groupBox12;
         private CheckBox ckb_personelAktif;
         private Label label41;
-        private TextBox tb_personelEhliyet;
         private NumericUpDown nud_personelMaas;
         private DateTimePicker dtp_personelIstencikis;
         private Label label40;
@@ -4214,5 +4214,6 @@
         private ComboBox cb_personelFiltre;
         private DateTimePicker dtp_personelDogumTarih;
         private Label label30;
+        private ComboBox cb_personelEhliyet;
     }
 }

@@ -68,19 +68,19 @@ namespace kargotakipsistemi
                 .HasForeignKey(a => a.MahalleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Adres - Musteri (SetNull - address can exist without customer)
+            // Adres - Musteri (Cascade - customer silinince adresleri sil)
             modelBuilder.Entity<Adres>()
                 .HasOne(a => a.Musteri)
                 .WithMany(m => m.Adresler)
                 .HasForeignKey(a => a.MusteriId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Adres - Personel (SetNull - address can exist without personnel)
+            // Adres - Personel (Cascade - personel silinince adresleri sil)
             modelBuilder.Entity<Adres>()
                 .HasOne(a => a.Personel)
                 .WithMany(p => p.Adresler)
                 .HasForeignKey(a => a.PersonelId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Sube - Il (Restrict)
             modelBuilder.Entity<Sube>()
@@ -150,7 +150,7 @@ namespace kargotakipsistemi
                 .HasForeignKey(g => g.AliciId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Gonderi - Adres (Restrict)
+            // Gonderi - Adres (Restrict) => iki FK olduğundan SET NULL çoklu path hatasına sebep olur
             modelBuilder.Entity<Gonderi>()
                 .HasOne(g => g.GonderenAdres)
                 .WithMany()
@@ -215,13 +215,6 @@ namespace kargotakipsistemi
                 .WithMany()
                 .HasForeignKey(md => md.GonderiId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // MusteriDestek - Personel (SetNull)
-            modelBuilder.Entity<MusteriDestek>()
-                .HasOne(md => md.Personel)
-                .WithMany(p => p.MusteriDestekleri)
-                .HasForeignKey(md => md.PersonelId)
-                .OnDelete(DeleteBehavior.SetNull);
 
             // OdemeFatura - Gonderi (Cascade)
             modelBuilder.Entity<OdemeFatura>()

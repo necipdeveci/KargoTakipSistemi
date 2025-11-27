@@ -1,13 +1,10 @@
 ﻿using kargotakipsistemi.Entities;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using kargotakipsistemi.Servisler;
+using kargotakipsistemi.Yardimcilar;
+using kargotakipsistemi.Dogrulamalar;
 
 namespace kargotakipsistemi;
 
@@ -23,152 +20,54 @@ public partial class AdresEkleForm : Form
         _referansTipi = referansTipi;
     }
 
-
-    private void VeriCek(DataGridView dgv, Func<KtsContext, IQueryable<Adres>> sorgu)
-    {
-        using (var context = new KtsContext())
-        {
-            var liste = sorgu(context)
-                .Select(a => new
-                {
-                    a.AdresId,
-                    a.AdresBaslik,
-                    a.AcikAdres,
-                    Il = a.Il != null ? a.Il.IlAd : "",
-                    Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
-                    Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
-                    a.PostaKodu,
-                    a.AdresTipi,
-                    a.KapiNo,
-                    a.BinaAdi,
-                    a.Kat,
-                    a.Daire,
-                    a.EkAciklama,
-                    a.Aktif
-                })
-                .ToList();
-            dgv.AutoGenerateColumns = true;
-            dgv.DataSource = liste;
-        }
-    }
-    private void ComboBoxVeriCek<T>(ComboBox cb, Func<KtsContext, IQueryable<T>> sorgu, string displayMember, string valueMember) where T : class
-    {
-        using (var context = new KtsContext())
-        {
-            cb.DataSource = sorgu(context).ToList();
-            cb.DisplayMember = displayMember;
-            cb.ValueMember = valueMember;
-        }
-    }
-
-    //formu temizler
-    private void KontrolleriTemizle(params Control[] controls)
-    {
-        foreach (var control in controls)
-        {
-            if (control is TextBox tb)
-                tb.Clear();
-            else if (control is ComboBox cb)
-                cb.SelectedIndex = -1;
-            else if (control is NumericUpDown nud)
-                nud.Value = nud.Minimum;
-            else if (control is CheckBox ckb)
-                ckb.Checked = false;
-            else if (control is DateTimePicker dtp)
-                dtp.Value = DateTime.Now;
-        }
-    }
-
-    private bool AdresAlanlariGecerliMi()
-    {
-        // Adres Başlığı
-        if (string.IsNullOrWhiteSpace(tb_adresBaslik.Text) || tb_adresBaslik.Text.Length > 50)
-        {
-            MessageBox.Show("Adres başlığı zorunlu ve en fazla 50 karakter olmalıdır.");
-            return false;
-        }
-        // Adres Tipi
-        if (cb_adresTip.SelectedIndex < 0)
-        {
-            MessageBox.Show("Adres tipi seçilmelidir.");
-            return false;
-        }
-        // İl
-        if (cb_adresIl.SelectedIndex < 0)
-        {
-            MessageBox.Show("İl seçilmelidir.");
-            return false;
-        }
-        // İlçe
-        if (cb_adresIlce.SelectedIndex < 0)
-        {
-            MessageBox.Show("İlçe seçilmelidir.");
-            return false;
-        }
-        // Mahalle
-        if (cb_adresMahalle.SelectedIndex < 0)
-        {
-            MessageBox.Show("Mahalle seçilmelidir.");
-            return false;
-        }
-        // Kapı No (isteğe bağlı, ama karakter sınırı var)
-        if (tb_adresKapiNo.Text.Length > 10)
-        {
-            MessageBox.Show("Kapı no en fazla 10 karakter olmalıdır.");
-            return false;
-        }
-        // Bina Adı (isteğe bağlı, karakter sınırı var)
-        if (tb_adresBinaAd.Text.Length > 50)
-        {
-            MessageBox.Show("Bina adı en fazla 50 karakter olmalıdır.");
-            return false;
-        }
-        // Kat (isteğe bağlı, karakter sınırı var)
-        if (tb_adresKat.Text.Length > 10)
-        {
-            MessageBox.Show("Kat en fazla 10 karakter olmalıdır.");
-            return false;
-        }
-        // Daire (isteğe bağlı, karakter sınırı var)
-        if (tb_adresDaire.Text.Length > 10)
-        {
-            MessageBox.Show("Daire en fazla 10 karakter olmalıdır.");
-            return false;
-        }
-        // Posta Kodu (isteğe bağlı, karakter sınırı var)
-        if (tb_adresPostaKodu.Text.Length > 10)
-        {
-            MessageBox.Show("Posta kodu en fazla 10 karakter olmalıdır.");
-            return false;
-        }
-        // Açık Adres
-        if (string.IsNullOrWhiteSpace(tb_adresAcikAdres.Text) || tb_adresAcikAdres.Text.Length > 255)
-        {
-            MessageBox.Show("Açık adres zorunlu ve en fazla 255 karakter olmalıdır.");
-            return false;
-        }
-        // Ek Açıklama (isteğe bağlı, karakter sınırı var)
-        if (tb_adresAciklama.Text.Length > 255)
-        {
-            MessageBox.Show("Ek açıklama en fazla 255 karakter olmalıdır.");
-            return false;
-        }
-
-        return true;
-    }
     private void btn_adresKaydet_Click(object sender, EventArgs e)
     {
-        if (!AdresAlanlariGecerliMi())
-            return;
+        // Doğrulama
+        var gecerli = AdresDogrulayici.Dogrula(
+            tb_adresBaslik,
+            cb_adresTip,
+            cb_adresIl,
+            cb_adresIlce,
+            cb_adresMahalle,
+            tb_adresKapiNo,
+            tb_adresBinaAd,
+            tb_adresKat,
+            tb_adresDaire,
+            tb_adresPostaKodu,
+            tb_adresAcikAdres,
+            tb_adresAciklama,
+            _referansTipi
+        );
+        if (!gecerli) return;
+
         using (var context = new KtsContext())
         {
             Adres adres = null;
+
+            // Personel: tek adres; Müşteri: Ev/İş upsert ve en fazla 2 kayıt
             if (_referansId.HasValue)
             {
                 if (_referansTipi == "Personel")
+                {
                     adres = context.Adresler.SingleOrDefault(a => a.PersonelId == _referansId);
+                    var extra = context.Adresler.Where(a => a.PersonelId == _referansId && a.AdresId != (adres != null ? adres.AdresId : 0)).ToList();
+                    if (extra.Count > 0)
+                    {
+                        context.Adresler.RemoveRange(extra);
+                    }
+                }
                 else
-                    adres = context.Adresler.SingleOrDefault(a => a.MusteriId == _referansId);
+                {
+                    var secilenTip = cb_adresTip.SelectedItem?.ToString();
+                    adres = context.Adresler.SingleOrDefault(a => a.MusteriId == _referansId && a.AdresTipi == secilenTip);
+
+                    var mevcutAdresler = context.Adresler.Where(a => a.MusteriId == _referansId).ToList();
+                    if (adres == null && mevcutAdresler.Count >= 2)
+                    {
+                        MessageBox.Show("Müşteriye en fazla iki adres atanabilir (Ev ve İş).");
+                        return;
+                    }
+                }
             }
 
             if (adres == null)
@@ -183,7 +82,8 @@ public partial class AdresEkleForm : Form
 
             adres.AdresBaslik = tb_adresBaslik.Text;
             adres.PostaKodu = tb_adresPostaKodu.Text;
-            adres.AdresTipi = cb_adresTip.SelectedItem?.ToString();
+            // Personel için adres tipi her zaman "Ev"
+            adres.AdresTipi = _referansTipi == "Personel" ? "Ev" : cb_adresTip.SelectedItem?.ToString();
             adres.IlId = (int)cb_adresIl.SelectedValue;
             adres.IlceId = (int)cb_adresIlce.SelectedValue;
             adres.MahalleId = (int)cb_adresMahalle.SelectedValue;
@@ -201,12 +101,37 @@ public partial class AdresEkleForm : Form
             if (_referansId.HasValue)
             {
                 if (_referansTipi == "Personel")
-                    VeriCek(dgv_adresler, ctx => ctx.Adresler.Where(a => a.PersonelId == _referansId));
+                    VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                        .Where(a => a.PersonelId == _referansId)
+                        .Select(a => new
+                        {
+                            a.AdresId,
+                            a.AdresBaslik,
+                            a.AcikAdres,
+                            Il = a.Il != null ? a.Il.IlAd : "",
+                            Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                            Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                            a.AdresTipi,
+                            a.Aktif
+                        }));
                 else
-                    VeriCek(dgv_adresler, ctx => ctx.Adresler.Where(a => a.MusteriId == _referansId));
+                    VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                        .Where(a => a.MusteriId == _referansId)
+                        .Select(a => new
+                        {
+                            a.AdresId,
+                            a.AdresBaslik,
+                            a.AcikAdres,
+                            Il = a.Il != null ? a.Il.IlAd : "",
+                            Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                            Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                            a.AdresTipi,
+                            a.Aktif
+                        }));
             }
         }
     }
+
     private void btn_adresKayitSil_Click(object sender, EventArgs e)
     {
         if (dgv_adresler.SelectedRows.Count > 0)
@@ -226,13 +151,36 @@ public partial class AdresEkleForm : Form
                         context.SaveChanges();
                         MessageBox.Show("Adres silindi.");
 
-                        // Listeyi güncelle
                         if (_referansId.HasValue)
                         {
                             if (_referansTipi == "Personel")
-                                VeriCek(dgv_adresler, ctx => ctx.Adresler.Where(a => a.PersonelId == _referansId));
+                                VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                                    .Where(a => a.PersonelId == _referansId)
+                                    .Select(a => new
+                                    {
+                                        a.AdresId,
+                                        a.AdresBaslik,
+                                        a.AcikAdres,
+                                        Il = a.Il != null ? a.Il.IlAd : "",
+                                        Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                                        Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                                        a.AdresTipi,
+                                        a.Aktif
+                                    }));
                             else
-                                VeriCek(dgv_adresler, ctx => ctx.Adresler.Where(a => a.MusteriId == _referansId));
+                                VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                                    .Where(a => a.MusteriId == _referansId)
+                                    .Select(a => new
+                                    {
+                                        a.AdresId,
+                                        a.AdresBaslik,
+                                        a.AcikAdres,
+                                        Il = a.Il != null ? a.Il.IlAd : "",
+                                        Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                                        Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                                        a.AdresTipi,
+                                        a.Aktif
+                                    }));
                         }
                     }
                     else
@@ -247,23 +195,71 @@ public partial class AdresEkleForm : Form
             MessageBox.Show("Lütfen silmek için bir adres seçin.");
         }
     }
+
     private void btn_adresFormTemizle_Click(object sender, EventArgs e)
     {
-        KontrolleriTemizle(
-        tb_adresBaslik,
-        tb_adresPostaKodu,
-        cb_adresTip,
-        cb_adresIl,
-        cb_adresIlce,
-        cb_adresMahalle,
-        tb_adresKapiNo,
-        tb_adresBinaAd,
-        tb_adresKat,
-        tb_adresDaire,
-        tb_adresAciklama,
-        tb_adresAcikAdres,
-        ckb_adresAktif
-    );
+        KontrolYardimcisi.Temizle(
+            tb_adresBaslik,
+            tb_adresPostaKodu,
+            cb_adresTip,
+            cb_adresIl,
+            cb_adresIlce,
+            cb_adresMahalle,
+            tb_adresKapiNo,
+            tb_adresBinaAd,
+            tb_adresKat,
+            tb_adresDaire,
+            tb_adresAciklama,
+            tb_adresAcikAdres,
+            ckb_adresAktif
+        );
+
+        // Tipleri referans tipine göre yeniden doldur
+        cb_adresTip.Items.Clear();
+        if (_referansTipi == "Personel")
+        {
+            cb_adresTip.Items.Add("Ev");
+        }
+        else
+        {
+            cb_adresTip.Items.Add("Ev");
+            cb_adresTip.Items.Add("İş");
+        }
+        cb_adresTip.SelectedIndex = 0;
+
+        VeriBaglamaServisi.KomboyaBagla(cb_adresIl, ctx => ctx.Iller, "IlAd", "IlId");
+
+        if (_referansId.HasValue)
+        {
+            if (_referansTipi == "Personel")
+                VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                    .Where(a => a.PersonelId == _referansId)
+                    .Select(a => new
+                    {
+                        a.AdresId,
+                        a.AdresBaslik,
+                        a.AcikAdres,
+                        Il = a.Il != null ? a.Il.IlAd : "",
+                        Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                        Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                        a.AdresTipi,
+                        a.Aktif
+                    }));
+            else
+                VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                    .Where(a => a.MusteriId == _referansId)
+                    .Select(a => new
+                    {
+                        a.AdresId,
+                        a.AdresBaslik,
+                        a.AcikAdres,
+                        Il = a.Il != null ? a.Il.IlAd : "",
+                        Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                        Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                        a.AdresTipi,
+                        a.Aktif
+                    }));
+        }
     }
 
     private void dgv_adresler_SelectionChanged(object sender, EventArgs e)
@@ -271,40 +267,96 @@ public partial class AdresEkleForm : Form
         if (dgv_adresler.SelectedRows.Count > 0)
         {
             var seciliSatir = dgv_adresler.SelectedRows[0];
-            tb_adresBaslik.Text = seciliSatir.Cells["AdresBaslik"].Value?.ToString();
-            tb_adresPostaKodu.Text = seciliSatir.Cells["PostaKodu"].Value?.ToString();
-            cb_adresTip.SelectedItem = seciliSatir.Cells["AdresTipi"].Value?.ToString();
-            cb_adresIl.SelectedItem = seciliSatir.Cells["Il"].Value?.ToString();
-            cb_adresIlce.SelectedItem = seciliSatir.Cells["Ilce"].Value?.ToString();
-            cb_adresMahalle.SelectedItem = seciliSatir.Cells["Mahalle"].Value?.ToString();
-            tb_adresKapiNo.Text = seciliSatir.Cells["KapiNo"].Value?.ToString();
-            tb_adresBinaAd.Text = seciliSatir.Cells["BinaAdi"].Value?.ToString();
-            tb_adresKat.Text = seciliSatir.Cells["Kat"].Value?.ToString();
-            tb_adresDaire.Text = seciliSatir.Cells["Daire"].Value?.ToString();
-            tb_adresAciklama.Text = seciliSatir.Cells["EkAciklama"].Value?.ToString();
-            tb_adresAcikAdres.Text = seciliSatir.Cells["AcikAdres"].Value?.ToString();
-            ckb_adresAktif.Checked = Convert.ToBoolean(seciliSatir.Cells["Aktif"].Value);
+            int adresId = Convert.ToInt32(seciliSatir.Cells["AdresId"].Value);
+
+            using (var ctx = new KtsContext())
+            {
+                var adres = ctx.Adresler.FirstOrDefault(a => a.AdresId == adresId);
+                if (adres == null) return;
+
+                tb_adresBaslik.Text = adres.AdresBaslik;
+                tb_adresPostaKodu.Text = adres.PostaKodu;
+
+                // Tipleri referans tipine göre doldur ve seç
+                cb_adresTip.Items.Clear();
+                if (_referansTipi == "Personel")
+                {
+                    cb_adresTip.Items.Add("Ev");
+                    cb_adresTip.SelectedIndex = 0; // Personel için her zaman Ev
+                }
+                else
+                {
+                    cb_adresTip.Items.Add("Ev");
+                    cb_adresTip.Items.Add("İş");
+                    cb_adresTip.SelectedItem = string.IsNullOrWhiteSpace(adres.AdresTipi) ? "Ev" : adres.AdresTipi;
+                }
+
+                // Comboları projedeki servis ile yeniden bağla ve ID seç
+                VeriBaglamaServisi.KomboyaBagla(cb_adresIlce, c => c.Ilceler.Where(x => x.IlId == adres.IlId), "IlceAd", "IlceId");
+                VeriBaglamaServisi.KomboyaBagla(cb_adresMahalle, c => c.Mahalleler.Where(x => x.IlceId == adres.IlceId), "MahalleAd", "MahalleId");
+
+                cb_adresIl.SelectedValue = adres.IlId;
+                cb_adresIlce.SelectedValue = adres.IlceId;
+                cb_adresMahalle.SelectedValue = adres.MahalleId;
+
+                tb_adresKapiNo.Text = adres.KapiNo;
+                tb_adresBinaAd.Text = adres.BinaAdi;
+                tb_adresKat.Text = adres.Kat;
+                tb_adresDaire.Text = adres.Daire;
+                tb_adresAciklama.Text = adres.EkAciklama;
+                tb_adresAcikAdres.Text = adres.AcikAdres;
+                ckb_adresAktif.Checked = adres.Aktif;
+            }
         }
     }
 
     private void AdresEkleForm_Load(object sender, EventArgs e)
     {
-        //cb_adresTip
+        // Tipleri referans tipine göre doldur
         cb_adresTip.Items.Clear();
-        cb_adresTip.Items.Add("Ev");
-        cb_adresTip.Items.Add("İş");
+        if (_referansTipi == "Personel")
+        {
+            cb_adresTip.Items.Add("Ev");
+        }
+        else
+        {
+            cb_adresTip.Items.Add("Ev");
+            cb_adresTip.Items.Add("İş");
+        }
         cb_adresTip.SelectedIndex = 0;
 
-        //cb_adresIl
-        ComboBoxVeriCek(cb_adresIl, ctx => ctx.Iller, "IlAd", "IlId");
+        VeriBaglamaServisi.KomboyaBagla(cb_adresIl, ctx => ctx.Iller, "IlAd", "IlId");
 
-        //dgv_adresler
         if (_referansId.HasValue)
         {
             if (_referansTipi == "Personel")
-                VeriCek(dgv_adresler, ctx => ctx.Adresler.Where(a => a.PersonelId == _referansId));
+                VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                    .Where(a => a.PersonelId == _referansId)
+                    .Select(a => new
+                    {
+                        a.AdresId,
+                        a.AdresBaslik,
+                        a.AcikAdres,
+                        Il = a.Il != null ? a.Il.IlAd : "",
+                        Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                        Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                        a.AdresTipi,
+                        a.Aktif
+                    }));
             else
-                VeriCek(dgv_adresler, ctx => ctx.Adresler.Where(a => a.MusteriId == _referansId));
+                VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
+                    .Where(a => a.MusteriId == _referansId)
+                    .Select(a => new
+                    {
+                        a.AdresId,
+                        a.AdresBaslik,
+                        a.AcikAdres,
+                        Il = a.Il != null ? a.Il.IlAd : "",
+                        Ilce = a.Ilce != null ? a.Ilce.IlceAd : "",
+                        Mahalle = a.Mahalle != null ? a.Mahalle.MahalleAd : "",
+                        a.AdresTipi,
+                        a.Aktif
+                    }));
         }
     }
 
@@ -319,7 +371,7 @@ public partial class AdresEkleForm : Form
                 secilenIlId = il.IlId;
             else
                 throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
-            ComboBoxVeriCek(cb_adresIlce, ctx => ctx.Ilceler.Where(x => x.IlId == secilenIlId), "IlceAd", "IlceId");
+            VeriBaglamaServisi.KomboyaBagla(cb_adresIlce, ctx => ctx.Ilceler.Where(x => x.IlId == secilenIlId), "IlceAd", "IlceId");
         }
     }
 
@@ -334,7 +386,7 @@ public partial class AdresEkleForm : Form
                 secilenIlceId = ilce.IlceId;
             else
                 throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
-            ComboBoxVeriCek(cb_adresMahalle, ctx => ctx.Mahalleler.Where(x => x.IlceId == secilenIlceId), "MahalleAd", "MahalleId");
+            VeriBaglamaServisi.KomboyaBagla(cb_adresMahalle, ctx => ctx.Mahalleler.Where(x => x.IlceId == secilenIlceId), "MahalleAd", "MahalleId");
         }
     }
 }
