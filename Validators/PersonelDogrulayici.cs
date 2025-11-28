@@ -59,6 +59,12 @@ namespace kargotakipsistemi.Dogrulamalar
                 MessageBox.Show("Þube seçilmelidir.");
                 return false;
             }
+            // Ehliyet zorunlu (DB kolonunda NOT NULL). Boþ býrakýlamaz.
+            if (string.IsNullOrWhiteSpace(tbEhliyet.Text))
+            {
+                MessageBox.Show("Ehliyet sýnýfý zorunludur.");
+                return false;
+            }
             if (tbEhliyet.Text.Length > 5)
             {
                 MessageBox.Show("Ehliyet sýnýfý en fazla 5 karakter olmalýdýr.");

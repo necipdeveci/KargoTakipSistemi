@@ -1,26 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\",
+  "WorkspaceRootPath": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\adresekleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:adresekleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\validators\\gonderidogrulayici.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:validators\\gonderidogrulayici.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\adresekleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:adresekleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\helpers\\onayyardimcisi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:helpers\\onayyardimcisi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,78 +26,66 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "OnayYardimcisi.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\Helpers\\OnayYardimcisi.cs",
-              "RelativeDocumentMoniker": "Helpers\\OnayYardimcisi.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\Helpers\\OnayYardimcisi.cs",
-              "RelativeToolTip": "Helpers\\OnayYardimcisi.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T09:03:32.695Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "MainForm.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeToolTip": "MainForm.cs",
-              "ViewState": "AgIAALIBAAAAAAAAAAAxwMABAAAQAAAAAAAAAA==",
+              "Title": "MainForm.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.Designer.cs",
+              "RelativeDocumentMoniker": "MainForm.Designer.cs",
+              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.Designer.cs",
+              "RelativeToolTip": "MainForm.Designer.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T08:23:32.816Z",
+              "WhenOpened": "2025-11-28T11:46:05.406Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "MainForm.cs [Tasar\u0131m]",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs [Tasar\u0131m]",
-              "RelativeToolTip": "MainForm.cs [Tasar\u0131m]",
+              "Title": "GonderiDogrulayici.cs",
+              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\Validators\\GonderiDogrulayici.cs",
+              "RelativeDocumentMoniker": "Validators\\GonderiDogrulayici.cs",
+              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\Validators\\GonderiDogrulayici.cs",
+              "RelativeToolTip": "Validators\\GonderiDogrulayici.cs",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAAAHoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:41:20.958Z",
-              "EditorCaption": " [Tasar\u0131m]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AdresEkleForm.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\AdresEkleForm.cs",
-              "RelativeDocumentMoniker": "AdresEkleForm.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\AdresEkleForm.cs",
-              "RelativeToolTip": "AdresEkleForm.cs",
-              "ViewState": "AgIAAGcAAAAAAAAAAIA0wOQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-18T08:27:12.673Z",
+              "WhenOpened": "2025-11-28T11:40:01.359Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "AdresEkleForm.cs [Tasar\u0131m]",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\AdresEkleForm.cs",
-              "RelativeDocumentMoniker": "AdresEkleForm.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\AdresEkleForm.cs [Tasar\u0131m]",
-              "RelativeToolTip": "AdresEkleForm.cs [Tasar\u0131m]",
+              "Title": "MainForm.cs [Tasar\u0131m]",
+              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
+              "RelativeDocumentMoniker": "MainForm.cs",
+              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs [Tasar\u0131m]",
+              "RelativeToolTip": "MainForm.cs [Tasar\u0131m]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-18T08:35:15.727Z",
+              "WhenOpened": "2025-11-28T10:14:29.078Z",
               "EditorCaption": " [Tasar\u0131m]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
+              "RelativeDocumentMoniker": "MainForm.cs",
+              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
+              "RelativeToolTip": "MainForm.cs",
+              "ViewState": "AgIAAHMFAAAAAAAAAAAtwDkCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-15T08:23:32.816Z",
+              "EditorCaption": ""
             }
           ]
         }

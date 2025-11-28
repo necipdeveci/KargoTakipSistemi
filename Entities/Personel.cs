@@ -26,7 +26,7 @@ namespace kargotakipsistemi.Entities
         public DateTime? IseGirisTarihi { get; set; }
         public DateTime? IstenCikisTarihi { get; set; }
         public decimal? Maas { get; set; }
-        [MaxLength(5)]
+        [Required, MaxLength(5)]
         public string EhliyetSinifi { get; set; }
         public Rol Rol { get; set; }
         public Sube Sube { get; set; }
