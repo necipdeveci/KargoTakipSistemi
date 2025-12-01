@@ -256,6 +256,10 @@ public partial class AdresEkleForm : Form
                 tb_adresAciklama.Text = adres.EkAciklama;
                 tb_adresAcikAdres.Text = adres.AcikAdres;
                 ckb_adresAktif.Checked = adres.Aktif;
+
+                // Güncelleme moduna geçir
+                btn_adresKaydet.Enabled = true;
+                btn_adresKaydet.Text = "Güncelle";
             }
         }
     }

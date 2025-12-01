@@ -10,6 +10,7 @@ namespace kargotakipsistemi.Servisler
         {
             cbAdresTip.Items.Clear();
             btnKaydet.Enabled = true;
+            btnKaydet.Text = "Kaydet";
 
             if (referansTipi == "Personel")
             {
@@ -56,6 +57,7 @@ namespace kargotakipsistemi.Servisler
                 {
                     // Ev ve İş zaten var => yeni ekleme yapılmamalı
                     btnKaydet.Enabled = false;
+                    btnKaydet.Text = "Güncelle";
                 }
             }
         }
@@ -119,7 +121,31 @@ namespace kargotakipsistemi.Servisler
                 adres.AcikAdres = tbAcikAdres.Text;
                 adres.Aktif = ckbAktif.Checked;
 
-                context.SaveChanges();
+                context.SaveChanges(); // Adres Id üretildi
+
+                // Musteri için MusteriAdres kaydı ekle/güncelle
+                if (referansTipi != "Personel" && adres.MusteriId.HasValue)
+                {
+                    var musterıAdres = context.MusteriAdresleri.SingleOrDefault(ma => ma.MusteriId == adres.MusteriId && ma.AdresId == adres.AdresId);
+                    if (musterıAdres == null)
+                    {
+                        musterıAdres = new Entities.MusteriAdres
+                        {
+                            MusteriId = adres.MusteriId.Value,
+                            AdresId = adres.AdresId,
+                            AdresTipi = adres.AdresTipi,
+                            Aktif = adres.Aktif
+                        };
+                        context.MusteriAdresleri.Add(musterıAdres);
+                    }
+                    else
+                    {
+                        musterıAdres.AdresTipi = adres.AdresTipi;
+                        musterıAdres.Aktif = adres.Aktif;
+                    }
+                    context.SaveChanges();
+                }
+
                 return (true, guncelleme);
             }
         }
@@ -135,6 +161,15 @@ namespace kargotakipsistemi.Servisler
                 var adres = context.Adresler.Find(adresId);
                 if (adres == null) return false;
                 context.Adresler.Remove(adres);
+
+                // İlgili MusteriAdres kaydını da kaldır (müşteri ise)
+                if (referansTipi != "Personel" && adres.MusteriId.HasValue)
+                {
+                    var musterıAdres = context.MusteriAdresleri.SingleOrDefault(ma => ma.MusteriId == adres.MusteriId && ma.AdresId == adres.AdresId);
+                    if (musterıAdres != null)
+                        context.MusteriAdresleri.Remove(musterıAdres);
+                }
+
                 context.SaveChanges();
                 return true;
             }

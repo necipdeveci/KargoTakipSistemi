@@ -65,9 +65,9 @@ namespace kargotakipsistemi.Dogrulamalar
                 MessageBox.Show("Boyut alaný en fazla 50 karakter olmalýdýr.");
                 return false;
             }
-            // Basit format kontrolü (LxWxH)
-            var rx = new Regex("^\n            (?:[ ]*)?(\\d+(?:[.,]\\d+)?)[xX](\\d+(?:[.,]\\d+)?)[xX](\\d+(?:[.,]\\d+)?)(?:[ ]*)?$");
-            if (!rx.IsMatch(tbBoyut.Text.Replace(" ", "")))
+            // LxWxH format kontrolü (boþluklarý esnek kabul eder, , veya . destekler)
+            var rx = new Regex(@"^\s*(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)\s*$");
+            if (!rx.IsMatch(tbBoyut.Text.Trim()))
             {
                 MessageBox.Show("Boyut formatý geçersiz. Örnek: 30x20x10");
                 return false;

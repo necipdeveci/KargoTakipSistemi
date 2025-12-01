@@ -1,18 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\",
+  "WorkspaceRootPath": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\gonderisurecform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:gonderisurecform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\entities\\gonderidurumgecmis.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:entities\\gonderidurumgecmis.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\administrator\\desktop\\nec\\ktsproje\\kargotakipsistemi\\adresekleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:adresekleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,40 +42,66 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainForm.Methods.cs",
-              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.Methods.cs",
-              "RelativeDocumentMoniker": "MainForm.Methods.cs",
-              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.Methods.cs",
-              "RelativeToolTip": "MainForm.Methods.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "GonderiSurecForm.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\GonderiSurecForm.cs",
+              "RelativeDocumentMoniker": "GonderiSurecForm.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\GonderiSurecForm.cs",
+              "RelativeToolTip": "GonderiSurecForm.cs",
+              "ViewState": "AgIAANQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-28T13:01:45.154Z",
+              "WhenOpened": "2025-12-01T12:54:24.643Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainForm.cs [Tasar\u0131m]",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs",
+              "RelativeDocumentMoniker": "MainForm.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs [Tasar\u0131m]",
+              "RelativeToolTip": "MainForm.cs [Tasar\u0131m]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-01T12:14:23.196Z",
+              "EditorCaption": " [Tasar\u0131m]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs",
+              "RelativeDocumentMoniker": "MainForm.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\MainForm.cs",
+              "RelativeToolTip": "MainForm.cs",
+              "ViewState": "AgIAANsFAAAAAAAAAAAwwFEBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-15T08:23:32.816Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "MainForm.cs [Tasar\u0131m]",
-              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs [Tasar\u0131m]",
-              "RelativeToolTip": "MainForm.cs [Tasar\u0131m]",
+              "Title": "GonderiDurumGecmis.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\Entities\\GonderiDurumGecmis.cs",
+              "RelativeDocumentMoniker": "Entities\\GonderiDurumGecmis.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\Entities\\GonderiDurumGecmis.cs",
+              "RelativeToolTip": "Entities\\GonderiDurumGecmis.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAA2wBcAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-28T10:14:29.078Z",
-              "EditorCaption": " [Tasar\u0131m]"
+              "WhenOpened": "2025-12-01T12:13:33.411Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainForm.cs",
-              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeToolTip": "MainForm.cs",
-              "ViewState": "AgIAAHMFAAAAAAAAAIA7wIwFAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "AdresEkleForm.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\AdresEkleForm.cs",
+              "RelativeDocumentMoniker": "AdresEkleForm.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\nec\\ktsproje\\KargoTakipSistemi\\AdresEkleForm.cs",
+              "RelativeToolTip": "AdresEkleForm.cs",
+              "ViewState": "AgIAAFABAAAAAAAAAAAAAFABAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T08:23:32.816Z",
+              "WhenOpened": "2025-12-01T11:37:59.619Z",
               "EditorCaption": ""
             }
           ]

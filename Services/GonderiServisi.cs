@@ -24,11 +24,13 @@ namespace kargotakipsistemi.Servisler
             {
                 KayitTarihi = DateTime.Now,
                 GonderiTarihi = DateTime.Now,
-                TahminiTeslimTarihi = DateTime.Now.AddDays(2)
+                TahminiTeslimTarihi = DateTime.Now.AddDays(2),
+                IadeDurumu = "Yok" // varsayýlan
             };
             ctx.Gonderiler.Add(g);
             return g;
         }
+
 
         public void Sil(KtsContext ctx, int id)
         {

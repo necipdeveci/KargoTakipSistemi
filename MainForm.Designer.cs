@@ -544,6 +544,7 @@
             btn_gonderiSurecYonetim.TabIndex = 3;
             btn_gonderiSurecYonetim.Text = "Gönderi Süreç Yönetimi";
             btn_gonderiSurecYonetim.UseVisualStyleBackColor = true;
+            btn_gonderiSurecYonetim.Click += btn_gonderiSurecYonetim_Click;
             // 
             // btn_gonderiOlustur
             // 

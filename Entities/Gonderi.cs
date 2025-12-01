@@ -15,7 +15,7 @@ namespace kargotakipsistemi.Entities
         public DateTime TahminiTeslimTarihi { get; set; }
         public DateTime? TeslimTarihi { get; set; }
         [MaxLength(100)]
-        public string TeslimEdilenKisi { get; set; }
+        public string? TeslimEdilenKisi { get; set; }
         [MaxLength(50)]
         public string TeslimatTipi { get; set; }
         public int? KuryeId { get; set; }
@@ -29,7 +29,7 @@ namespace kargotakipsistemi.Entities
         public DateTime? GuncellemeTarihi { get; set; }
         public DateTime? IptalTarihi { get; set; }
         [MaxLength(20)]
-        public string IadeDurumu { get; set; }
+        public string? IadeDurumu { get; set; }
         public Musteri Gonderen { get; set; }
         public Musteri Alici { get; set; }
         public Adres GonderenAdres { get; set; }

@@ -558,3 +558,4 @@ C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-w
 C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.pdb
 C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.genruntimeconfig.cache
 C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\ref\kargotakipsistemi.dll
+C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.Forms.GonderiSurecForm.resources
