@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using kargotakipsistemi.Entities;
+using kargotakipsistemi.Data;
 
 namespace kargotakipsistemi
 {
@@ -25,6 +26,7 @@ namespace kargotakipsistemi
         public DbSet<OdemeFatura> OdemeFaturalari { get; set; }
         public DbSet<IadeIptalIslem> IadeIptalIslemleri { get; set; }
         public DbSet<Personel> Personeller { get; set; }
+        public DbSet<FiyatlandirmaTarife> FiyatlandirmaTarifeler { get; set; } // YENİ EKLENDI
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -264,6 +266,86 @@ namespace kargotakipsistemi
                 .WithMany(p => p.IadeIptalIslemleri)
                 .HasForeignKey(ii => ii.PersonelId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // ======================================
+            // FiyatlandirmaTarife - Bağımsız Tablo (İlişki Yok)
+            // ======================================
+            modelBuilder.Entity<FiyatlandirmaTarife>(entity =>
+            {
+                entity.ToTable("FiyatlandirmaTarifeler");
+                
+                entity.HasKey(e => e.TarifeId);
+
+                entity.Property(e => e.TarifeTuru)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TarifeAdi)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.MinDeger)
+                    .HasColumnType("decimal(18,4)");
+
+                entity.Property(e => e.MaxDeger)
+                    .HasColumnType("decimal(18,4)");
+
+                entity.Property(e => e.Deger)
+                    .IsRequired()
+                    .HasColumnType("decimal(18,4)");
+
+                entity.Property(e => e.Birim)
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Aktif)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                entity.Property(e => e.GecerlilikBaslangic)
+                    .IsRequired()
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(e => e.GecerlilikBitis);
+
+                entity.Property(e => e.Oncelik)
+                    .IsRequired()
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.Aciklama)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.OlusturulmaTarihi)
+                    .IsRequired()
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(e => e.GuncellemeTarihi);
+
+                // Index'ler - Performans için
+                entity.HasIndex(e => new { e.TarifeTuru, e.Aktif, e.GecerlilikBaslangic })
+                    .HasDatabaseName("IX_FiyatlandirmaTarifeler_TarifeTuru_Aktif_Gecerlilik");
+
+                entity.HasIndex(e => new { e.TarifeTuru, e.MinDeger, e.MaxDeger })
+                    .HasDatabaseName("IX_FiyatlandirmaTarifeler_TarifeTuru_DegerAraligi");
+            });
+
+            // ======================================
+            // SEED DATA - Migration Sırasında Otomatik Veri Ekleme
+            // ======================================
+            
+            // Roller - Kargo takip sistemi için kullanıcı rolleri (Toplam: 18 rol)
+            RolSeedData.Seed(modelBuilder);
+            
+            // Türkiye'nin 81 ili
+            IlSeedData.Seed(modelBuilder);
+            
+            // Her il için 3 ilçe (Toplam: 81 * 3 = 243)
+            IlceSeedData.Seed(modelBuilder);
+            
+            // Her ilçe için 2 mahalle (Toplam: 243 * 2 = 486)
+            MahalleSeedData.Seed(modelBuilder);
+            
+            // Fiyatlandırma tarifeleri (Toplam: 18 tarife - 5 kategori)
+            FiyatlandirmaTarifeSeedData.Seed(modelBuilder);
         }
     }
 }

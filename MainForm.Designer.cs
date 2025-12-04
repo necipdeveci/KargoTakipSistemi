@@ -36,6 +36,7 @@
             btn_gonderiSurecYonetim = new Button();
             btn_gonderiOlustur = new Button();
             groupBox4 = new GroupBox();
+            btn_gonderiTarifeYonetim = new Button();
             nud_gonderiEkMasraf = new NumericUpDown();
             nud_gonderiIndirim = new NumericUpDown();
             nud_gonderiUcret = new NumericUpDown();
@@ -558,6 +559,7 @@
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(btn_gonderiTarifeYonetim);
             groupBox4.Controls.Add(nud_gonderiEkMasraf);
             groupBox4.Controls.Add(nud_gonderiIndirim);
             groupBox4.Controls.Add(nud_gonderiUcret);
@@ -573,6 +575,16 @@
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Ücretlendirme";
+            // 
+            // btn_gonderiTarifeYonetim
+            // 
+            btn_gonderiTarifeYonetim.Location = new Point(305, 91);
+            btn_gonderiTarifeYonetim.Name = "btn_gonderiTarifeYonetim";
+            btn_gonderiTarifeYonetim.Size = new Size(120, 26);
+            btn_gonderiTarifeYonetim.TabIndex = 6;
+            btn_gonderiTarifeYonetim.Text = "Tarife Yönetimi";
+            btn_gonderiTarifeYonetim.UseVisualStyleBackColor = true;
+            btn_gonderiTarifeYonetim.Click += btn_gonderiTarifeYonetim_Click;
             // 
             // nud_gonderiEkMasraf
             // 
@@ -594,6 +606,7 @@
             nud_gonderiUcret.Name = "nud_gonderiUcret";
             nud_gonderiUcret.Size = new Size(112, 22);
             nud_gonderiUcret.TabIndex = 26;
+            nud_gonderiUcret.ValueChanged += nud_gonderiUcret_ValueChanged;
             // 
             // tb_gonderiToplamFiyat
             // 
@@ -668,7 +681,7 @@
             // 
             // dtp_gonderiTahminiTeslimTarih
             // 
-            dtp_gonderiTahminiTeslimTarih.Location = new Point(335, 135);
+            dtp_gonderiTahminiTeslimTarih.Location = new Point(335, 108);
             dtp_gonderiTahminiTeslimTarih.Name = "dtp_gonderiTahminiTeslimTarih";
             dtp_gonderiTahminiTeslimTarih.Size = new Size(97, 22);
             dtp_gonderiTahminiTeslimTarih.TabIndex = 25;
@@ -676,7 +689,7 @@
             // 
             // dtp_gonderiTarih
             // 
-            dtp_gonderiTarih.Location = new Point(335, 107);
+            dtp_gonderiTarih.Location = new Point(335, 80);
             dtp_gonderiTarih.Name = "dtp_gonderiTarih";
             dtp_gonderiTarih.Size = new Size(97, 22);
             dtp_gonderiTarih.TabIndex = 24;
@@ -685,7 +698,7 @@
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(217, 138);
+            label16.Location = new Point(217, 111);
             label16.Name = "label16";
             label16.Size = new Size(112, 14);
             label16.TabIndex = 18;
@@ -694,7 +707,7 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(217, 110);
+            label15.Location = new Point(217, 83);
             label15.Name = "label15";
             label15.Size = new Size(112, 14);
             label15.TabIndex = 17;
@@ -703,7 +716,7 @@
             // cb_gonderiCikisSube
             // 
             cb_gonderiCikisSube.FormattingEnabled = true;
-            cb_gonderiCikisSube.Location = new Point(321, 52);
+            cb_gonderiCikisSube.Location = new Point(321, 25);
             cb_gonderiCikisSube.Name = "cb_gonderiCikisSube";
             cb_gonderiCikisSube.Size = new Size(111, 22);
             cb_gonderiCikisSube.TabIndex = 23;
@@ -712,7 +725,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(217, 80);
+            label9.Location = new Point(217, 53);
             label9.Name = "label9";
             label9.Size = new Size(98, 14);
             label9.TabIndex = 15;
@@ -721,7 +734,7 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(217, 55);
+            label10.Location = new Point(217, 28);
             label10.Name = "label10";
             label10.Size = new Size(98, 14);
             label10.TabIndex = 16;
@@ -730,7 +743,7 @@
             // cb_gonderiAtananKurye
             // 
             cb_gonderiAtananKurye.FormattingEnabled = true;
-            cb_gonderiAtananKurye.Location = new Point(321, 77);
+            cb_gonderiAtananKurye.Location = new Point(321, 50);
             cb_gonderiAtananKurye.Name = "cb_gonderiAtananKurye";
             cb_gonderiAtananKurye.Size = new Size(111, 22);
             cb_gonderiAtananKurye.TabIndex = 22;
@@ -4240,5 +4253,6 @@
         private Button btn_gonderiFormTemizle;
         private Button btn_gonderiKayitSil;
         private Button btn_gonderiSurecYonetim;
+        private Button btn_gonderiTarifeYonetim;
     }
 }

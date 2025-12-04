@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using kargotakipsistemi.Dogrulamalar;
 using kargotakipsistemi.Entities;
+using kargotakipsistemi.Forms;
+using kargotakipsistemi.Servisler;
+using kargotakipsistemi.Yardimcilar;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using kargotakipsistemi.Servisler;
-using kargotakipsistemi.Yardimcilar;
-using kargotakipsistemi.Dogrulamalar;
-using System.Text.RegularExpressions;
 
 namespace kargotakipsistemi;
 
@@ -18,6 +18,7 @@ public partial class MainForm : Form
     private readonly AracServisi _aracServisi = new();
     private readonly MusteriServisi _musteriServisi = new();
     private readonly GonderiServisi _gonderiServisi = new();
+    private readonly DinamikUcretHesaplamaServisi _ucretServisi = new(); // VERİTABANI TABANLI HESAPLAMA
 
     private int? secilenPersonelId = null;
     private int? secilenSubeId = null;
@@ -96,85 +97,48 @@ public partial class MainForm : Form
 
     private void GonderiToplamFiyatGuncelle()
     {
-        decimal toplam = nud_gonderiUcret.Value - nud_gonderiIndirim.Value + nud_gonderiEkMasraf.Value;
-        if (toplam < 0) toplam = 0;
+        decimal toplam = _ucretServisi.ToplamFiyatHesapla(
+            nud_gonderiUcret.Value,
+            nud_gonderiIndirim.Value,
+            nud_gonderiEkMasraf.Value);
         tb_gonderiToplamFiyat.Text = toplam.ToString("0.00");
     }
 
     private void GonderiFiyatHesaplaVeGuncelle()
     {
-        // Boyut (örn: 30x20x10) ve Ağırlık bazlı maliyet + teslimat tipi çarpanı + ek masraf & indirim önerisi
         try
         {
             _fiyatHesaplamaCalisiyor = true;
 
-            decimal agirlikKg = nud_gonderiAgirlik.Value;
-            if (agirlikKg < 0) agirlikKg = 0;
+            // Mevcut manuel değerleri kontrol et
+            decimal? mevcutIndirim = nud_gonderiIndirim.Value > 0 ? nud_gonderiIndirim.Value : null;
+            decimal? mevcutEkMasraf = nud_gonderiEkMasraf.Value > 0 ? nud_gonderiEkMasraf.Value : null;
 
-            // Kg başına tarife belirle
-            decimal kgTarife = agirlikKg switch
-            {
-                <= 1m => 25m,
-                <= 5m => 20m,
-                <= 20m => 15m,
-                _ => 12m
-            };
-            decimal agirlikMaliyeti = agirlikKg * kgTarife;
+            // Ücret hesaplama servisini kullan
+            var detay = _ucretServisi.UcretHesapla(
+                nud_gonderiAgirlik.Value,
+                tb_gonderiBoyut.Text,
+                cb_gonderiTeslimatTip.SelectedItem?.ToString() ?? "Standart",
+                mevcutIndirim,
+                mevcutEkMasraf
+            );
 
-            // Boyut hacim hesabı (cm^3) - format: LxWxH (x veya X ile ayrılmış)
-            decimal? hacim = HacimHesapla(tb_gonderiBoyut.Text);
-            decimal hacimEk = 0m;
-            if (hacim.HasValue)
+            // Ek masraf önerisini uygula (kullanıcı manual girmediyse)
+            if (!detay.EkMasrafManuelMi)
             {
-                hacimEk = hacim.Value switch
-                {
-                    <= 10000m => 0m,
-                    <= 30000m => 15m,
-                    <= 70000m => 35m,
-                    _ => 60m
-                };
+                nud_gonderiEkMasraf.Value = Math.Min(nud_gonderiEkMasraf.Maximum, detay.EkMasraf);
             }
 
-            // Teslimat tipi çarpanı
-            string tip = cb_gonderiTeslimatTip.SelectedItem?.ToString() ?? "Standart";
-            decimal tipCarpani = tip switch
-            {
-                "Standart" => 1.0m,
-                "Hızlı" => 1.25m,
-                "Aynı Gün" => 1.50m,
-                "Randevulu" => 1.30m,
-                _ => 1.0m
-            };
-
-            decimal hamUcret = (agirlikMaliyeti + hacimEk) * tipCarpani;
-
-            // Ek masraf önerileri (aşırı ağırlık / hacim)
-            decimal onerilenEkMasraf = 0m;
-            if (agirlikKg > 30m) onerilenEkMasraf += 40m; // ağır yük taşıma
-            if (hacim.HasValue && hacim.Value > 100000m) onerilenEkMasraf += 80m; // çok büyük hacim
-
-            // Kullanıcı ek masraf girmediyse öneriyi uygula (manuel değilse)
-            if (nud_gonderiEkMasraf.Value == 0m)
-            {
-                nud_gonderiEkMasraf.Value = Math.Min(nud_gonderiEkMasraf.Maximum, onerilenEkMasraf);
-            }
-
-            // Ücret alanı kullanıcı tarafından elle değiştirilmediyse hesaplanan ücreti yaz
+            // Ücret alanını güncelle (kullanıcı manuel değiştirmediyse)
             if (!_ucretManuelDegisti)
             {
-                nud_gonderiUcret.Value = Math.Min(nud_gonderiUcret.Maximum, decimal.Round(hamUcret, 2));
+                nud_gonderiUcret.Value = Math.Min(nud_gonderiUcret.Maximum, detay.HamUcret);
             }
 
-            // İndirim önerisi (ağırlık eşiğine göre) - kullanıcı henüz indirim vermediyse uygula
-            decimal onerilenIndirim = 0m;
-            if (agirlikKg > 20m)
-                onerilenIndirim = hamUcret * 0.10m; // %10
-            else if (agirlikKg > 10m)
-                onerilenIndirim = hamUcret * 0.05m; // %5
-
-            if (nud_gonderiIndirim.Value == 0m && onerilenIndirim > 0m)
+            // İndirim önerisini uygula (kullanıcı manuel girmediyse)
+            if (!detay.IndirimManuelMi && detay.Indirim > 0)
             {
-                nud_gonderiIndirim.Value = Math.Min(nud_gonderiIndirim.Maximum, decimal.Round(onerilenIndirim, 2));
+                nud_gonderiIndirim.Value = Math.Min(nud_gonderiIndirim.Maximum, detay.Indirim);
             }
         }
         finally
@@ -182,25 +146,6 @@ public partial class MainForm : Form
             _fiyatHesaplamaCalisiyor = false;
             GonderiToplamFiyatGuncelle();
         }
-    }
-
-    private decimal? HacimHesapla(string metin)
-    {
-        if (string.IsNullOrWhiteSpace(metin)) return null;
-        var rx = new Regex(@"^\s*(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)\s*$");
-        var m = rx.Match(metin.Trim());
-        if (!m.Success) return null;
-        bool TryParse(string s, out decimal d)
-        {
-            s = s.Replace(',', '.');
-            return decimal.TryParse(s, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out d);
-        }
-        if (TryParse(m.Groups[1].Value, out var l) && TryParse(m.Groups[2].Value, out var w) && TryParse(m.Groups[3].Value, out var h))
-        {
-            if (l <= 0 || w <= 0 || h <= 0) return null;
-            return l * w * h; // cm^3 varsayımı
-        }
-        return null;
     }
 
     private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
@@ -851,7 +796,7 @@ public partial class MainForm : Form
             tb_personelSifre,
             tb_personelTel,
             cb_personelEhliyet,
-            dtp_personelDogumTarih, // düzeltildi
+            dtp_personelDogumTarih, // düzeltildi - h eklendi
             nud_personelMaas,
             cb_personelCinsiyet,
             cb_personelRol,
@@ -895,7 +840,7 @@ public partial class MainForm : Form
                 tb_personelSifre,
                 tb_personelTel,
                 cb_personelEhliyet,
-                dtp_personelDogumTarih, // düzeltildi
+                dtp_personelDogumTarih, // düzeltildi - h eklendi
                 nud_personelMaas,
                 cb_personelCinsiyet,
                 cb_personelRol,
@@ -1289,11 +1234,11 @@ public partial class MainForm : Form
             tb_personelTel,
             cb_personelEhliyet,
             dtp_personelDogumTarih,
+            cb_personelArac,
             nud_personelMaas,
             cb_personelCinsiyet,
             cb_personelRol,
             cb_personelSube,
-            cb_personelArac,
             dtp_personelIsegiris,
             dtp_personelIstencikis,
             ckb_personelAktif,
@@ -1518,5 +1463,23 @@ public partial class MainForm : Form
         VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
         // Detay panelini de tazele
         GonderiDetayPaneliniGuncelle();
+    }
+
+    private void nud_gonderiUcret_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void btn_gonderiTarifeYonetim_Click(object sender, EventArgs e)
+    {
+        // Tarife Yönetim formunu aç
+        using var frm = new TarifeYonetimForm();
+        frm.ShowDialog(this);
+
+        // Form kapandıktan sonra ücret hesaplamayı yenile (tarife değişmiş olabilir)
+        GonderiFiyatHesaplaVeGuncelle();
+        
+        MessageBox.Show("Tarife ayarları kapatıldı. Ücret hesaplama yenilendi.", 
+            "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 }
