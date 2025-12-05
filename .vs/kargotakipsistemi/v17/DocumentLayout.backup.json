@@ -42,20 +42,19 @@
               "RelativeToolTip": "Services\\GonderiServisi.cs",
               "ViewState": "AgIAADgAAAAAAAAAAAAIwDsAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-05T11:33:34.879Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-05T11:33:34.879Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "MainForm.cs [Tasar\u0131m]",
+              "Title": "MainForm.cs [Design]",
               "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
               "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs [Tasar\u0131m]",
-              "RelativeToolTip": "MainForm.cs [Tasar\u0131m]",
+              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs [Design]",
+              "RelativeToolTip": "MainForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-05T11:01:48.414Z",
-              "EditorCaption": " [Tasar\u0131m]"
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
@@ -67,8 +66,7 @@
               "RelativeToolTip": "MainForm.cs",
               "ViewState": "AgIAAPYFAAAAAAAAAAASwAwGAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T08:23:32.816Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-15T08:23:32.816Z"
             }
           ]
         }
