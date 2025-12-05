@@ -560,3 +560,5 @@ C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-w
 C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\ref\kargotakipsistemi.dll
 C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.Forms.GonderiSurecForm.resources
 C:\Users\Administrator\Desktop\nec\ktsproje\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.Forms.TarifeYonetimForm.resources
+C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.Forms.TarifeYonetimForm.resources
+C:\Users\necip\OneDrive\Masaüstü\KargoTakipSistemi\KargoTakipSistemi\obj\Debug\net9.0-windows\kargotakipsistemi.Forms.GonderiSurecForm.resources

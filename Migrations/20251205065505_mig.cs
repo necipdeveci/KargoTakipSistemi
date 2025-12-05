@@ -25,6 +25,7 @@ namespace kargotakipsistemi.Migrations
                     MaxDeger = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
                     Deger = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Birim = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    TeslimatTipi = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Aktif = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     GecerlilikBaslangic = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     GecerlilikBitis = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -581,75 +582,14 @@ namespace kargotakipsistemi.Migrations
 
             migrationBuilder.InsertData(
                 table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Aktif", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[] { 1, "Küçük paketler için temel ücret (minimum ücret uygulanır)", true, "TL/kg", 30.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 1.0m, 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Çok Hafif (0-1 kg)", "AgirlikTarife" });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
+                columns: new[] { "TarifeId", "Aciklama", "Aktif", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru", "TeslimatTipi" },
                 values: new object[,]
                 {
-                    { 2, "Standart paketler için ekonomik tarife", "TL/kg", 22.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 5.0m, 1.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Hafif (1-5 kg)", "AgirlikTarife" },
-                    { 3, "Büyük paketler için indirimli fiyat", "TL/kg", 18.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 20.0m, 5.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Orta (5-20 kg)", "AgirlikTarife" },
-                    { 4, "Toplu/ağır kargolar için en uygun fiyat", "TL/kg", 15.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 20.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Ağır (20+ kg)", "AgirlikTarife" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Aktif", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[] { 5, "Normal boyutlu paketler - ek ücret uygulanmaz", true, "TL", 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 20000.0m, 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Standart Hacim (0-20,000 cm³)", "HacimEkUcret" });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[,]
-                {
-                    { 6, "Orta hacimli paketler için ek ücret", "TL", 20.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 50000.0m, 20000.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Orta Hacim (20,001-50,000 cm³)", "HacimEkUcret" },
-                    { 7, "Hacimli paketler için özel işlem ücreti", "TL", 45.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 100000.0m, 50000.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Büyük Hacim (50,001-100,000 cm³)", "HacimEkUcret" },
-                    { 8, "Ekstra büyük paketler için maksimum ek ücret", "TL", 75.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 100000.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Çok Büyük Hacim (100,000+ cm³)", "HacimEkUcret" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Aktif", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[] { 9, "3-5 iş günü - ek ücret yok (x1.0)", true, "çarpan", 1.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Standart Teslimat", "TeslimatCarpan" });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[,]
-                {
-                    { 10, "1-2 iş günü - %35 ek ücret (x1.35)", "çarpan", 1.35m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Hızlı Teslimat", "TeslimatCarpan" },
-                    { 11, "Aynı gün teslim - %60 ek ücret (x1.60)", "çarpan", 1.60m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Aynı Gün Teslimat", "TeslimatCarpan" },
-                    { 12, "Belirli saat aralığında teslimat - %40 ek ücret (x1.40)", "çarpan", 1.40m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Randevulu Teslimat", "TeslimatCarpan" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Aktif", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[] { 13, "40 kg üzeri paketler için özel taşıma ücreti", true, "TL", 50.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 40.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Çok Ağır Yük (40+ kg)", "EkMasrafEsik" });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[,]
-                {
-                    { 14, "Çok hacimli paketler için özel araç gereksinimi ücreti", "TL", 100.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 150000.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Ekstra Büyük Hacim (150,000+ cm³)", "EkMasrafEsik" },
-                    { 15, "Özel paketleme ve dikkatli taşıma gerektiren ürünler için", "TL", 25.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Kırılgan/Hassas Ürün", "EkMasrafEsik" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Aktif", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[] { 16, "10-25 kg arası gönderiler için %5 indirim", true, "%", 0.05m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 25.0m, 10.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Orta Hacim İndirimi (10-25 kg)", "IndirimEsik" });
-
-            migrationBuilder.InsertData(
-                table: "FiyatlandirmaTarifeler",
-                columns: new[] { "TarifeId", "Aciklama", "Birim", "Deger", "GecerlilikBaslangic", "GecerlilikBitis", "GuncellemeTarihi", "MaxDeger", "MinDeger", "OlusturulmaTarihi", "Oncelik", "TarifeAdi", "TarifeTuru" },
-                values: new object[,]
-                {
-                    { 17, "25-50 kg arası toplu gönderiler için %10 indirim", "%", 0.10m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 50.0m, 25.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Toplu Gönderi İndirimi (25-50 kg)", "IndirimEsik" },
-                    { 18, "50 kg üzeri kurumsal gönderiler için %15 indirim", "%", 0.15m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 50.01m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Kurumsal Müşteri (50+ kg)", "IndirimEsik" }
+                    { 1, "Tüm paketler için standart kg başı ücret", true, "TL/kg", 25.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Standart Ağırlık Tarifesi", "AgirlikTarife", null },
+                    { 2, "Standart gönderilerde hacim ek ücreti uygulanmaz", true, "TL", 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Hacim Ek Ücreti Yok", "HacimEkUcret", null },
+                    { 3, "Standart teslimat süresi - ek ücret uygulanmaz (x1.0)", true, "Çarpan", 1.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Normal Teslimat", "TeslimatCarpan", "Standart Teslimat" },
+                    { 4, "Standart gönderi koşullarında ek masraf uygulanmaz", true, "TL", 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Ek Masraf Uygulanmaz", "EkMasrafEsik", null },
+                    { 5, "Standart fiyatlandırma - indirim uygulanmaz", true, "%", 0.0m, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "İndirim Uygulanmaz", "IndirimEsik", null }
                 });
 
             migrationBuilder.InsertData(

@@ -210,6 +210,10 @@ namespace kargotakipsistemi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("TeslimatTipi")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("TarifeId");
 
                     b.HasIndex("TarifeTuru", "Aktif", "GecerlilikBaslangic")
@@ -224,256 +228,69 @@ namespace kargotakipsistemi.Migrations
                         new
                         {
                             TarifeId = 1,
-                            Aciklama = "Küçük paketler için temel ücret (minimum ücret uygulanır)",
+                            Aciklama = "Tüm paketler için standart kg başı ücret",
                             Aktif = true,
                             Birim = "TL/kg",
-                            Deger = 30.0m,
+                            Deger = 25.0m,
                             GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 1.0m,
                             MinDeger = 0.0m,
                             OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Oncelik = 1,
-                            TarifeAdi = "Çok Hafif (0-1 kg)",
+                            TarifeAdi = "Standart Ağırlık Tarifesi",
                             TarifeTuru = "AgirlikTarife"
                         },
                         new
                         {
                             TarifeId = 2,
-                            Aciklama = "Standart paketler için ekonomik tarife",
-                            Aktif = false,
-                            Birim = "TL/kg",
-                            Deger = 22.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 5.0m,
-                            MinDeger = 1.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 2,
-                            TarifeAdi = "Hafif (1-5 kg)",
-                            TarifeTuru = "AgirlikTarife"
-                        },
-                        new
-                        {
-                            TarifeId = 3,
-                            Aciklama = "Büyük paketler için indirimli fiyat",
-                            Aktif = false,
-                            Birim = "TL/kg",
-                            Deger = 18.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 20.0m,
-                            MinDeger = 5.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 3,
-                            TarifeAdi = "Orta (5-20 kg)",
-                            TarifeTuru = "AgirlikTarife"
-                        },
-                        new
-                        {
-                            TarifeId = 4,
-                            Aciklama = "Toplu/ağır kargolar için en uygun fiyat",
-                            Aktif = false,
-                            Birim = "TL/kg",
-                            Deger = 15.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinDeger = 20.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 4,
-                            TarifeAdi = "Ağır (20+ kg)",
-                            TarifeTuru = "AgirlikTarife"
-                        },
-                        new
-                        {
-                            TarifeId = 5,
-                            Aciklama = "Normal boyutlu paketler - ek ücret uygulanmaz",
+                            Aciklama = "Standart gönderilerde hacim ek ücreti uygulanmaz",
                             Aktif = true,
                             Birim = "TL",
                             Deger = 0.0m,
                             GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 20000.0m,
                             MinDeger = 0.0m,
                             OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Oncelik = 1,
-                            TarifeAdi = "Standart Hacim (0-20,000 cm³)",
+                            TarifeAdi = "Hacim Ek Ücreti Yok",
                             TarifeTuru = "HacimEkUcret"
                         },
                         new
                         {
-                            TarifeId = 6,
-                            Aciklama = "Orta hacimli paketler için ek ücret",
-                            Aktif = false,
-                            Birim = "TL",
-                            Deger = 20.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 50000.0m,
-                            MinDeger = 20000.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 2,
-                            TarifeAdi = "Orta Hacim (20,001-50,000 cm³)",
-                            TarifeTuru = "HacimEkUcret"
-                        },
-                        new
-                        {
-                            TarifeId = 7,
-                            Aciklama = "Hacimli paketler için özel işlem ücreti",
-                            Aktif = false,
-                            Birim = "TL",
-                            Deger = 45.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 100000.0m,
-                            MinDeger = 50000.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 3,
-                            TarifeAdi = "Büyük Hacim (50,001-100,000 cm³)",
-                            TarifeTuru = "HacimEkUcret"
-                        },
-                        new
-                        {
-                            TarifeId = 8,
-                            Aciklama = "Ekstra büyük paketler için maksimum ek ücret",
-                            Aktif = false,
-                            Birim = "TL",
-                            Deger = 75.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinDeger = 100000.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 4,
-                            TarifeAdi = "Çok Büyük Hacim (100,000+ cm³)",
-                            TarifeTuru = "HacimEkUcret"
-                        },
-                        new
-                        {
-                            TarifeId = 9,
-                            Aciklama = "3-5 iş günü - ek ücret yok (x1.0)",
+                            TarifeId = 3,
+                            Aciklama = "Standart teslimat süresi - ek ücret uygulanmaz (x1.0)",
                             Aktif = true,
-                            Birim = "çarpan",
+                            Birim = "Çarpan",
                             Deger = 1.0m,
                             GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Oncelik = 1,
-                            TarifeAdi = "Standart Teslimat",
-                            TarifeTuru = "TeslimatCarpan"
+                            TarifeAdi = "Normal Teslimat",
+                            TarifeTuru = "TeslimatCarpan",
+                            TeslimatTipi = "Standart Teslimat"
                         },
                         new
                         {
-                            TarifeId = 10,
-                            Aciklama = "1-2 iş günü - %35 ek ücret (x1.35)",
-                            Aktif = false,
-                            Birim = "çarpan",
-                            Deger = 1.35m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 2,
-                            TarifeAdi = "Hızlı Teslimat",
-                            TarifeTuru = "TeslimatCarpan"
-                        },
-                        new
-                        {
-                            TarifeId = 11,
-                            Aciklama = "Aynı gün teslim - %60 ek ücret (x1.60)",
-                            Aktif = false,
-                            Birim = "çarpan",
-                            Deger = 1.60m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 3,
-                            TarifeAdi = "Aynı Gün Teslimat",
-                            TarifeTuru = "TeslimatCarpan"
-                        },
-                        new
-                        {
-                            TarifeId = 12,
-                            Aciklama = "Belirli saat aralığında teslimat - %40 ek ücret (x1.40)",
-                            Aktif = false,
-                            Birim = "çarpan",
-                            Deger = 1.40m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 4,
-                            TarifeAdi = "Randevulu Teslimat",
-                            TarifeTuru = "TeslimatCarpan"
-                        },
-                        new
-                        {
-                            TarifeId = 13,
-                            Aciklama = "40 kg üzeri paketler için özel taşıma ücreti",
+                            TarifeId = 4,
+                            Aciklama = "Standart gönderi koşullarında ek masraf uygulanmaz",
                             Aktif = true,
                             Birim = "TL",
-                            Deger = 50.0m,
+                            Deger = 0.0m,
                             GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinDeger = 40.0m,
                             OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Oncelik = 1,
-                            TarifeAdi = "Çok Ağır Yük (40+ kg)",
+                            TarifeAdi = "Ek Masraf Uygulanmaz",
                             TarifeTuru = "EkMasrafEsik"
                         },
                         new
                         {
-                            TarifeId = 14,
-                            Aciklama = "Çok hacimli paketler için özel araç gereksinimi ücreti",
-                            Aktif = false,
-                            Birim = "TL",
-                            Deger = 100.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinDeger = 150000.0m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 2,
-                            TarifeAdi = "Ekstra Büyük Hacim (150,000+ cm³)",
-                            TarifeTuru = "EkMasrafEsik"
-                        },
-                        new
-                        {
-                            TarifeId = 15,
-                            Aciklama = "Özel paketleme ve dikkatli taşıma gerektiren ürünler için",
-                            Aktif = false,
-                            Birim = "TL",
-                            Deger = 25.0m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 3,
-                            TarifeAdi = "Kırılgan/Hassas Ürün",
-                            TarifeTuru = "EkMasrafEsik"
-                        },
-                        new
-                        {
-                            TarifeId = 16,
-                            Aciklama = "10-25 kg arası gönderiler için %5 indirim",
+                            TarifeId = 5,
+                            Aciklama = "Standart fiyatlandırma - indirim uygulanmaz",
                             Aktif = true,
                             Birim = "%",
-                            Deger = 0.05m,
+                            Deger = 0.0m,
                             GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 25.0m,
-                            MinDeger = 10.0m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 3,
-                            TarifeAdi = "Orta Hacim İndirimi (10-25 kg)",
-                            TarifeTuru = "IndirimEsik"
-                        },
-                        new
-                        {
-                            TarifeId = 17,
-                            Aciklama = "25-50 kg arası toplu gönderiler için %10 indirim",
-                            Aktif = false,
-                            Birim = "%",
-                            Deger = 0.10m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxDeger = 50.0m,
-                            MinDeger = 25.01m,
-                            OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Oncelik = 2,
-                            TarifeAdi = "Toplu Gönderi İndirimi (25-50 kg)",
-                            TarifeTuru = "IndirimEsik"
-                        },
-                        new
-                        {
-                            TarifeId = 18,
-                            Aciklama = "50 kg üzeri kurumsal gönderiler için %15 indirim",
-                            Aktif = false,
-                            Birim = "%",
-                            Deger = 0.15m,
-                            GecerlilikBaslangic = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinDeger = 50.01m,
                             OlusturulmaTarihi = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Oncelik = 1,
-                            TarifeAdi = "Kurumsal Müşteri (50+ kg)",
+                            TarifeAdi = "İndirim Uygulanmaz",
                             TarifeTuru = "IndirimEsik"
                         });
                 });

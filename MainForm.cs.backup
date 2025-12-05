@@ -1,0 +1,2647 @@
+﻿using kargotakipsistemi.Dogrulamalar;
+using kargotakipsistemi.Entities;
+using kargotakipsistemi.Forms;
+using kargotakipsistemi.Servisler;
+using kargotakipsistemi.Yardimcilar;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace kargotakipsistemi;
+
+public partial class MainForm : Form
+{
+    // Alanlar & Servis örnekleri
+    private readonly PersonelServisi _personelServisi = new();
+    private readonly SubeServisi _subeServisi = new();
+    private readonly AracServisi _aracServisi = new();
+    private readonly MusteriServisi _musteriServisi = new();
+    private readonly GonderiServisi _gonderiServisi = new();
+    private readonly DinamikUcretHesaplamaServisi _ucretServisi = new(); // VERİTABANI TABANLI HESAPLAMA
+
+    private int? secilenPersonelId = null;
+    private int? secilenSubeId = null;
+    private int? secilenAracId = null;
+    private int? secilenMusteriId = null;
+    private int? secilenGonderiId = null;
+
+    // Ücret hesaplama durum alanları
+    private bool _ucretManuelDegisti = false; // Kullanıcı ücret alanını elle güncelledi mi?
+    private bool _fiyatHesaplamaCalisiyor = false; // Hesaplama re-entrancy koruması
+
+    // Tüm seçimleri tek seferde sıfırlamak için yardımcı metot
+    private void SecimleriResetle()
+    {
+        secilenPersonelId = null;
+        secilenSubeId = null;
+        secilenAracId = null;
+        secilenMusteriId = null;
+        secilenGonderiId = null;
+    }
+
+    public MainForm()
+    {
+        InitializeComponent();
+        cb_subeIl.SelectedIndexChanged += cb_subeIl_SelectedIndexChanged;
+        cb_aracSube.SelectedIndexChanged += cb_aracSube_SelectedIndexChanged_Araç;
+        // Gönderi: müşteri seçince adresleri doldur
+        cb_gonderiGonderen.SelectedIndexChanged += cb_gonderiGonderen_SelectedIndexChanged;
+        cb_gonderiAlici.SelectedIndexChanged += cb_gonderiAlici_SelectedIndexChanged;
+        // Adres combolarındaki değişimleri izle (kural uygula)
+        cb_gonderiGonderenAdres.SelectedIndexChanged += GonderiAdresCombo_SelectedIndexChanged;
+        cb_gonderiAliciAdres.SelectedIndexChanged += GonderiAdresCombo_SelectedIndexChanged;
+        // Gönderi grid selection
+        dgv_gonderiler.SelectionChanged += dgv_gonderiler_SelectionChanged;
+        // Personel bölümünde rol değişince araç listesi rol/subeye göre güncellensin
+        cb_personelRol.SelectedIndexChanged += cb_personelRol_SelectedIndexChanged;
+        cb_personelSube.SelectedIndexChanged += cb_personelSube_SelectedIndexChanged;
+        // Müşteri grid seçim değişimi
+        dgv_musteriler.SelectionChanged += dgv_musteriler_SelectionChanged;
+        // Canlı müşteri filtreleme
+        tb_musteriFiltre.TextChanged += tb_musteriFiltre_TextChanged;
+
+        // Ücretlendirme için ilgili eventler
+        tb_gonderiBoyut.TextChanged += GonderiFiyatBilesenDegisti;
+        nud_gonderiAgirlik.ValueChanged += GonderiFiyatBilesenDegisti;
+        cb_gonderiTeslimatTip.SelectedIndexChanged += GonderiFiyatBilesenDegisti;
+        nud_gonderiIndirim.ValueChanged += GonderiFiyatBilesenDegisti;
+        nud_gonderiEkMasraf.ValueChanged += GonderiFiyatBilesenDegisti;
+        nud_gonderiUcret.ValueChanged += GonderiUcretManuelDegisti;
+
+        // NumericUpDown maksimumları (varsayılan 100 olabilir, hesaplanan değerler taşmasın)
+        nud_gonderiUcret.Maximum = 10000000;
+        nud_gonderiIndirim.Maximum = 10000000;
+        nud_gonderiEkMasraf.Maximum = 10000000;
+
+        // Başlangıçta tüm kaydet butonları Kaydet modunda
+        btn_personelKaydet.Text = "Kaydet";
+        btn_musteriKaydet.Text = "Kaydet";
+        btn_subeKaydet.Text = "Kaydet";
+        btn_aracKaydet.Text = "Kaydet";
+        btn_gonderiOlustur.Text = "Kaydet";
+    }
+
+    // -------------------------------------------------- ÜCRET HESAPLAMA --------------------------------------------------
+    private void GonderiUcretManuelDegisti(object? sender, EventArgs e)
+    {
+        if (_fiyatHesaplamaCalisiyor) return; // otomatik hesaplamada tetiklendiyse yok say
+        _ucretManuelDegisti = true; // Kullanıcı ücreti elle değiştirdi
+        GonderiToplamFiyatGuncelle();
+    }
+
+    private void GonderiFiyatBilesenDegisti(object? sender, EventArgs e)
+    {
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    private void GonderiToplamFiyatGuncelle()
+    {
+        decimal toplam = _ucretServisi.ToplamFiyatHesapla(
+            nud_gonderiUcret.Value,
+            nud_gonderiIndirim.Value,
+            nud_gonderiEkMasraf.Value);
+        tb_gonderiToplamFiyat.Text = toplam.ToString("0.00");
+    }
+
+    private void GonderiFiyatHesaplaVeGuncelle()
+    {
+        try
+        {
+            _fiyatHesaplamaCalisiyor = true;
+
+            // Mevcut manuel değerleri kontrol et
+            decimal? mevcutIndirim = nud_gonderiIndirim.Value > 0 ? nud_gonderiIndirim.Value : null;
+            decimal? mevcutEkMasraf = nud_gonderiEkMasraf.Value > 0 ? nud_gonderiEkMasraf.Value : null;
+
+            // Ücret hesaplama servisini kullan
+            var detay = _ucretServisi.UcretHesapla(
+                nud_gonderiAgirlik.Value,
+                tb_gonderiBoyut.Text,
+                cb_gonderiTeslimatTip.SelectedItem?.ToString() ?? "Standart",
+                mevcutIndirim,
+                mevcutEkMasraf
+            );
+
+            // Ek masraf önerisini uygula (kullanıcı manual girmediyse)
+            if (!detay.EkMasrafManuelMi)
+            {
+                nud_gonderiEkMasraf.Value = Math.Min(nud_gonderiEkMasraf.Maximum, detay.EkMasraf);
+            }
+
+            // Ücret alanını güncelle (kullanıcı manuel değiştirmediyse)
+            if (!_ucretManuelDegisti)
+            {
+                nud_gonderiUcret.Value = Math.Min(nud_gonderiUcret.Maximum, detay.HamUcret);
+            }
+
+            // İndirim önerisini uygula (kullanıcı manuel girmediyse)
+            if (!detay.IndirimManuelMi && detay.Indirim > 0)
+            {
+                nud_gonderiIndirim.Value = Math.Min(nud_gonderiIndirim.Maximum, detay.Indirim);
+            }
+        }
+        finally
+        {
+            _fiyatHesaplamaCalisiyor = false;
+            GonderiToplamFiyatGuncelle();
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnMusterAdresYonet_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Adres yönetimi için önce müşteri seçin.");
+            return;
+        }
+        var form = new AdresEkleForm(secilenMusteriId.Value, "Musteri");
+        form.ShowDialog();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+    }
+
+    // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
+    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    {
+        if (cb_aracSube.SelectedValue is int subeId)
+        {
+            using (var ctx = new KtsContext())
+            {
+                var sube = ctx.Subeler.Find(subeId);
+                if (sube != null)
+                {
+                    // GPS artık otomatik değil
+                }
+            }
+        }
+    }
+
+    private void cb_personelRol_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void KontrolleriTemizle(params Control[] controls) => KontrolYardimcisi.Temizle(controls);
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = cb_personelSube.Items.Count > 0 ? 0 : -1;
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        cb_personelEhliyet.Items.Clear();
+        cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+        cb_personelEhliyet.SelectedIndex = -1;
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(ctx));
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        SubeFiltreyiGuncelle();
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        using (var context = new KtsContext())
+        {
+            var tipler = context.Araclar.Select(a => a.AracTip).Distinct().ToList();
+            cb_aracFiltre.Items.Clear();
+            cb_aracFiltre.Items.AddRange(tipler.ToArray());
+        }
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+
+        // Personel filtre combobox'ını SADECE mevcut personel kayıtlarından (distinct) doldur
+        using (var context = new KtsContext())
+        {
+            var personelTipleri = context.Personeller
+                .Select(p => p.Rol.RolAd)
+                .Where(rolAd => rolAd != null && rolAd != "")
+                .Distinct()
+                .ToList();
+            cb_personelFiltre.Items.Clear();
+            if (personelTipleri.Count > 0)
+            {
+                cb_personelFiltre.Items.AddRange(personelTipleri.Cast<object>().ToArray());
+            }
+        }
+
+        // Gönderi Combobox ve Grid bağlama
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
+        // Kurye combosu sadece rolü Kurye olan aktif personellerle doldurulur (tüm şubelerden başlangıçta)
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
+            ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
+            nameof(Personel.Ad), nameof(Personel.PersonelId));
+        
+        // *** DİNAMİK TESLİMAT TİPİ COMBOBOX - VERİTABANINDAN YÜKLE ***
+        TeslimatTipiCombosuDoldur();
+        
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // İlk yüklemede hesaplamayı tetikle
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif TeslimatCarpan tarifelerinden doldurur
+    /// </summary>
+    private void TeslimatTipiCombosuDoldur()
+    {
+        using var ctx = new KtsContext();
+        
+        // Veritabanındaki aktif teslimat çarpanı tarifelerini al
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.Aktif 
+                     && t.TarifeTuru == "TeslimatCarpan"
+                     && t.GecerlilikBaslangic <= DateTime.Now
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.Deger) // Önce ucuz olanlar
+            .Select(t => t.TeslimatTipi)
+            .Distinct()
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+        
+        if (teslimatTipleri.Count > 0)
+        {
+            cb_gonderiTeslimatTip.Items.AddRange(teslimatTipleri.Cast<object>().ToArray());
+            cb_gonderiTeslimatTip.SelectedIndex = 0; // İlk teslimat tipini seç
+        }
+        else
+        {
+            // Veritabanında tarife yoksa varsayılan değerleri ekle
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] 
+            { 
+                "Standart Teslimat", 
+                "Hızlı Teslimat", 
+                "Aynı Gün Teslimat", 
+                "Randevulu Teslimat" 
+            });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+            
+            MessageBox.Show(
+                "Teslimat tipi tarifeleri bulunamadı!\n\n" +
+                "Lütfen Tarife Yönetimi'nden teslimat çarpanlarını tanımlayın.",
+                "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnMusterAdresYonet_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Adres yönetimi için önce müşteri seçin.");
+            return;
+        }
+        var form = new AdresEkleForm(secilenMusteriId.Value, "Musteri");
+        form.ShowDialog();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+    }
+
+    // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
+    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    {
+        if (cb_aracSube.SelectedValue is int subeId)
+        {
+            using (var ctx = new KtsContext())
+            {
+                var sube = ctx.Subeler.Find(subeId);
+                if (sube != null)
+                {
+                    // GPS artık otomatik değil
+                }
+            }
+        }
+    }
+
+    private void cb_personelRol_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void KontrolleriTemizle(params Control[] controls) => KontrolYardimcisi.Temizle(controls);
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = cb_personelSube.Items.Count > 0 ? 0 : -1;
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        cb_personelEhliyet.Items.Clear();
+        cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+        cb_personelEhliyet.SelectedIndex = -1;
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(ctx));
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        SubeFiltreyiGuncelle();
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        using (var context = new KtsContext())
+        {
+            var tipler = context.Araclar.Select(a => a.AracTip).Distinct().ToList();
+            cb_aracFiltre.Items.Clear();
+            cb_aracFiltre.Items.AddRange(tipler.ToArray());
+        }
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+
+        // Personel filtre combobox'ını SADECE mevcut personel kayıtlarından (distinct) doldur
+        using (var context = new KtsContext())
+        {
+            var personelTipleri = context.Personeller
+                .Select(p => p.Rol.RolAd)
+                .Where(rolAd => rolAd != null && rolAd != "")
+                .Distinct()
+                .ToList();
+            cb_personelFiltre.Items.Clear();
+            if (personelTipleri.Count > 0)
+            {
+                cb_personelFiltre.Items.AddRange(personelTipleri.Cast<object>().ToArray());
+            }
+        }
+
+        // Gönderi Combobox ve Grid bağlama
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
+        // Kurye combosu sadece rolü Kurye olan aktif personellerle doldurulur (tüm şubelerden başlangıçta)
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
+            ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
+            nameof(Personel.Ad), nameof(Personel.PersonelId));
+        
+        // *** DİNAMİK TESLİMAT TİPİ COMBOBOX - VERİTABANINDAN YÜKLE ***
+        TeslimatTipiCombosuDoldur();
+        
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // İlk yüklemede hesaplamayı tetikle
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif TeslimatCarpan tarifelerinden doldurur
+    /// </summary>
+    private void TeslimatTipiCombosuDoldur()
+    {
+        using var ctx = new KtsContext();
+        
+        // Veritabanındaki aktif teslimat çarpanı tarifelerini al
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.Aktif 
+                     && t.TarifeTuru == "TeslimatCarpan"
+                     && t.GecerlilikBaslangic <= DateTime.Now
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.Deger) // Önce ucuz olanlar
+            .Select(t => t.TeslimatTipi)
+            .Distinct()
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+        
+        if (teslimatTipleri.Count > 0)
+        {
+            cb_gonderiTeslimatTip.Items.AddRange(teslimatTipleri.Cast<object>().ToArray());
+            cb_gonderiTeslimatTip.SelectedIndex = 0; // İlk teslimat tipini seç
+        }
+        else
+        {
+            // Veritabanında tarife yoksa varsayılan değerleri ekle
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] 
+            { 
+                "Standart Teslimat", 
+                "Hızlı Teslimat", 
+                "Aynı Gün Teslimat", 
+                "Randevulu Teslimat" 
+            });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+            
+            MessageBox.Show(
+                "Teslimat tipi tarifeleri bulunamadı!\n\n" +
+                "Lütfen Tarife Yönetimi'nden teslimat çarpanlarını tanımlayın.",
+                "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    // -------------------------------------------------- ÜCRET HESAPLAMA --------------------------------------------------
+    private void GonderiUcretManuelDegisti(object? sender, EventArgs e)
+    {
+        if (_fiyatHesaplamaCalisiyor) return; // otomatik hesaplamada tetiklendiyse yok say
+        _ucretManuelDegisti = true; // Kullanıcı ücreti elle değiştirdi
+        GonderiToplamFiyatGuncelle();
+    }
+
+    private void GonderiFiyatBilesenDegisti(object? sender, EventArgs e)
+    {
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    private void GonderiToplamFiyatGuncelle()
+    {
+        decimal toplam = _ucretServisi.ToplamFiyatHesapla(
+            nud_gonderiUcret.Value,
+            nud_gonderiIndirim.Value,
+            nud_gonderiEkMasraf.Value);
+        tb_gonderiToplamFiyat.Text = toplam.ToString("0.00");
+    }
+
+    private void GonderiFiyatHesaplaVeGuncelle()
+    {
+        try
+        {
+            _fiyatHesaplamaCalisiyor = true;
+
+            // Mevcut manuel değerleri kontrol et
+            decimal? mevcutIndirim = nud_gonderiIndirim.Value > 0 ? nud_gonderiIndirim.Value : null;
+            decimal? mevcutEkMasraf = nud_gonderiEkMasraf.Value > 0 ? nud_gonderiEkMasraf.Value : null;
+
+            // Ücret hesaplama servisini kullan
+            var detay = _ucretServisi.UcretHesapla(
+                nud_gonderiAgirlik.Value,
+                tb_gonderiBoyut.Text,
+                cb_gonderiTeslimatTip.SelectedItem?.ToString() ?? "Standart",
+                mevcutIndirim,
+                mevcutEkMasraf
+            );
+
+            // Ek masraf önerisini uygula (kullanıcı manual girmediyse)
+            if (!detay.EkMasrafManuelMi)
+            {
+                nud_gonderiEkMasraf.Value = Math.Min(nud_gonderiEkMasraf.Maximum, detay.EkMasraf);
+            }
+
+            // Ücret alanını güncelle (kullanıcı manuel değiştirmediyse)
+            if (!_ucretManuelDegisti)
+            {
+                nud_gonderiUcret.Value = Math.Min(nud_gonderiUcret.Maximum, detay.HamUcret);
+            }
+
+            // İndirim önerisini uygula (kullanıcı manuel girmediyse)
+            if (!detay.IndirimManuelMi && detay.Indirim > 0)
+            {
+                nud_gonderiIndirim.Value = Math.Min(nud_gonderiIndirim.Maximum, detay.Indirim);
+            }
+        }
+        finally
+        {
+            _fiyatHesaplamaCalisiyor = false;
+            GonderiToplamFiyatGuncelle();
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnMusterAdresYonet_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Adres yönetimi için önce müşteri seçin.");
+            return;
+        }
+        var form = new AdresEkleForm(secilenMusteriId.Value, "Musteri");
+        form.ShowDialog();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+    }
+
+    // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
+    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    {
+        if (cb_aracSube.SelectedValue is int subeId)
+        {
+            using (var ctx = new KtsContext())
+            {
+                var sube = ctx.Subeler.Find(subeId);
+                if (sube != null)
+                {
+                    // GPS artık otomatik değil
+                }
+            }
+        }
+    }
+
+    private void cb_personelRol_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void KontrolleriTemizle(params Control[] controls) => KontrolYardimcisi.Temizle(controls);
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = cb_personelSube.Items.Count > 0 ? 0 : -1;
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        cb_personelEhliyet.Items.Clear();
+        cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+        cb_personelEhliyet.SelectedIndex = -1;
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(ctx));
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        SubeFiltreyiGuncelle();
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        using (var context = new KtsContext())
+        {
+            var tipler = context.Araclar.Select(a => a.AracTip).Distinct().ToList();
+            cb_aracFiltre.Items.Clear();
+            cb_aracFiltre.Items.AddRange(tipler.ToArray());
+        }
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+
+        // Personel filtre combobox'ını SADECE mevcut personel kayıtlarından (distinct) doldur
+        using (var context = new KtsContext())
+        {
+            var personelTipleri = context.Personeller
+                .Select(p => p.Rol.RolAd)
+                .Where(rolAd => rolAd != null && rolAd != "")
+                .Distinct()
+                .ToList();
+            cb_personelFiltre.Items.Clear();
+            if (personelTipleri.Count > 0)
+            {
+                cb_personelFiltre.Items.AddRange(personelTipleri.Cast<object>().ToArray());
+            }
+        }
+
+        // Gönderi Combobox ve Grid bağlama
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
+        // Kurye combosu sadece rolü Kurye olan aktif personellerle doldurulur (tüm şubelerden başlangıçta)
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
+            ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
+            nameof(Personel.Ad), nameof(Personel.PersonelId));
+        
+        // *** DİNAMİK TESLİMAT TİPİ COMBOBOX - VERİTABANINDAN YÜKLE ***
+        TeslimatTipiCombosuDoldur();
+        
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // İlk yüklemede hesaplamayı tetikle
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif TeslimatCarpan tarifelerinden doldurur
+    /// </summary>
+    private void TeslimatTipiCombosuDoldur()
+    {
+        using var ctx = new KtsContext();
+        
+        // Veritabanındaki aktif teslimat çarpanı tarifelerini al
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.Aktif 
+                     && t.TarifeTuru == "TeslimatCarpan"
+                     && t.GecerlilikBaslangic <= DateTime.Now
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.Deger) // Önce ucuz olanlar
+            .Select(t => t.TeslimatTipi)
+            .Distinct()
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+        
+        if (teslimatTipleri.Count > 0)
+        {
+            cb_gonderiTeslimatTip.Items.AddRange(teslimatTipleri.Cast<object>().ToArray());
+            cb_gonderiTeslimatTip.SelectedIndex = 0; // İlk teslimat tipini seç
+        }
+        else
+        {
+            // Veritabanında tarife yoksa varsayılan değerleri ekle
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] 
+            { 
+                "Standart Teslimat", 
+                "Hızlı Teslimat", 
+                "Aynı Gün Teslimat", 
+                "Randevulu Teslimat" 
+            });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+            
+            MessageBox.Show(
+                "Teslimat tipi tarifeleri bulunamadı!\n\n" +
+                "Lütfen Tarife Yönetimi'nden teslimat çarpanlarını tanımlayın.",
+                "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnMusterAdresYonet_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Adres yönetimi için önce müşteri seçin.");
+            return;
+        }
+        var form = new AdresEkleForm(secilenMusteriId.Value, "Musteri");
+        form.ShowDialog();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+    }
+
+    // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
+    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    {
+        if (cb_aracSube.SelectedValue is int subeId)
+        {
+            using (var ctx = new KtsContext())
+            {
+                var sube = ctx.Subeler.Find(subeId);
+                if (sube != null)
+                {
+                    // GPS artık otomatik değil
+                }
+            }
+        }
+    }
+
+    private void cb_personelRol_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void KontrolleriTemizle(params Control[] controls) => KontrolYardimcisi.Temizle(controls);
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = cb_personelSube.Items.Count > 0 ? 0 : -1;
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        cb_personelEhliyet.Items.Clear();
+        cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+        cb_personelEhliyet.SelectedIndex = -1;
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(ctx));
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        SubeFiltreyiGuncelle();
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        using (var context = new KtsContext())
+        {
+            var tipler = context.Araclar.Select(a => a.AracTip).Distinct().ToList();
+            cb_aracFiltre.Items.Clear();
+            cb_aracFiltre.Items.AddRange(tipler.ToArray());
+        }
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+
+        // Personel filtre combobox'ını SADECE mevcut personel kayıtlarından (distinct) doldur
+        using (var context = new KtsContext())
+        {
+            var personelTipleri = context.Personeller
+                .Select(p => p.Rol.RolAd)
+                .Where(rolAd => rolAd != null && rolAd != "")
+                .Distinct()
+                .ToList();
+            cb_personelFiltre.Items.Clear();
+            if (personelTipleri.Count > 0)
+            {
+                cb_personelFiltre.Items.AddRange(personelTipleri.Cast<object>().ToArray());
+            }
+        }
+
+        // Gönderi Combobox ve Grid bağlama
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
+        // Kurye combosu sadece rolü Kurye olan aktif personellerle doldurulur (tüm şubelerden başlangıçta)
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
+            ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
+            nameof(Personel.Ad), nameof(Personel.PersonelId));
+        
+        // *** DİNAMİK TESLİMAT TİPİ COMBOBOX - VERİTABANINDAN YÜKLE ***
+        TeslimatTipiCombosuDoldur();
+        
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // İlk yüklemede hesaplamayı tetikle
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif TeslimatCarpan tarifelerinden doldurur
+    /// </summary>
+    private void TeslimatTipiCombosuDoldur()
+    {
+        using var ctx = new KtsContext();
+        
+        // Veritabanındaki aktif teslimat çarpanı tarifelerini al
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.Aktif 
+                     && t.TarifeTuru == "TeslimatCarpan"
+                     && t.GecerlilikBaslangic <= DateTime.Now
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.Deger) // Önce ucuz olanlar
+            .Select(t => t.TeslimatTipi)
+            .Distinct()
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+        
+        if (teslimatTipleri.Count > 0)
+        {
+            cb_gonderiTeslimatTip.Items.AddRange(teslimatTipleri.Cast<object>().ToArray());
+            cb_gonderiTeslimatTip.SelectedIndex = 0; // İlk teslimat tipini seç
+        }
+        else
+        {
+            // Veritabanında tarife yoksa varsayılan değerleri ekle
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] 
+            { 
+                "Standart Teslimat", 
+                "Hızlı Teslimat", 
+                "Aynı Gün Teslimat", 
+                "Randevulu Teslimat" 
+            });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+            
+            MessageBox.Show(
+                "Teslimat tipi tarifeleri bulunamadı!\n\n" +
+                "Lütfen Tarife Yönetimi'nden teslimat çarpanlarını tanımlayın.",
+                "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    // -------------------------------------------------- ÜCRET HESAPLAMA --------------------------------------------------
+    private void GonderiUcretManuelDegisti(object? sender, EventArgs e)
+    {
+        if (_fiyatHesaplamaCalisiyor) return; // otomatik hesaplamada tetiklendiyse yok say
+        _ucretManuelDegisti = true; // Kullanıcı ücreti elle değiştirdi
+        GonderiToplamFiyatGuncelle();
+    }
+
+    private void GonderiFiyatBilesenDegisti(object? sender, EventArgs e)
+    {
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    private void GonderiToplamFiyatGuncelle()
+    {
+        decimal toplam = _ucretServisi.ToplamFiyatHesapla(
+            nud_gonderiUcret.Value,
+            nud_gonderiIndirim.Value,
+            nud_gonderiEkMasraf.Value);
+        tb_gonderiToplamFiyat.Text = toplam.ToString("0.00");
+    }
+
+    private void GonderiFiyatHesaplaVeGuncelle()
+    {
+        try
+        {
+            _fiyatHesaplamaCalisiyor = true;
+
+            // Mevcut manuel değerleri kontrol et
+            decimal? mevcutIndirim = nud_gonderiIndirim.Value > 0 ? nud_gonderiIndirim.Value : null;
+            decimal? mevcutEkMasraf = nud_gonderiEkMasraf.Value > 0 ? nud_gonderiEkMasraf.Value : null;
+
+            // Ücret hesaplama servisini kullan
+            var detay = _ucretServisi.UcretHesapla(
+                nud_gonderiAgirlik.Value,
+                tb_gonderiBoyut.Text,
+                cb_gonderiTeslimatTip.SelectedItem?.ToString() ?? "Standart",
+                mevcutIndirim,
+                mevcutEkMasraf
+            );
+
+            // Ek masraf önerisini uygula (kullanıcı manual girmediyse)
+            if (!detay.EkMasrafManuelMi)
+            {
+                nud_gonderiEkMasraf.Value = Math.Min(nud_gonderiEkMasraf.Maximum, detay.EkMasraf);
+            }
+
+            // Ücret alanını güncelle (kullanıcı manuel değiştirmediyse)
+            if (!_ucretManuelDegisti)
+            {
+                nud_gonderiUcret.Value = Math.Min(nud_gonderiUcret.Maximum, detay.HamUcret);
+            }
+
+            // İndirim önerisini uygula (kullanıcı manuel girmediyse)
+            if (!detay.IndirimManuelMi && detay.Indirim > 0)
+            {
+                nud_gonderiIndirim.Value = Math.Min(nud_gonderiIndirim.Maximum, detay.Indirim);
+            }
+        }
+        finally
+        {
+            _fiyatHesaplamaCalisiyor = false;
+            GonderiToplamFiyatGuncelle();
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnMusterAdresYonet_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Adres yönetimi için önce müşteri seçin.");
+            return;
+        }
+        var form = new AdresEkleForm(secilenMusteriId.Value, "Musteri");
+        form.ShowDialog();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+    }
+
+    // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
+    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    {
+        if (cb_aracSube.SelectedValue is int subeId)
+        {
+            using (var ctx = new KtsContext())
+            {
+                var sube = ctx.Subeler.Find(subeId);
+                if (sube != null)
+                {
+                    // GPS artık otomatik değil
+                }
+            }
+        }
+    }
+
+    private void cb_personelRol_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void KontrolleriTemizle(params Control[] controls) => KontrolYardimcisi.Temizle(controls);
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = cb_personelSube.Items.Count > 0 ? 0 : -1;
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        cb_personelEhliyet.Items.Clear();
+        cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+        cb_personelEhliyet.SelectedIndex = -1;
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(ctx));
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        SubeFiltreyiGuncelle();
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        using (var context = new KtsContext())
+        {
+            var tipler = context.Araclar.Select(a => a.AracTip).Distinct().ToList();
+            cb_aracFiltre.Items.Clear();
+            cb_aracFiltre.Items.AddRange(tipler.ToArray());
+        }
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+
+        // Personel filtre combobox'ını SADECE mevcut personel kayıtlarından (distinct) doldur
+        using (var context = new KtsContext())
+        {
+            var personelTipleri = context.Personeller
+                .Select(p => p.Rol.RolAd)
+                .Where(rolAd => rolAd != null && rolAd != "")
+                .Distinct()
+                .ToList();
+            cb_personelFiltre.Items.Clear();
+            if (personelTipleri.Count > 0)
+            {
+                cb_personelFiltre.Items.AddRange(personelTipleri.Cast<object>().ToArray());
+            }
+        }
+
+        // Gönderi Combobox ve Grid bağlama
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
+        // Kurye combosu sadece rolü Kurye olan aktif personellerle doldurulur (tüm şubelerden başlangıçta)
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
+            ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
+            nameof(Personel.Ad), nameof(Personel.PersonelId));
+        
+        // *** DİNAMİK TESLİMAT TİPİ COMBOBOX - VERİTABANINDAN YÜKLE ***
+        TeslimatTipiCombosuDoldur();
+        
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // İlk yüklemede hesaplamayı tetikle
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif TeslimatCarpan tarifelerinden doldurur
+    /// </summary>
+    private void TeslimatTipiCombosuDoldur()
+    {
+        using var ctx = new KtsContext();
+        
+        // Veritabanındaki aktif teslimat çarpanı tarifelerini al
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.Aktif 
+                     && t.TarifeTuru == "TeslimatCarpan"
+                     && t.GecerlilikBaslangic <= DateTime.Now
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.Deger) // Önce ucuz olanlar
+            .Select(t => t.TeslimatTipi)
+            .Distinct()
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+        
+        if (teslimatTipleri.Count > 0)
+        {
+            cb_gonderiTeslimatTip.Items.AddRange(teslimatTipleri.Cast<object>().ToArray());
+            cb_gonderiTeslimatTip.SelectedIndex = 0; // İlk teslimat tipini seç
+        }
+        else
+        {
+            // Veritabanında tarife yoksa varsayılan değerleri ekle
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] 
+            { 
+                "Standart Teslimat", 
+                "Hızlı Teslimat", 
+                "Aynı Gün Teslimat", 
+                "Randevulu Teslimat" 
+            });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+            
+            MessageBox.Show(
+                "Teslimat tipi tarifeleri bulunamadı!\n\n" +
+                "Lütfen Tarife Yönetimi'nden teslimat çarpanlarını tanımlayın.",
+                "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnMusterAdresYonet_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Adres yönetimi için önce müşteri seçin.");
+            return;
+        }
+        var form = new AdresEkleForm(secilenMusteriId.Value, "Musteri");
+        form.ShowDialog();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+    }
+
+    // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
+    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    {
+        if (cb_aracSube.SelectedValue is int subeId)
+        {
+            using (var ctx = new KtsContext())
+            {
+                var sube = ctx.Subeler.Find(subeId);
+                if (sube != null)
+                {
+                    // GPS artık otomatik değil
+                }
+            }
+        }
+    }
+
+    private void cb_personelRol_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void cb_personelSube_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+    }
+
+    private void KontrolleriTemizle(params Control[] controls) => KontrolYardimcisi.Temizle(controls);
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        cb_personelSube.SelectedIndex = cb_personelSube.Items.Count > 0 ? 0 : -1;
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        cb_personelEhliyet.Items.Clear();
+        cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+        cb_personelEhliyet.SelectedIndex = -1;
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(ctx));
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        SubeFiltreyiGuncelle();
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        using (var context = new KtsContext())
+        {
+            var tipler = context.Araclar.Select(a => a.AracTip).Distinct().ToList();
+            cb_aracFiltre.Items.Clear();
+            cb_aracFiltre.Items.AddRange(tipler.ToArray());
+        }
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+
+        // Personel filtre combobox'ını SADECE mevcut personel kayıtlarından (distinct) doldur
+        using (var context = new KtsContext())
+        {
+            var personelTipleri = context.Personeller
+                .Select(p => p.Rol.RolAd)
+                .Where(rolAd => rolAd != null && rolAd != "")
+                .Distinct()
+                .ToList();
+            cb_personelFiltre.Items.Clear();
+            if (personelTipleri.Count > 0)
+            {
+                cb_personelFiltre.Items.AddRange(personelTipleri.Cast<object>().ToArray());
+            }
+        }
+
+        // Gönderi Combobox ve Grid bağlama
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
+        // Kurye combosu sadece rolü Kurye olan aktif personellerle doldurulur (tüm şubelerden başlangıçta)
+        VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
+            ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
+            nameof(Personel.Ad), nameof(Personel.PersonelId));
+        
+        // *** DİNAMİK TESLİMAT TİPİ COMBOBOX - VERİTABANINDAN YÜKLE ***
+        TeslimatTipiCombosuDoldur();
+        
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // İlk yüklemede hesaplamayı tetikle
+        GonderiFiyatHesaplaVeGuncelle();
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif TeslimatCarpan tarifelerinden doldurur
+    /// </summary>
+    private void TeslimatTipiCombosuDoldur()
+    {
+        using var ctx = new KtsContext();
+        
+        // Veritabanındaki aktif teslimat çarpanı tarifelerini al
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.Aktif 
+                     && t.TarifeTuru == "TeslimatCarpan"
+                     && t.GecerlilikBaslangic <= DateTime.Now
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.Deger) // Önce ucuz olanlar
+            .Select(t => t.TeslimatTipi)
+            .Distinct()
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+        
+        if (teslimatTipleri.Count > 0)
+        {
+            cb_gonderiTeslimatTip.Items.AddRange(teslimatTipleri.Cast<object>().ToArray());
+            cb_gonderiTeslimatTip.SelectedIndex = 0; // İlk teslimat tipini seç
+        }
+        else
+        {
+            // Veritabanında tarife yoksa varsayılan değerleri ekle
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] 
+            { 
+                "Standart Teslimat", 
+                "Hızlı Teslimat", 
+                "Aynı Gün Teslimat", 
+                "Randevulu Teslimat" 
+            });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+            
+            MessageBox.Show(
+                "Teslimat tipi tarifeleri bulunamadı!\n\n" +
+                "Lütfen Tarife Yönetimi'nden teslimat çarpanlarını tanımlayın.",
+                "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void cb_subeIl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cb_subeIl.SelectedValue != null)
+        {
+            int ilId;
+            if (cb_subeIl.SelectedValue is int)
+                ilId = (int)cb_subeIl.SelectedValue;
+            else if (cb_subeIl.SelectedValue is Il il)
+                ilId = il.IlId;
+            else
+                throw new InvalidOperationException("Seçilen değer beklenen türde değil.");
+
+            VeriBaglamaServisi.KomboyaBagla(cb_subeIlce,
+                ctx => ctx.Ilceler.Where(x => x.IlId == ilId),
+                "IlceAd", "IlceId");
+        }
+    }
+
+    // -------------------------------------------------- MÜŞTERİ BÖLÜMÜ --------------------------------------------------
+    private void dgv_musteriler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_musteriler.SelectedRows.Count > 0)
+        {
+            var row = dgv_musteriler.SelectedRows[0];
+            secilenMusteriId = row.Cells["MusteriId"].Value != DBNull.Value ? Convert.ToInt32(row.Cells["MusteriId"].Value) : (int?)null;
+            tb_musteriAd.Text = row.Cells["Ad"].Value?.ToString() ?? string.Empty;
+            tb_musteriSoyad.Text = row.Cells["Soyad"].Value?.ToString() ?? string.Empty;
+            tb_musteriEposta.Text = row.Cells["Mail"].Value?.ToString() ?? string.Empty;
+            tb_musteriTel.Text = row.Cells["Tel"].Value?.ToString() ?? string.Empty;
+            tb_musteriNot.Text = row.Cells["Notlar"].Value?.ToString() ?? string.Empty;
+            dtp_musteriDogumTarih.Value = row.Cells["DogumTarihi"].Value != DBNull.Value ? Convert.ToDateTime(row.Cells["DogumTarihi"].Value) : DateTime.Now;
+            btnMusterAdresYonet.Enabled = secilenMusteriId.HasValue;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_musteriKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenMusteriId = null;
+            btnMusterAdresYonet.Enabled = false;
+            // Seçim yok -> Kaydet modu
+            btn_musteriKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_musteriKaydet_Click(object sender, EventArgs e)
+    {
+        if (!MusteriDogrulayici.Dogrula(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, dtp_musteriDogumTarih, tb_musteriNot))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            Musteri musteri;
+            bool guncelleme = secilenMusteriId.HasValue;
+            if (guncelleme)
+            {
+                musteri = _musteriServisi.KimlikleGetir(ctx, secilenMusteriId!.Value);
+                if (musteri == null)
+                {
+                    MessageBox.Show("Müşteri bulunamadı.");
+                    return;
+                }
+            }
+            else
+            {
+                musteri = _musteriServisi.Olustur(ctx);
+            }
+
+            musteri.Ad = tb_musteriAd.Text;
+            musteri.Soyad = tb_musteriSoyad.Text;
+            musteri.Mail = tb_musteriEposta.Text;
+            musteri.Tel = tb_musteriTel.Text;
+            musteri.Notlar = tb_musteriNot.Text;
+            musteri.DogumTarihi = dtp_musteriDogumTarih.Value;
+
+            ctx.SaveChanges();
+            SecimleriResetle(); // Seçilen ID'leri hemen sıfırla
+            MessageBox.Show(guncelleme ? "Müşteri güncellendi." : "Müşteri eklendi.");
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet"; // Kaydet moduna dön
+    }
+
+    private void btn_musteriKayitSil_Click(object sender, EventArgs e)
+    {
+        if (!secilenMusteriId.HasValue)
+        {
+            MessageBox.Show("Lütfen silmek için bir müşteri seçin.");
+            return;
+        }
+        if (!OnayYardimcisi.SilmeOnayi("Müşteri Sil", "Seçili müşteriyi silmek istediğinize emin misiniz?"))
+            return;
+
+        using (var ctx = new KtsContext())
+        {
+            _musteriServisi.Sil(ctx, secilenMusteriId.Value);
+            ctx.SaveChanges();
+            SecimleriResetle(); // Silme sonrası ID'leri sıfırla
+            VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, c => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        }
+
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btn_musteriFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_musteriAd, tb_musteriSoyad, tb_musteriEposta, tb_musteriTel, tb_musteriNot, dtp_musteriDogumTarih);
+        btnMusterAdresYonet.Enabled = false;
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx => _musteriServisi.IzgaraIcinProjeksiyon(c));
+        btn_musteriKaydet.Text = "Kaydet";
+    }
+
+    private void btnPersonelAdresYonet_Click(object sender, EventArgs e)
+    {
+        var form = new AdresEkleForm(secilenPersonelId.Value, "Personel");
+        form.ShowDialog();
+    }
+
+    private void btn_tempSifre_Click(object sender, EventArgs e) { }
+    private void btn_subeAra_Click(object sender, EventArgs e)
+    {
+        if (cb_subeFiltre.SelectedItem != null)
+        {
+            string seciliTip = cb_subeFiltre.SelectedItem.ToString();
+            VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx =>
+                _subeServisi.IzgaraIcinProjeksiyon(ctx).Where(s => (string)s.GetType().GetProperty("SubeTip")!.GetValue(s)! == seciliTip));
+        }
+        else
+        {
+            VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        }
+    }
+
+    private void dgv_subeler_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_subeler.SelectedRows.Count > 0)
+        {
+            var row = dgv_subeler.SelectedRows[0];
+            secilenSubeId = Convert.ToInt32(row.Cells["SubeId"].Value);
+            tb_subeAd.Text = row.Cells["SubeAd"].Value?.ToString() ?? "";
+            string tip = row.Cells["SubeTip"].Value?.ToString();
+            cb_subeTip.SelectedItem = !string.IsNullOrEmpty(tip) ? tip : null;
+            tb_subeTel.Text = row.Cells["Tel"].Value?.ToString() ?? "";
+            tb_subeMail.Text = row.Cells["Email"].Value?.ToString() ?? "";
+            tbm_subeAcikAdres.Text = row.Cells["AcikAdres"].Value?.ToString() ?? "";
+            cb_subeCalismaSaat.SelectedItem = row.Cells["CalismaSaatleri"].Value?.ToString() ?? null;
+            nud_subeKapasite.Value = row.Cells["Kapasite"].Value != null ? Convert.ToDecimal(row.Cells["Kapasite"].Value) : 0;
+            cb_subeIl.SelectedValue = row.Cells["IlId"].Value;
+            cb_subeIlce.SelectedValue = row.Cells["IlceId"].Value;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_subeKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenSubeId = null;
+            btn_subeKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_aracAra_Click(object sender, EventArgs e)
+    {
+        if (cb_aracFiltre.SelectedItem != null)
+        {
+            string seciliTip = cb_aracFiltre.SelectedItem.ToString();
+            VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx =>
+                _aracServisi.IzgaraIcinProjeksiyon(ctx).Where(a => (string)a.GetType().GetProperty("AracTip")!.GetValue(a)! == seciliTip));
+        }
+        else
+        {
+            VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        }
+    }
+
+    private void dgv_araclar_SelectionChanged(object sender, EventArgs e)
+    {
+        if (dgv_araclar.SelectedRows.Count > 0)
+        {
+            var row = dgv_araclar.SelectedRows[0];
+            secilenAracId = Convert.ToInt32(row.Cells["AracId"].Value);
+            tb_aracPlaka.Text = row.Cells["Plaka"].Value?.ToString() ?? "";
+            cb_aracTip.SelectedItem = row.Cells["AracTip"].Value?.ToString();
+            nud_aracKapasite.Value = row.Cells["KapasiteKg"].Value != null ? Convert.ToDecimal(row.Cells["KapasiteKg"].Value) : 0;
+            tb_aracGps.Text = row.Cells["GpsKodu"].Value?.ToString();
+            cb_aracDurum.SelectedItem = row.Cells["Durum"].Value?.ToString();
+            cb_aracSube.SelectedValue = row.Cells["SubeId"].Value;
+
+            // Kaydet buton metni: seçim var -> Güncelle
+            btn_aracKaydet.Text = "Güncelle";
+        }
+        else
+        {
+            secilenAracId = null;
+            btn_aracKaydet.Text = "Kaydet";
+        }
+    }
+
+    private void btn_aracFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_aracPlaka, cb_aracTip, nud_aracKapasite, tb_aracGps, cb_aracDurum, cb_aracSube, cb_aracFiltre);
+        VeriBaglamaServisi.IzgaraBagla(dgv_araclar, ctx => _aracServisi.IzgaraIcinProjeksiyon(ctx));
+        cb_aracTip.Items.Clear();
+        cb_aracTip.Items.Add("Kamyonet");
+        cb_aracTip.Items.Add("Panelvan");
+        cb_aracTip.Items.Add("Tır");
+        cb_aracTip.Items.Add("Minibüs");
+        cb_aracTip.Items.Add("Otomobil");
+        cb_aracTip.Items.Add("Motosiklet");
+        cb_aracTip.Items.Add("Diğer");
+        cb_aracDurum.Items.Clear();
+        cb_aracDurum.Items.Add("Aktif");
+        cb_aracDurum.Items.Add("Bakımda");
+        cb_aracDurum.Items.Add("Arızalı");
+        cb_aracDurum.Items.Add("Pasif");
+        cb_aracDurum.Items.Add("Serviste");
+        cb_aracDurum.Items.Add("Kullanımda");
+        VeriBaglamaServisi.KomboyaBagla(cb_aracSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        btn_aracKaydet.Text = "Kaydet";
+    }
+
+    private void btn_subeFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(tb_subeAd, cb_subeTip, tb_subeTel, tb_subeMail, tbm_subeAcikAdres, cb_subeCalismaSaat, nud_subeKapasite, cb_subeIl, cb_subeIlce, cb_subeFiltre);
+        VeriBaglamaServisi.IzgaraBagla(dgv_subeler, ctx => _subeServisi.IzgaraIcinProjeksiyon(ctx));
+        cb_subeTip.Items.Clear();
+        cb_subeTip.Items.Add("Merkez");
+        cb_subeTip.Items.Add("Şube");
+        cb_subeTip.Items.Add("Dağıtım Noktası");
+        cb_subeTip.Items.Add("Depo");
+        cb_subeTip.Items.Add("Transfer merkezi");
+        cb_subeTip.Items.Add("Kargo kabul");
+        cb_subeTip.Items.Add("Teslimat noktası");
+        cb_subeCalismaSaat.Items.Clear();
+        cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
+        cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
+        cb_subeCalismaSaat.Items.Add("24 saat açık");
+        cb_subeCalismaSaat.Items.Add("Hafta içi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta sonu kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta sonu 10:00 - 16:00");
+        VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
+        btn_subeKaydet.Text = "Kaydet";
+    }
+
+    private void btn_personelFormTemizle_Click(object sender, EventArgs e)
+    {
+        SecimleriResetle();
+        KontrolleriTemizle(
+            tb_personelAd,
+            tb_personelSoyad,
+            tb_personelMail,
+            tb_personelSifre,
+            tb_personelTel,
+            cb_personelEhliyet,
+            dtp_personelDogumTarih,
+            cb_personelArac,
+            nud_personelMaas,
+            cb_personelCinsiyet,
+            cb_personelRol,
+            cb_personelSube,
+            dtp_personelIsegiris,
+            dtp_personelIstencikis,
+            ckb_personelAktif,
+            cb_personelFiltre
+        );
+        // Filtre comboyu yeniden doldur
+        PersonelFiltreyiGuncelle();
+        if (cb_personelEhliyet.Items.Count == 0)
+        {
+            cb_personelEhliyet.Items.AddRange(new object[] { "A", "A1", "A2", "B", "BE", "C", "CE", "C1", "C1E", "D", "DE", "D1", "D1E", "F", "G", "M" });
+            cb_personelEhliyet.SelectedIndex = -1;
+        }
+        cb_personelCinsiyet.Items.Clear();
+        cb_personelCinsiyet.Items.Add("Erkek");
+        cb_personelCinsiyet.Items.Add("Kadın");
+        cb_personelCinsiyet.SelectedIndex = 0;
+        dtp_personelIstencikis.Enabled = false;
+        VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
+        VeriBaglamaServisi.KomboyaBagla(cb_personelSube, ctx => ctx.Subeler, "SubeAd", "SubeId");
+        PersonelFormServisi.GuncelleAracCombosu(cb_personelArac, cb_personelRol, cb_personelSube);
+        VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        btn_personelKaydet.Text = "Kaydet";
+    }
+
+    private void btn_personelAra_Click(object sender, EventArgs e)
+    {
+        if (cb_personelFiltre.SelectedItem != null)
+        {
+            string seciliRolAd = cb_personelFiltre.SelectedItem.ToString();
+            VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx =>
+                ctx.Personeller
+                    .Include(p => p.Rol)
+                    .Include(p => p.Sube)
+                    .Include(p => p.Arac)
+                    .Include(p => p.Adresler)
+                    .Where(p => p.Rol != null && p.Rol.RolAd == seciliRolAd)
+                    .Select(p => new
+                    {
+                        p.PersonelId,
+                        p.Ad,
+                        p.Soyad,
+                        p.Mail,
+                        Sifre = p.Sifre.Length > 4 ? new string('*', p.Sifre.Length) : p.Sifre,
+                        p.Tel,
+                        p.DogumTarihi,
+                        p.Cinsiyet,
+                        p.RolId,
+                        RolAd = p.Rol != null ? p.Rol.RolAd : "",
+                        p.SubeId,
+                        SubeAd = p.Sube != null ? p.Sube.SubeAd : "",
+                        p.AracId,
+                        AracTip = p.Arac != null ? p.Arac.AracTip : "",
+                        p.Aktif,
+                        p.IseGirisTarihi,
+                        p.IstenCikisTarihi,
+                        p.Maas,
+                        p.EhliyetSinifi,
+                        Adresler = p.Adresler != null && p.Adresler.Any()
+                            ? string.Join(", ", p.Adresler.Select(a => a.AdresBaslik))
+                            : ""
+                    }));
+        }
+        else
+        {
+            VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
+        }
+    }
+
+    private void tb_musteriFiltre_TextChanged(object sender, EventArgs e)
+    {
+        MusteriFiltreUygula();
+    }
+
+    private void MusteriFiltreUygula()
+    {
+        var term = tb_musteriFiltre.Text.Trim();
+        VeriBaglamaServisi.IzgaraBagla(dgv_musteriler, ctx =>
+            string.IsNullOrEmpty(term)
+                ? _musteriServisi.IzgaraIcinProjeksiyon(ctx)
+                : ctx.Musteriler
+                    .Where(m => EF.Functions.Like(m.Ad, "%" + term + "%")
+                             || EF.Functions.Like(m.Soyad, "%" + term + "%")
+                             || EF.Functions.Like(m.Ad + " " + m.Soyad, "%" + term + "%"))
+                    .Select(m => new
+                    {
+                        m.MusteriId,
+                        m.Ad,
+                        m.Soyad,
+                        m.Mail,
+                        m.Tel,
+                        m.DogumTarihi,
+                        m.Notlar
+                    }));
+    }
+
+    private void btn_musteriAra_Click(object sender, EventArgs e)
+    {
+        MusteriFiltreUygula();
+    }
+
+    private bool GonderiZorunluSecimlerTam()
+    {
+        return cb_gonderiGonderen.SelectedValue is int
+            && cb_gonderiGonderenAdres.SelectedValue is int
+            && cb_gonderiAlici.SelectedValue is int
+            && cb_gonderiAliciAdres.SelectedValue is int;
+    }
+
+    private bool IsAdresKisitSaglandi()
+    {
+        var gMusteri = cb_gonderiGonderen.SelectedValue as int?;
+        var aMusteri = cb_gonderiAlici.SelectedValue as int?;
+        if (!gMusteri.HasValue || !aMusteri.HasValue) return false;
+        var gAdres = cb_gonderiGonderenAdres.SelectedItem as Adres;
+        var aAdres = cb_gonderiAliciAdres.SelectedItem as Adres;
+        if (gMusteri.Value != aMusteri.Value) return true; // Farklı müşteriler için kısıtlama yok
+        return gAdres != null && aAdres != null && !string.Equals(gAdres.AdresTipi, aAdres.AdresTipi, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void TakipNoHazirsaUretVeAyarla()
+    {
+        if (GonderiZorunluSecimlerTam() && IsAdresKisitSaglandi())
+        {
+            tb_gonderiTakipNo.Text = RasgeleTakipNo8Hane();
+        }
+    }
+
+    private Adres? SeciliGonderenAdres()
+    {
+        if (cb_gonderiGonderenAdres.SelectedValue is int adresId)
+        {
+            using var ctx = new KtsContext();
+            return ctx.Adresler.Find(adresId);
+        }
+        return null;
+    }
+
+    private Adres? SeciliAliciAdres()
+    {
+        if (cb_gonderiAliciAdres.SelectedValue is int adresId)
+        {
+            using var ctx = new KtsContext();
+            return ctx.Adresler.Find(adresId);
+        }
+        return null;
+    }
+
+    private void AdresCombosunuBagla(ComboBox cb, int musteriId)
+    {
+        using var ctx = new KtsContext();
+        var liste = ctx.Adresler
+            .Where(a => a.MusteriId == musteriId && (a.AdresTipi == "Ev" || a.AdresTipi == "İş" || a.AdresTipi == "Is"))
+            .ToList();
+        cb.DataSource = liste;
+        cb.DisplayMember = nameof(Adres.AdresTipi);
+        cb.ValueMember = nameof(Adres.AdresId);
+        cb.SelectedIndex = liste.Count > 0 ? 0 : -1;
+    }
+
+    private void AdresTipiFarkiniZorla()
+    {
+        var gMusteri = cb_gonderiGonderen.SelectedValue as int?;
+        var aMusteri = cb_gonderiAlici.SelectedValue as int?;
+        if (!gMusteri.HasValue || !aMusteri.HasValue) return;
+        if (gMusteri.Value != aMusteri.Value) return;
+
+        string gTip = (cb_gonderiGonderenAdres.SelectedItem as Adres)?.AdresTipi;
+        string aTip = (cb_gonderiAliciAdres.SelectedItem as Adres)?.AdresTipi;
+        if (string.IsNullOrEmpty(gTip) && string.IsNullOrEmpty(aTip)) return;
+
+        using var ctx = new KtsContext();
+        var tumAdresler = ctx.Adresler
+            .Where(a => a.MusteriId == gMusteri.Value && (a.AdresTipi == "Ev" || a.AdresTipi == "İş" || a.AdresTipi == "Is"))
+            .ToList();
+
+        if (!string.IsNullOrEmpty(gTip))
+        {
+            var hedefTip = gTip.Equals("Ev", StringComparison.OrdinalIgnoreCase) ? "İş" : "Ev";
+            var alternatifler = tumAdresler.Where(a => string.Equals(a.AdresTipi, hedefTip, StringComparison.OrdinalIgnoreCase)).ToList();
+            cb_gonderiAliciAdres.DataSource = alternatifler;
+            cb_gonderiAliciAdres.DisplayMember = nameof(Adres.AdresTipi);
+            cb_gonderiAliciAdres.ValueMember = nameof(Adres.AdresId);
+            cb_gonderiAliciAdres.SelectedIndex = alternatifler.Count > 0 ? 0 : -1;
+        }
+        else if (!string.IsNullOrEmpty(aTip))
+        {
+            var hedefTip = aTip.Equals("Ev", StringComparison.OrdinalIgnoreCase) ? "İş" : "Ev";
+            var alternatifler = tumAdresler.Where(a => string.Equals(a.AdresTipi, hedefTip, StringComparison.OrdinalIgnoreCase)).ToList();
+            cb_gonderiGonderenAdres.DataSource = alternatifler;
+            cb_gonderiGonderenAdres.DisplayMember = nameof(Adres.AdresTipi);
+            cb_gonderiGonderenAdres.ValueMember = nameof(Adres.AdresId);
+            cb_gonderiGonderenAdres.SelectedIndex = alternatifler.Count > 0 ? 0 : -1;
+        }
+    }
+
+    // 8 haneli rastgele takip no
+    private string RasgeleTakipNo8Hane()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var rnd = new Random();
+        return new string(Enumerable.Range(0, 8).Select(_ => chars[rnd.Next(chars.Length)]).ToArray());
+    }
+
+    // Şube değişince o şubedeki aktif kuryeleri listele ve rastgele birini seç
+    private void cb_gonderiCikisSube_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (cb_gonderiCikisSube.SelectedValue is int subeId)
+        {
+            using var ctx = new KtsContext();
+            var kuryeler = ctx.Personeller
+                .Include(p => p.Rol)
+                .Where(p => p.SubeId == subeId && p.Aktif && p.Rol.RolAd == "Kurye")
+                .OrderBy(p => p.Ad)
+                .ToList();
+            cb_gonderiAtananKurye.DataSource = kuryeler;
+            cb_gonderiAtananKurye.DisplayMember = nameof(Personel.Ad);
+            cb_gonderiAtananKurye.ValueMember = nameof(Personel.PersonelId);
+            if (kuryeler.Count > 0)
+            {
+                var rnd = new Random();
+                cb_gonderiAtananKurye.SelectedIndex = rnd.Next(kuryeler.Count);
+            }
+            else
+            {
+                cb_gonderiAtananKurye.SelectedIndex = -1;
+            }
+        }
+    }
+
+    private void btn_gonderiSurecYonetim_Click(object sender, EventArgs e)
+    {
+        if (!secilenGonderiId.HasValue)
+        {
+            MessageBox.Show("Lütfen süreç yönetimi için bir gönderi seçin.");
+            return;
+        }
+
+        using var frm = new Forms.GonderiSurecForm(secilenGonderiId.Value);
+        frm.ShowDialog(this);
+
+        // Kapanışta ızgarayı tazele (durum değişmiş olabilir)
+        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+        // Detay panelini de tazele
+        GonderiDetayPaneliniGuncelle();
+    }
+
+    private void nud_gonderiUcret_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void btn_gonderiTarifeYonetim_Click(object sender, EventArgs e)
+    {
+        // Tarife Yönetim formunu aç
+        using var frm = new TarifeYonetimForm();
+        frm.ShowDialog(this);
+
+        // Form kapandıktan sonra teslimat tipi comboboxunu yenile
+        TeslimatTipiCombosuDoldur();
+        
+        // Ücret hesaplamayı yenile (tarife değişmiş olabilir)
+        GonderiFiyatHesaplaVeGuncelle();
+        
+        MessageBox.Show(
+            "Tarife ayarları kapatıldı.\n" +
+            "Teslimat tipleri ve ücret hesaplama yenilendi.", 
+            "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    // Seçili gönderi detaylarını sağ paneldeki dgv_seciliGonderiDetay içinde gösterir
+    private void GonderiDetayPaneliniGuncelle()
+    {
+        if (!secilenGonderiId.HasValue)
+        {
+            dgv_seciliGonderiDetay.DataSource = null;
+            return;
+        }
+
+        using var ctx = new KtsContext();
+        var gecmisListe = ctx.GonderiDurumGecmisi
+            .AsNoTracking()
+            .Where(x => x.GonderiId == secilenGonderiId.Value)
+            .OrderByDescending(x => x.Tarih)
+            .Select(x => new
+            {
+                x.Id,
+                x.GonderiId,
+                x.DurumAd,
+                x.Aciklama,
+                x.Tarih,
+                x.IslemTipi,
+                x.SonDurumMu,
+                x.IslemSonucu,
+                x.TeslimatKodu,
+                x.IlgiliKisiAd,
+                x.IlgiliKisiTel,
+                x.SubeId,
+                x.PersonelId,
+                x.AracId,
+                x.IslemBaslangicTarihi,
+                x.IslemBitisTarihi
+            })
+            .ToList();
+
+        dgv_seciliGonderiDetay.AutoGenerateColumns = true;
+        dgv_seciliGonderiDetay.DataSource = gecmisListe;
+        dgv_seciliGonderiDetay.ClearSelection();
+    }
+
+    // Tasarımcı tarafından bağlanan boş olay işleyicileri
+    private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e) { }
+    private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e) { }
+    private void label12_Click(object sender, EventArgs e) { }
+    private void groupBox1_Enter(object sender, EventArgs e) { }
+    private void label2_Click(object sender, EventArgs e) { }
+    private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+    private void dateTimePicker4_ValueChanged(object sender, EventArgs e) { }
+    private void button29_Click(object sender, EventArgs e) { }
+    private void label85_Click(object sender, EventArgs e) { }
+    private void MainForm_FormClosing(object sender, FormClosingEventArgs e) { }
+}

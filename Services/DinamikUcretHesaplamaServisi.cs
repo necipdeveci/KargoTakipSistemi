@@ -45,15 +45,15 @@ public class DinamikUcretHesaplamaServisi
         if (agirlikKg < 0) agirlikKg = 0;
         detay.Agirlik = agirlikKg;
 
-        // 1) Aðýrlýk bazlý tarife
+        // 1) Aðýrlýk bazlý tarife (veritabanýndan)
         detay.AgirlikTarife = AgirlikTarifeGetir(agirlikKg);
         detay.AgirlikMaliyeti = agirlikKg * detay.AgirlikTarife;
 
-        // 2) Hacim bazlý ek ücret
+        // 2) Hacim bazlý ek ücret (veritabanýndan)
         detay.Hacim = HacimHesapla(boyutMetni);
         detay.HacimEkUcret = HacimEkUcretGetir(detay.Hacim);
 
-        // 3) Teslimat tipi çarpaný
+        // 3) Teslimat tipi çarpaný (veritabanýndan)
         detay.TeslimatTipi = teslimatTipi;
         detay.TeslimatCarpani = TeslimatCarpaniGetir(teslimatTipi);
 
@@ -61,7 +61,7 @@ public class DinamikUcretHesaplamaServisi
         detay.HamUcret = (detay.AgirlikMaliyeti + detay.HacimEkUcret) * detay.TeslimatCarpani;
         detay.HamUcret = decimal.Round(detay.HamUcret, 2);
 
-        // 5) Ek masraf (manuel veya otomatik)
+        // 5) Ek masraf (manuel veya otomatik - veritabanýndan)
         if (mevcutEkMasraf.HasValue && mevcutEkMasraf.Value > 0)
         {
             detay.EkMasraf = mevcutEkMasraf.Value;
@@ -73,7 +73,7 @@ public class DinamikUcretHesaplamaServisi
             detay.EkMasrafManuelMi = false;
         }
 
-        // 6) Ýndirim (manuel veya otomatik)
+        // 6) Ýndirim (manuel veya otomatik - veritabanýndan)
         if (mevcutIndirim.HasValue && mevcutIndirim.Value > 0)
         {
             detay.Indirim = mevcutIndirim.Value;
@@ -107,7 +107,8 @@ public class DinamikUcretHesaplamaServisi
     #region Veritabanýndan Tarife Çekme Metotlarý
 
     /// <summary>
-    /// Aðýrlýða göre kg baþýna tarifeyi veritabanýndan getirir
+    /// Aðýrlýða göre kg baþýna tarifeyi veritabanýndan getirir.
+    /// TarifeTuru: "AgirlikTarife"
     /// </summary>
     private decimal AgirlikTarifeGetir(decimal agirlikKg)
     {
@@ -122,11 +123,12 @@ public class DinamikUcretHesaplamaServisi
             .ThenBy(t => t.MinDeger)
             .FirstOrDefault();
 
-        return tarife?.Deger ?? 15m; // Varsayýlan: 15 TL/kg
+        return tarife?.Deger ?? 25m; // Varsayýlan: 25 TL/kg (seed data'daki deðer)
     }
 
     /// <summary>
-    /// Hacme göre ek ücreti veritabanýndan getirir
+    /// Hacme göre ek ücreti veritabanýndan getirir.
+    /// TarifeTuru: "HacimEkUcret"
     /// </summary>
     private decimal HacimEkUcretGetir(decimal? hacim)
     {
@@ -143,41 +145,57 @@ public class DinamikUcretHesaplamaServisi
             .ThenBy(t => t.MinDeger)
             .FirstOrDefault();
 
-        return tarife?.Deger ?? 0m;
+        return tarife?.Deger ?? 0m; // Varsayýlan: 0 TL (seed data'daki deðer)
     }
 
     /// <summary>
-    /// Teslimat tipine göre çarpaný veritabanýndan getirir
+    /// Teslimat tipine göre çarpaný veritabanýndan getirir.
+    /// TarifeTuru: "TeslimatCarpan"
+    /// TeslimatTipi alanýný kullanarak eþleþen tarifeyi bulur.
     /// </summary>
     private decimal TeslimatCarpaniGetir(string teslimatTipi)
     {
         if (string.IsNullOrWhiteSpace(teslimatTipi))
             teslimatTipi = "Standart";
 
+        // Teslimat tipini normalize et (form'daki deðerler ile DB'deki deðerleri eþleþtir)
+        string normalizedTip = teslimatTipi;
+        
+        // Form'dan gelen kýsa isimler -> DB'deki tam isimler
+        if (teslimatTipi == "Standart") 
+            normalizedTip = "Standart Teslimat";
+        else if (teslimatTipi == "Hýzlý") 
+            normalizedTip = "Hýzlý Teslimat";
+        else if (teslimatTipi == "Ayný Gün") 
+            normalizedTip = "Ayný Gün Teslimat";
+        else if (teslimatTipi == "Randevulu") 
+            normalizedTip = "Randevulu Teslimat";
+
         var tarife = _context.FiyatlandirmaTarifeler
             .Where(t => t.Aktif 
                      && t.TarifeTuru == "TeslimatCarpan"
                      && t.GecerlilikBaslangic <= DateTime.Now
                      && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
-                     && t.TarifeAdi == teslimatTipi)
+                     && t.TeslimatTipi == normalizedTip)
             .OrderBy(t => t.Oncelik)
             .FirstOrDefault();
 
-        return tarife?.Deger ?? 1.0m; // Varsayýlan: 1.0 (çarpan yok)
+        return tarife?.Deger ?? 1.0m; // Varsayýlan: 1.0 (çarpan yok - seed data'daki deðer)
     }
 
     /// <summary>
-    /// Aðýrlýk ve hacme göre ek masraflarý hesaplar
+    /// Aðýrlýk ve hacme göre ek masraflarý veritabanýndan hesaplar.
+    /// TarifeTuru: "EkMasrafEsik"
     /// </summary>
     private decimal EkMasrafHesapla(decimal agirlikKg, decimal? hacim)
     {
         decimal toplam = 0m;
 
-        // Aðýr yük ek masrafý
+        // Aðýr yük ek masrafý (örn: 50 kg üzeri için ek ücret)
         var agirYukTarife = _context.FiyatlandirmaTarifeler
             .Where(t => t.Aktif 
                      && t.TarifeTuru == "EkMasrafEsik"
-                     && t.TarifeAdi.Contains("Aðýr")
+                     && (t.TarifeAdi.Contains("Aðýr") || t.TarifeAdi.Contains("Agir"))
                      && t.GecerlilikBaslangic <= DateTime.Now
                      && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
                      && (t.MinDeger == null || agirlikKg > t.MinDeger))
@@ -187,7 +205,7 @@ public class DinamikUcretHesaplamaServisi
         if (agirYukTarife != null)
             toplam += agirYukTarife.Deger;
 
-        // Büyük hacim ek masrafý
+        // Büyük hacim ek masrafý (örn: 100000 cm³ üzeri için ek ücret)
         if (hacim.HasValue)
         {
             var buyukHacimTarife = _context.FiyatlandirmaTarifeler
@@ -208,7 +226,9 @@ public class DinamikUcretHesaplamaServisi
     }
 
     /// <summary>
-    /// Aðýrlýða göre indirim hesaplar
+    /// Aðýrlýða göre indirim veritabanýndan hesaplar.
+    /// TarifeTuru: "IndirimEsik"
+    /// Deger alaný indirim oranýný içerir (0.10 = %10 indirim)
     /// </summary>
     private decimal IndirimHesapla(decimal agirlikKg, decimal hamUcret)
     {
@@ -218,14 +238,17 @@ public class DinamikUcretHesaplamaServisi
                      && t.GecerlilikBaslangic <= DateTime.Now
                      && (t.GecerlilikBitis == null || t.GecerlilikBitis >= DateTime.Now)
                      && (t.MinDeger == null || agirlikKg > t.MinDeger))
-            .OrderByDescending(t => t.MinDeger) // En yüksek eþik önce
+            .OrderByDescending(t => t.MinDeger) // En yüksek eþik önce (en yüksek indirim)
             .ThenBy(t => t.Oncelik)
             .FirstOrDefault();
 
         if (indirimTarife != null)
-            return hamUcret * indirimTarife.Deger; // Deger: 0.10 = %10 indirim
+        {
+            // Deger alaný oran ise (0.10 = %10)
+            return hamUcret * indirimTarife.Deger;
+        }
 
-        return 0m;
+        return 0m; // Ýndirim yok
     }
 
     #endregion

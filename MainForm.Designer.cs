@@ -77,12 +77,20 @@
             groupBox7 = new GroupBox();
             dgv_seciliGonderiDetay = new DataGridView();
             groupBox5 = new GroupBox();
+            tb_filtreTeslimAlanAdSoyad = new TextBox();
+            label125 = new Label();
+            tb_filtreIdAdSoyad = new TextBox();
+            label124 = new Label();
+            dtp_filtreSonTarih = new DateTimePicker();
+            label123 = new Label();
+            label122 = new Label();
+            tb_filtreId = new TextBox();
             btn_gonderiAra = new Button();
             label19 = new Label();
-            dateTimePicker3 = new DateTimePicker();
-            comboBox8 = new ComboBox();
+            dtp_filtreIlkTarih = new DateTimePicker();
+            cb_filtreIdTipSec = new ComboBox();
             label18 = new Label();
-            textBox2 = new TextBox();
+            tb_filtreTakipNo = new TextBox();
             label17 = new Label();
             tabPage2 = new TabPage();
             splitContainer2 = new SplitContainer();
@@ -956,12 +964,20 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(tb_filtreTeslimAlanAdSoyad);
+            groupBox5.Controls.Add(label125);
+            groupBox5.Controls.Add(tb_filtreIdAdSoyad);
+            groupBox5.Controls.Add(label124);
+            groupBox5.Controls.Add(dtp_filtreSonTarih);
+            groupBox5.Controls.Add(label123);
+            groupBox5.Controls.Add(label122);
+            groupBox5.Controls.Add(tb_filtreId);
             groupBox5.Controls.Add(btn_gonderiAra);
             groupBox5.Controls.Add(label19);
-            groupBox5.Controls.Add(dateTimePicker3);
-            groupBox5.Controls.Add(comboBox8);
+            groupBox5.Controls.Add(dtp_filtreIlkTarih);
+            groupBox5.Controls.Add(cb_filtreIdTipSec);
             groupBox5.Controls.Add(label18);
-            groupBox5.Controls.Add(textBox2);
+            groupBox5.Controls.Add(tb_filtreTakipNo);
             groupBox5.Controls.Add(label17);
             groupBox5.Dock = DockStyle.Top;
             groupBox5.Location = new Point(0, 0);
@@ -970,6 +986,71 @@
             groupBox5.TabIndex = 28;
             groupBox5.TabStop = false;
             groupBox5.Text = "Gönderi Arama";
+            // 
+            // tb_filtreTeslimAlanAdSoyad
+            // 
+            tb_filtreTeslimAlanAdSoyad.Location = new Point(429, 51);
+            tb_filtreTeslimAlanAdSoyad.Name = "tb_filtreTeslimAlanAdSoyad";
+            tb_filtreTeslimAlanAdSoyad.Size = new Size(97, 22);
+            tb_filtreTeslimAlanAdSoyad.TabIndex = 39;
+            // 
+            // label125
+            // 
+            label125.AutoSize = true;
+            label125.Location = new Point(269, 57);
+            label125.Name = "label125";
+            label125.Size = new Size(154, 14);
+            label125.TabIndex = 38;
+            label125.Text = "Teslim Alan Ad Soyad:";
+            // 
+            // tb_filtreIdAdSoyad
+            // 
+            tb_filtreIdAdSoyad.Location = new Point(380, 23);
+            tb_filtreIdAdSoyad.Name = "tb_filtreIdAdSoyad";
+            tb_filtreIdAdSoyad.Size = new Size(97, 22);
+            tb_filtreIdAdSoyad.TabIndex = 37;
+            // 
+            // label124
+            // 
+            label124.AutoSize = true;
+            label124.Location = new Point(269, 27);
+            label124.Name = "label124";
+            label124.Size = new Size(105, 14);
+            label124.TabIndex = 36;
+            label124.Text = "ID - Ad Soyad:";
+            // 
+            // dtp_filtreSonTarih
+            // 
+            dtp_filtreSonTarih.Format = DateTimePickerFormat.Short;
+            dtp_filtreSonTarih.Location = new Point(766, 21);
+            dtp_filtreSonTarih.Name = "dtp_filtreSonTarih";
+            dtp_filtreSonTarih.Size = new Size(97, 22);
+            dtp_filtreSonTarih.TabIndex = 35;
+            // 
+            // label123
+            // 
+            label123.AutoSize = true;
+            label123.Location = new Point(683, 26);
+            label123.Name = "label123";
+            label123.Size = new Size(77, 14);
+            label123.TabIndex = 34;
+            label123.Text = "Son Tarih:";
+            // 
+            // label122
+            // 
+            label122.AutoSize = true;
+            label122.Location = new Point(27, 82);
+            label122.Name = "label122";
+            label122.Size = new Size(56, 14);
+            label122.TabIndex = 33;
+            label122.Text = "ID Gir:";
+            // 
+            // tb_filtreId
+            // 
+            tb_filtreId.Location = new Point(103, 79);
+            tb_filtreId.Name = "tb_filtreId";
+            tb_filtreId.Size = new Size(147, 22);
+            tb_filtreId.TabIndex = 32;
             // 
             // btn_gonderiAra
             // 
@@ -984,42 +1065,43 @@
             // label19
             // 
             label19.AutoSize = true;
-            label19.Location = new Point(279, 29);
+            label19.Location = new Point(497, 27);
             label19.Name = "label19";
-            label19.Size = new Size(112, 14);
+            label19.Size = new Size(77, 14);
             label19.TabIndex = 31;
-            label19.Text = "Gönderi Tarihi:";
+            label19.Text = "İlk Tarih:";
             // 
-            // dateTimePicker3
+            // dtp_filtreIlkTarih
             // 
-            dateTimePicker3.Location = new Point(397, 26);
-            dateTimePicker3.Name = "dateTimePicker3";
-            dateTimePicker3.Size = new Size(200, 22);
-            dateTimePicker3.TabIndex = 30;
+            dtp_filtreIlkTarih.Format = DateTimePickerFormat.Short;
+            dtp_filtreIlkTarih.Location = new Point(580, 21);
+            dtp_filtreIlkTarih.Name = "dtp_filtreIlkTarih";
+            dtp_filtreIlkTarih.Size = new Size(97, 22);
+            dtp_filtreIlkTarih.TabIndex = 30;
             // 
-            // comboBox8
+            // cb_filtreIdTipSec
             // 
-            comboBox8.FormattingEnabled = true;
-            comboBox8.Location = new Point(124, 51);
-            comboBox8.Name = "comboBox8";
-            comboBox8.Size = new Size(112, 22);
-            comboBox8.TabIndex = 29;
+            cb_filtreIdTipSec.FormattingEnabled = true;
+            cb_filtreIdTipSec.Location = new Point(117, 51);
+            cb_filtreIdTipSec.Name = "cb_filtreIdTipSec";
+            cb_filtreIdTipSec.Size = new Size(133, 22);
+            cb_filtreIdTipSec.TabIndex = 29;
             // 
             // label18
             // 
             label18.AutoSize = true;
             label18.Location = new Point(27, 54);
             label18.Name = "label18";
-            label18.Size = new Size(91, 14);
+            label18.Size = new Size(84, 14);
             label18.TabIndex = 28;
-            label18.Text = "Müşteri Seç:";
+            label18.Text = "ID Tip Seç:";
             // 
-            // textBox2
+            // tb_filtreTakipNo
             // 
-            textBox2.Location = new Point(117, 26);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(119, 22);
-            textBox2.TabIndex = 27;
+            tb_filtreTakipNo.Location = new Point(103, 23);
+            tb_filtreTakipNo.Name = "tb_filtreTakipNo";
+            tb_filtreTakipNo.Size = new Size(147, 22);
+            tb_filtreTakipNo.TabIndex = 27;
             // 
             // label17
             // 
@@ -3963,10 +4045,10 @@
         private TextBox tb_gonderiToplamFiyat;
         private GroupBox groupBox5;
         private Label label19;
-        private DateTimePicker dateTimePicker3;
-        private ComboBox comboBox8;
+        private DateTimePicker dtp_filtreIlkTarih;
+        private ComboBox cb_filtreIdTipSec;
         private Label label18;
-        private TextBox textBox2;
+        private TextBox tb_filtreTakipNo;
         private Label label17;
         private GroupBox groupBox6;
         private DataGridView dgv_gonderiler;
@@ -4254,5 +4336,13 @@
         private Button btn_gonderiKayitSil;
         private Button btn_gonderiSurecYonetim;
         private Button btn_gonderiTarifeYonetim;
+        private Label label123;
+        private Label label122;
+        private TextBox tb_filtreId;
+        private DateTimePicker dtp_filtreSonTarih;
+        private TextBox tb_filtreIdAdSoyad;
+        private Label label124;
+        private TextBox tb_filtreTeslimAlanAdSoyad;
+        private Label label125;
     }
 }

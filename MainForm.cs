@@ -381,6 +381,13 @@ public partial class MainForm : Form
             }
         }
 
+        // ID Tip Seç ComboBox'ını doldur
+        cb_filtreIdTipSec.Items.Clear();
+        cb_filtreIdTipSec.Items.Add("-");
+        cb_filtreIdTipSec.Items.Add("Gönderen");
+        cb_filtreIdTipSec.Items.Add("Alıcı");
+        cb_filtreIdTipSec.Items.Add("Kurye"); 
+        cb_filtreIdTipSec.SelectedIndex = 0;
         // Gönderi Combobox ve Grid bağlama
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
@@ -389,9 +396,10 @@ public partial class MainForm : Form
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
             ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
             nameof(Personel.Ad), nameof(Personel.PersonelId));
-        cb_gonderiTeslimatTip.Items.Clear();
-        cb_gonderiTeslimatTip.Items.AddRange(new object[] { "Standart", "Hızlı", "Aynı Gün", "Randevulu" });
-        cb_gonderiTeslimatTip.SelectedIndex = 0;
+
+        // Teslimat tipi combobox'ını veritabanındaki tarifelerden doldur
+        TeslimatTipiCombosunuDoldur();
+
         VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
         // İlk yüklemede hesaplamayı tetikle
         GonderiFiyatHesaplaVeGuncelle();
@@ -440,6 +448,68 @@ public partial class MainForm : Form
             nud_gonderiUcret.Value = row.Cells["Ucret"].Value != DBNull.Value ? Convert.ToDecimal(row.Cells["Ucret"].Value) : 0;
             nud_gonderiIndirim.Value = row.Cells["IndirimTutar"].Value != DBNull.Value ? Convert.ToDecimal(row.Cells["IndirimTutar"].Value) : 0;
             nud_gonderiEkMasraf.Value = row.Cells["EkMasraf"].Value != DBNull.Value ? Convert.ToDecimal(row.Cells["EkMasraf"].Value) : 0;
+            
+            // Veritabanından ilgili gönderiyi yükleyerek FK bilgilerini al
+            if (secilenGonderiId.HasValue)
+            {
+                using var ctx = new KtsContext();
+                var gonderi = ctx.Gonderiler
+                    .Include(g => g.Gonderen)
+                    .Include(g => g.Alici)
+                    .Include(g => g.GonderenAdres)
+                    .Include(g => g.AliciAdres)
+                    .Include(g => g.Kurye)
+                    .FirstOrDefault(g => g.GonderiId == secilenGonderiId.Value);
+
+                if (gonderi != null)
+                {
+                    // Gönderen ComboBox
+                    if (gonderi.GonderenId > 0)
+                    {
+                        cb_gonderiGonderen.SelectedValue = gonderi.GonderenId;
+                        // Gönderen adreslerini doldur
+                        if (gonderi.GonderenId > 0)
+                            AdresCombosunuBagla(cb_gonderiGonderenAdres, gonderi.GonderenId);
+                    }
+
+                    // Alıcı ComboBox
+                    if (gonderi.AliciId > 0)
+                    {
+                        cb_gonderiAlici.SelectedValue = gonderi.AliciId;
+                        // Alıcı adreslerini doldur
+                        if (gonderi.AliciId > 0)
+                            AdresCombosunuBagla(cb_gonderiAliciAdres, gonderi.AliciId);
+                    }
+
+                    // Gönderen Adresi
+                    if (gonderi.GonderenAdresId.HasValue)
+                        cb_gonderiGonderenAdres.SelectedValue = gonderi.GonderenAdresId.Value;
+
+                    // Alıcı Adresi
+                    if (gonderi.AliciAdresId.HasValue)
+                        cb_gonderiAliciAdres.SelectedValue = gonderi.AliciAdresId.Value;
+
+                    // Çıkış Şubesi (önce kolonu kontrol et)
+                    try 
+                    {
+                        var cikisSubeCell = row.Cells["CikisSubeId"];
+                        if (cikisSubeCell != null && cikisSubeCell.Value != DBNull.Value)
+                        {
+                            var cikisSubeId = Convert.ToInt32(cikisSubeCell.Value);
+                            cb_gonderiCikisSube.SelectedValue = cikisSubeId;
+                        }
+                    }
+                    catch 
+                    {
+                        // CikisSubeId kolonu yoksa sessizce devam et
+                    }
+
+                    // Atanan Kurye
+                    if (gonderi.KuryeId.HasValue)
+                        cb_gonderiAtananKurye.SelectedValue = gonderi.KuryeId.Value;
+                }
+            }
+
             _ucretManuelDegisti = true; // seçili kaydı yüklerken hesaplamayı override etme
             GonderiToplamFiyatGuncelle();
 
@@ -566,53 +636,199 @@ public partial class MainForm : Form
     private void btn_gonderiFormTemizle_Click(object? sender, EventArgs e)
     {
         SecimleriResetle();
-        KontrolleriTemizle(tb_gonderiTakipNo, tb_gonderiBoyut, cb_gonderiTeslimatTip, cb_gonderiGonderen, cb_gonderiGonderenAdres, cb_gonderiAlici, cb_gonderiAliciAdres, cb_gonderiAtananKurye, cb_gonderiCikisSube, nud_gonderiAgirlik, nud_gonderiUcret, nud_gonderiIndirim, nud_gonderiEkMasraf, tb_gonderiToplamFiyat, dtp_gonderiTarih, dtp_gonderiTahminiTeslimTarih);
+
+        // Form kontrolleri temizleme
+        KontrolleriTemizle(
+            tb_gonderiTakipNo,
+            tb_gonderiBoyut,
+            cb_gonderiTeslimatTip,
+            cb_gonderiGonderen,
+            cb_gonderiGonderenAdres,
+            cb_gonderiAlici,
+            cb_gonderiAliciAdres,
+            cb_gonderiAtananKurye,
+            cb_gonderiCikisSube,
+            nud_gonderiAgirlik,
+            nud_gonderiUcret,
+            nud_gonderiIndirim,
+            nud_gonderiEkMasraf,
+            tb_gonderiToplamFiyat,
+            dtp_gonderiTarih,
+            dtp_gonderiTahminiTeslimTarih
+        );
+
+        // Arama/Filtreleme kontrolleri temizleme
+        KontrolleriTemizle(
+            tb_filtreTakipNo,
+            tb_filtreId,
+            tb_filtreIdAdSoyad,
+            tb_filtreTeslimAlanAdSoyad,
+            cb_filtreIdTipSec
+        );
+
+        // Tarih filtrelerini bugüne ayarla
+        dtp_filtreIlkTarih.Value = DateTime.Today;
+        dtp_filtreSonTarih.Value = DateTime.Today;
+
+        // ID Tip Seç combobox'ını varsayılan değere ayarla
+        cb_filtreIdTipSec.SelectedIndex = 0; // "-" seçeneği
+
+        // Grid'i yeniden yükle
         VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
-        cb_gonderiTeslimatTip.Items.Clear();
-        cb_gonderiTeslimatTip.Items.AddRange(new object[] { "Standart", "Hızlı", "Aynı Gün", "Randevulu" });
-        cb_gonderiTeslimatTip.SelectedIndex = 0;
-        // müşteriler/kurye/sube combolarını yeniden bağla
+
+        // Teslimat tipi combobox'ını veritabanından yeniden doldur
+        TeslimatTipiCombosunuDoldur();
+
+        // Müşteriler/kurye/şube combolarını yeniden bağla
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiCikisSube, ctx => ctx.Subeler.OrderBy(s => s.SubeAd), nameof(Sube.SubeAd), nameof(Sube.SubeId));
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiAtananKurye,
             ctx => ctx.Personeller.Include(p => p.Rol).Where(p => p.Aktif && p.Rol.RolAd == "Kurye").OrderBy(p => p.Ad),
             nameof(Personel.Ad), nameof(Personel.PersonelId));
-        _ucretManuelDegisti = false; // temizle sonrası otomatik hesaplamaya izin ver
+
+        _ucretManuelDegisti = false; // Temizle sonrası otomatik hesaplamaya izin ver
         GonderiFiyatHesaplaVeGuncelle();
         btn_gonderiOlustur.Text = "Kaydet";
     }
 
     private void btn_gonderiAra_Click(object? sender, EventArgs e)
     {
-        string takipNo = textBox2.Text?.Trim();
-        int? musteriId = comboBox8.SelectedValue as int?;
-        DateTime? tarih = dateTimePicker3.Value;
-        VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx =>
-            ctx.Gonderiler
-                .Include(g => g.Gonderen)
-                .Include(g => g.Alici)
-                .Include(g => g.Kurye)
-                .Where(g => (string.IsNullOrEmpty(takipNo) || g.TakipNo == takipNo)
-                            && (!musteriId.HasValue || g.GonderenId == musteriId.Value || g.AliciId == musteriId.Value)
-                            && (!tarih.HasValue || g.GonderiTarihi.Date == tarih.Value.Date))
-                .Select(g => new
+        using var ctx = new KtsContext();
+
+        // Tüm gönderi sorgusunu başlat - TÜM ALANLARI GETİR
+        IQueryable<Gonderi> query = ctx.Gonderiler
+            .Include(g => g.Gonderen)
+            .Include(g => g.Alici)
+            .Include(g => g.Kurye)
+            .Include(g => g.GonderenAdres)
+            .Include(g => g.AliciAdres);
+
+        bool filtreLandiMi = false;
+
+        // GRUP 1: Takip No Filtresi (tek başına çalışır)
+        var takipNo = tb_filtreTakipNo.Text.Trim();
+        if (!string.IsNullOrEmpty(takipNo))
+        {
+            query = query.Where(g => EF.Functions.Like(g.TakipNo, "%" + takipNo + "%"));
+            filtreLandiMi = true;
+        }
+
+        // GRUP 2: ID/Ad-Soyad Filtresi (birlikte çalışır, Grup 1'den bağımsız)
+        var secilenTip = cb_filtreIdTipSec.SelectedItem?.ToString();
+        var idText = tb_filtreId.Text.Trim();
+        var adSoyad = tb_filtreIdAdSoyad.Text.Trim();
+
+        // "-" seçiliyse veya seçim yoksa bu grubu atla
+        bool grup2Aktif = !string.IsNullOrEmpty(secilenTip) &&
+                          secilenTip != "-" &&
+                          (!string.IsNullOrEmpty(idText) || !string.IsNullOrEmpty(adSoyad));
+
+        if (grup2Aktif)
+        {
+            // ID ile filtreleme
+            if (!string.IsNullOrEmpty(idText) && int.TryParse(idText, out int arananId))
+            {
+                switch (secilenTip)
                 {
-                    g.GonderiId,
-                    g.TakipNo,
-                    GonderenAd = g.Gonderen != null ? g.Gonderen.Ad + " " + g.Gonderen.Soyad : string.Empty,
-                    AliciAd = g.Alici != null ? g.Alici.Ad + " " + g.Alici.Soyad : string.Empty,
-                    KuryeAd = g.Kurye != null ? g.Kurye.Ad + " " + g.Kurye.Soyad : string.Empty,
-                    g.GonderiTarihi,
-                    g.TahminiTeslimTarihi,
-                    g.TeslimTarihi,
-                    g.TeslimatTipi,
-                    g.Agirlik,
-                    g.Boyut,
-                    g.Ucret,
-                    g.IndirimTutar,
-                    g.EkMasraf
-                }));
+                    case "Gönderen":
+                        query = query.Where(g => g.GonderenId == arananId);
+                        break;
+                    case "Alıcı":
+                        query = query.Where(g => g.AliciId == arananId);
+                        break;
+                    case "Kurye":
+                        query = query.Where(g => g.KuryeId == arananId);
+                        break;
+                }
+            }
+            // Ad-Soyad ile filtreleme
+            else if (!string.IsNullOrEmpty(adSoyad))
+            {
+                switch (secilenTip)
+                {
+                    case "Gönderen":
+                        query = query.Where(g =>
+                            EF.Functions.Like(g.Gonderen.Ad + " " + g.Gonderen.Soyad, "%" + adSoyad + "%") ||
+                            EF.Functions.Like(g.Gonderen.Ad, "%" + adSoyad + "%") ||
+                            EF.Functions.Like(g.Gonderen.Soyad, "%" + adSoyad + "%"));
+                        break;
+                    case "Alıcı":
+                        query = query.Where(g =>
+                            EF.Functions.Like(g.Alici.Ad + " " + g.Alici.Soyad, "%" + adSoyad + "%") ||
+                            EF.Functions.Like(g.Alici.Ad, "%" + adSoyad + "%") ||
+                            EF.Functions.Like(g.Alici.Soyad, "%" + adSoyad + "%"));
+                        break;
+                    case "Kurye":
+                        query = query.Where(g => g.Kurye != null && (
+                            EF.Functions.Like(g.Kurye.Ad + " " + g.Kurye.Soyad, "%" + adSoyad + "%") ||
+                            EF.Functions.Like(g.Kurye.Ad, "%" + adSoyad + "%") ||
+                            EF.Functions.Like(g.Kurye.Soyad, "%" + adSoyad + "%")));
+                        break;
+                }
+            }
+
+            filtreLandiMi = true;
+        }
+
+        // GRUP 3: Teslim Alan Kişi Filtresi (tek başına çalışır)
+        var teslimAlanAd = tb_filtreTeslimAlanAdSoyad.Text.Trim();
+        if (!string.IsNullOrEmpty(teslimAlanAd))
+        {
+            query = query.Where(g =>
+                g.TeslimEdilenKisi != null &&
+                EF.Functions.Like(g.TeslimEdilenKisi, "%" + teslimAlanAd + "%"));
+            filtreLandiMi = true;
+        }
+
+        // GRUP 4: Tarih Aralığı Filtresi
+        if (!filtreLandiMi || dtp_filtreIlkTarih.Value.Date != DateTime.Today.Date ||
+            dtp_filtreSonTarih.Value.Date != DateTime.Today.Date)
+        {
+            DateTime ilkTarih = dtp_filtreIlkTarih.Value.Date;
+            DateTime sonTarih = dtp_filtreSonTarih.Value.Date.AddDays(1).AddSeconds(-1);
+
+            query = query.Where(g => g.GonderiTarihi >= ilkTarih && g.GonderiTarihi <= sonTarih);
+        }
+
+        // Sonuçları TÜM ALANLARLA grid'e bağla
+        var sonuclar = query
+            .OrderByDescending(g => g.GonderiTarihi)
+            .Select(g => new
+            {
+                g.GonderiId,
+                g.TakipNo,
+                GonderenAd = g.Gonderen.Ad + " " + g.Gonderen.Soyad,
+                GonderenId = g.GonderenId,
+                AliciAd = g.Alici.Ad + " " + g.Alici.Soyad,
+                AliciId = g.AliciId,
+                KuryeAd = g.Kurye != null ? g.Kurye.Ad + " " + g.Kurye.Soyad : "",
+                KuryeId = g.KuryeId,
+                GonderenAdres = g.GonderenAdres != null ? g.GonderenAdres.AcikAdres : "",
+                AliciAdres = g.AliciAdres != null ? g.AliciAdres.AcikAdres : "",
+                g.GonderiTarihi,
+                g.TahminiTeslimTarihi,
+                g.TeslimTarihi,
+                g.TeslimatTipi,
+                g.Agirlik,
+                g.Boyut,
+                g.Ucret,
+                g.IndirimTutar,
+                g.EkMasraf,
+                ToplamUcret = g.Ucret - (g.IndirimTutar ?? 0m) + (g.EkMasraf ?? 0m),
+                g.TeslimEdilenKisi,
+                g.IadeDurumu,
+                g.KayitTarihi,
+                g.GuncellemeTarihi,
+                g.IptalTarihi
+            }).ToList();
+
+        dgv_gonderiler.DataSource = sonuclar;
+
+        if (sonuclar.Count == 0)
+        {
+            MessageBox.Show("Arama kriterlerine uygun gönderi bulunamadı.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 
     // -------------------------------------------------- PERSONEL BÖLÜMÜ --------------------------------------------------
@@ -840,7 +1056,7 @@ public partial class MainForm : Form
                 tb_personelSifre,
                 tb_personelTel,
                 cb_personelEhliyet,
-                dtp_personelDogumTarih, // düzeltildi - h eklendi
+                dtp_personelDogumTarih, // düzeltildi
                 nud_personelMaas,
                 cb_personelCinsiyet,
                 cb_personelRol,
@@ -1366,6 +1582,15 @@ public partial class MainForm : Form
         }
     }
 
+    private Adres AdresCombosuOlustur(int musteriId, string adresTipi)
+    {
+        var combo = new Adres();
+        combo.AdresId = -1;
+        combo.AdresTipi = adresTipi;
+        combo.AdresBaslik = adresTipi + " Adresi";
+        return combo;
+    }
+
     private void AdresCombosunuBagla(ComboBox cb, int musteriId)
     {
         using var ctx = new KtsContext();
@@ -1478,8 +1703,49 @@ public partial class MainForm : Form
 
         // Form kapandıktan sonra ücret hesaplamayı yenile (tarife değişmiş olabilir)
         GonderiFiyatHesaplaVeGuncelle();
-        
-        MessageBox.Show("Tarife ayarları kapatıldı. Ücret hesaplama yenilendi.", 
+
+        MessageBox.Show("Tarife ayarları kapatıldı. Ücret hesaplama yenilendi.",
             "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    /// <summary>
+    /// Teslimat tipi combobox'ını veritabanındaki aktif tarifelerden doldur
+    /// </summary>
+    private void TeslimatTipiCombosunuDoldur()
+    {
+        using var ctx = new KtsContext();
+
+        // Önce sadece TeslimatTipi ve Oncelik'i al, sonra grupla
+        var teslimatTipleri = ctx.FiyatlandirmaTarifeler
+            .Where(t => t.TarifeTuru == "TeslimatCarpan"
+                     && t.Aktif
+                     && (t.GecerlilikBitis == null || t.GecerlilikBitis > DateTime.Now)
+                     && !string.IsNullOrEmpty(t.TeslimatTipi))
+            .GroupBy(t => t.TeslimatTipi)
+            .Select(g => new
+            {
+                TeslimatTipi = g.Key,
+                Oncelik = g.Min(x => x.Oncelik)  // Aynı tip için en düşük önceliği al
+            })
+            .OrderBy(t => t.Oncelik)
+            .ThenBy(t => t.TeslimatTipi)
+            .ToList();
+
+        cb_gonderiTeslimatTip.Items.Clear();
+
+        if (teslimatTipleri.Any())
+        {
+            // Sadece TeslimatTipi değerlerini ComboBox'a ekle
+            cb_gonderiTeslimatTip.Items.AddRange(
+                teslimatTipleri.Select(t => t.TeslimatTipi).ToArray()
+            );
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+        }
+        else
+        {
+            // Fallback: Eğer veritabanında kayıt yoksa varsayılan değerler
+            cb_gonderiTeslimatTip.Items.AddRange(new object[] { "Standart", "Hızlı", "Aynı Gün", "Randevulu" });
+            cb_gonderiTeslimatTip.SelectedIndex = 0;
+        }
     }
 }

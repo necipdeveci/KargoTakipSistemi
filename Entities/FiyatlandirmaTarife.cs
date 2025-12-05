@@ -53,6 +53,14 @@ public class FiyatlandirmaTarife
     public string? Birim { get; set; }
 
     /// <summary>
+    /// Teslimat Tipi (TeslimatCarpan tarife türü için kullanýlýr)
+    /// Örn: "Standart Teslimat", "Hýzlý Teslimat", "Ayný Gün", "Randevulu"
+    /// Diðer tarife türleri için null olabilir
+    /// </summary>
+    [MaxLength(50)]
+    public string? TeslimatTipi { get; set; }
+
+    /// <summary>
     /// Tarife aktif mi? Geçersiz tarifeleri silmeden pasif yapabiliriz.
     /// </summary>
     public bool Aktif { get; set; } = true;

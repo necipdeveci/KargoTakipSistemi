@@ -35,6 +35,22 @@ public partial class TarifeYonetimForm : Form
             "IndirimEsik" 
         });
         cb_tarifeTuru.SelectedIndex = 0;
+        cb_tarifeTuru.SelectedIndexChanged += Cb_tarifeTuru_SelectedIndexChanged;
+
+        // Teslimat Tipi combo (baþlangýçta gizli)
+        cb_teslimatTipi.Items.Clear();
+        cb_teslimatTipi.Items.AddRange(new object[]
+        {
+            "Standart Teslimat",
+            "Hýzlý Teslimat",
+            "Ayný Gün Teslimat",
+            "Randevulu Teslimat"
+        });
+        cb_teslimatTipi.SelectedIndex = 0;
+        
+        // Baþlangýçta teslimat tipi alanlarýný gizle
+        lbl_teslimatTipi.Visible = false;
+        cb_teslimatTipi.Visible = false;
 
         // Filtre combo (Tümü seçeneði ile)
         cb_tarifeTuruFiltre.Items.Clear();
@@ -51,7 +67,7 @@ public partial class TarifeYonetimForm : Form
 
         // Birim combo
         cb_birim.Items.Clear();
-        cb_birim.Items.AddRange(new object[] { "TL/kg", "TL", "çarpan", "%" });
+        cb_birim.Items.AddRange(new object[] { "TL/kg", "TL", "Çarpan", "%" });
         cb_birim.SelectedIndex = 0;
 
         // Grid ayarlarý
@@ -86,6 +102,14 @@ public partial class TarifeYonetimForm : Form
         TarifeleriYukle();
     }
 
+    private void Cb_tarifeTuru_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        // TeslimatCarpan seçiliyse teslimat tipi alanlarýný göster
+        bool teslimatCarpanSecili = cb_tarifeTuru.SelectedItem?.ToString() == "TeslimatCarpan";
+        lbl_teslimatTipi.Visible = teslimatCarpanSecili;
+        cb_teslimatTipi.Visible = teslimatCarpanSecili;
+    }
+
     private void TarifeleriYukle(string? filtreTuru = null)
     {
         var query = _context.FiyatlandirmaTarifeler.AsQueryable();
@@ -102,6 +126,7 @@ public partial class TarifeYonetimForm : Form
                 t.TarifeId,
                 t.TarifeTuru,
                 t.TarifeAdi,
+                t.TeslimatTipi,
                 t.MinDeger,
                 t.MaxDeger,
                 t.Deger,
@@ -131,6 +156,17 @@ public partial class TarifeYonetimForm : Form
             {
                 cb_tarifeTuru.SelectedItem = tarife.TarifeTuru;
                 tb_tarifeAdi.Text = tarife.TarifeAdi;
+                
+                // Teslimat tipi varsa seç
+                if (!string.IsNullOrEmpty(tarife.TeslimatTipi) && cb_teslimatTipi.Items.Contains(tarife.TeslimatTipi))
+                {
+                    cb_teslimatTipi.SelectedItem = tarife.TeslimatTipi;
+                }
+                else
+                {
+                    cb_teslimatTipi.SelectedIndex = 0;
+                }
+
                 nud_minDeger.Value = tarife.MinDeger ?? 0;
                 ckb_minDegerYok.Checked = !tarife.MinDeger.HasValue;
                 nud_maxDeger.Value = tarife.MaxDeger ?? 0;
@@ -183,6 +219,17 @@ public partial class TarifeYonetimForm : Form
 
         tarife.TarifeTuru = cb_tarifeTuru.SelectedItem?.ToString() ?? "AgirlikTarife";
         tarife.TarifeAdi = tb_tarifeAdi.Text.Trim();
+        
+        // TeslimatCarpan seçiliyse teslimat tipini kaydet
+        if (tarife.TarifeTuru == "TeslimatCarpan")
+        {
+            tarife.TeslimatTipi = cb_teslimatTipi.SelectedItem?.ToString();
+        }
+        else
+        {
+            tarife.TeslimatTipi = null;
+        }
+
         tarife.MinDeger = ckb_minDegerYok.Checked ? null : nud_minDeger.Value;
         tarife.MaxDeger = ckb_maxDegerYok.Checked ? null : nud_maxDeger.Value;
         tarife.Deger = nud_deger.Value;
@@ -253,6 +300,7 @@ public partial class TarifeYonetimForm : Form
     {
         _secilenTarifeId = null;
         tb_tarifeAdi.Clear();
+        cb_teslimatTipi.SelectedIndex = 0;
         nud_minDeger.Value = 0;
         nud_maxDeger.Value = 0;
         nud_deger.Value = 0;
