@@ -62,6 +62,9 @@ namespace kargotakipsistemi.Forms
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Padding = new Padding(12);
             KeyPreview = true;
+            
+            // Renk teması ayarları (MainForm ile tutarlı)
+            this.BackColor = Color.FromArgb(234, 228, 213);
 
             // ErrorProvider hedef form
             ep.ContainerControl = this;
@@ -70,14 +73,16 @@ namespace kargotakipsistemi.Forms
             var scrollPanel = new Panel
             {
                 Dock = DockStyle.Fill,
-                AutoScroll = true
+                AutoScroll = true,
+                BackColor = Color.FromArgb(234, 228, 213)
             };
 
             var table = new TableLayoutPanel
             {
                 Dock = DockStyle.Top, // AutoScroll ile uyumlu; içerik yüksekliği kadar olacak
                 ColumnCount = 2,
-                AutoSize = true
+                AutoSize = true,
+                BackColor = Color.FromArgb(234, 228, 213)
             };
             table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
@@ -100,6 +105,55 @@ namespace kargotakipsistemi.Forms
 
             SuspendLayout();
             table.SuspendLayout();
+            
+            // Kontrol stillerini ayarla
+            cbDurumAd.BackColor = Color.FromArgb(182, 176, 159);
+            cbDurumAd.FlatStyle = FlatStyle.Flat;
+            
+            tbAciklama.BackColor = Color.FromArgb(182, 176, 159);
+            tbAciklama.BorderStyle = BorderStyle.FixedSingle;
+            
+            cbIslemTipi.BackColor = Color.FromArgb(182, 176, 159);
+            cbIslemTipi.FlatStyle = FlatStyle.Flat;
+            
+            cbIslemSonucu.BackColor = Color.FromArgb(182, 176, 159);
+            cbIslemSonucu.FlatStyle = FlatStyle.Flat;
+            
+            tbTeslimatKodu.BackColor = Color.FromArgb(182, 176, 159);
+            tbTeslimatKodu.BorderStyle = BorderStyle.FixedSingle;
+            
+            tbIlgiliKisiAd.BackColor = Color.FromArgb(182, 176, 159);
+            tbIlgiliKisiAd.BorderStyle = BorderStyle.FixedSingle;
+            
+            tbIlgiliKisiTel.BackColor = Color.FromArgb(182, 176, 159);
+            tbIlgiliKisiTel.BorderStyle = BorderStyle.FixedSingle;
+            
+            cbSube.BackColor = Color.FromArgb(182, 176, 159);
+            cbSube.FlatStyle = FlatStyle.Flat;
+            
+            cbPersonel.BackColor = Color.FromArgb(182, 176, 159);
+            cbPersonel.FlatStyle = FlatStyle.Flat;
+            
+            cbArac.BackColor = Color.FromArgb(182, 176, 159);
+            cbArac.FlatStyle = FlatStyle.Flat;
+            
+            dtpIslemBaslangic.BackColor = Color.FromArgb(182, 176, 159);
+            dtpIslemBitis.BackColor = Color.FromArgb(182, 176, 159);
+            dtpDurumTarih.BackColor = Color.FromArgb(182, 176, 159);
+            
+            tbTeslimEdilenKisi.BackColor = Color.FromArgb(182, 176, 159);
+            tbTeslimEdilenKisi.BorderStyle = BorderStyle.FixedSingle;
+            
+            dtpTeslimTarih.BackColor = Color.FromArgb(182, 176, 159);
+            
+            btnDurumEkle.BackColor = Color.FromArgb(182, 176, 159);
+            btnDurumEkle.FlatStyle = FlatStyle.Flat;
+            
+            btnTeslimEt.BackColor = Color.FromArgb(182, 176, 159);
+            btnTeslimEt.FlatStyle = FlatStyle.Flat;
+            
+            btnKapat.BackColor = Color.FromArgb(182, 176, 159);
+            btnKapat.FlatStyle = FlatStyle.Flat;
 
             row("Takip No:", lblTakipNo); // Zaten Label olduğu için readonly
             row("Gönderen:", lblGonderen);
@@ -136,14 +190,14 @@ namespace kargotakipsistemi.Forms
             // Teslim paneli
             int rTeslim = NextRow();
             table.Controls.Add(new Label { Text = "Teslim Alan:", AutoSize = true, Padding = new Padding(0, 8, 8, 4) }, 0, rTeslim);
-            var teslimPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
+            var teslimPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.LeftToRight, WrapContents = false, BackColor = Color.FromArgb(234, 228, 213) };
             teslimPanel.Controls.Add(tbTeslimEdilenKisi);
             teslimPanel.Controls.Add(new Label { Text = "Tarih:", AutoSize = true, Padding = new Padding(8, 4, 4, 4) });
             teslimPanel.Controls.Add(dtpTeslimTarih);
             table.Controls.Add(teslimPanel, 1, rTeslim);
 
             // Butonlar
-            var buttons = new FlowLayoutPanel { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill, AutoSize = true, Padding = new Padding(0, 8, 0, 0) };
+            var buttons = new FlowLayoutPanel { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill, AutoSize = true, Padding = new Padding(0, 8, 0, 0), BackColor = Color.FromArgb(234, 228, 213) };
             buttons.Controls.Add(btnKapat);
             buttons.Controls.Add(btnTeslimEt);
             buttons.Controls.Add(btnDurumEkle);

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using kargotakipsistemi.Entities;
+using System.Drawing;
 
 namespace kargotakipsistemi.Forms;
 
@@ -24,6 +25,72 @@ public partial class TarifeYonetimForm : Form
 
     private void FormLoad()
     {
+        // Renk temasý ayarlarý (MainForm ile tutarlý)
+        this.BackColor = Color.FromArgb(234, 228, 213);
+        
+        // DataGridView renklendirme
+        dgv_tarifeler.BackgroundColor = Color.FromArgb(234, 228, 213);
+        dgv_tarifeler.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_tarifeler.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_tarifeler.EnableHeadersVisualStyles = false;
+        dgv_tarifeler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_tarifeler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+        
+        // ComboBox kontrolleri
+        cb_tarifeTuru.BackColor = Color.FromArgb(182, 176, 159);
+        cb_tarifeTuru.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_tarifeTuru.FlatStyle = FlatStyle.Flat;
+        
+        cb_teslimatTipi.BackColor = Color.FromArgb(182, 176, 159);
+        cb_teslimatTipi.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_teslimatTipi.FlatStyle = FlatStyle.Flat;
+        
+        cb_birim.BackColor = Color.FromArgb(182, 176, 159);
+        cb_birim.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_birim.FlatStyle = FlatStyle.Flat;
+        
+        cb_tarifeTuruFiltre.BackColor = Color.FromArgb(182, 176, 159);
+        cb_tarifeTuruFiltre.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_tarifeTuruFiltre.FlatStyle = FlatStyle.Flat;
+        
+        // TextBox kontrolleri
+        tb_tarifeAdi.BackColor = Color.FromArgb(182, 176, 159);
+        tb_tarifeAdi.BorderStyle = BorderStyle.FixedSingle;
+        
+        tb_aciklama.BackColor = Color.FromArgb(182, 176, 159);
+        tb_aciklama.BorderStyle = BorderStyle.FixedSingle;
+        
+        // NumericUpDown kontrolleri
+        nud_minDeger.BackColor = Color.FromArgb(182, 176, 159);
+        nud_minDeger.BorderStyle = BorderStyle.FixedSingle;
+        
+        nud_maxDeger.BackColor = Color.FromArgb(182, 176, 159);
+        nud_maxDeger.BorderStyle = BorderStyle.FixedSingle;
+        
+        nud_deger.BackColor = Color.FromArgb(182, 176, 159);
+        nud_deger.BorderStyle = BorderStyle.FixedSingle;
+        nud_deger.TabIndex = 8;
+        
+        nud_oncelik.BackColor = Color.FromArgb(182, 176, 159);
+        nud_oncelik.BorderStyle = BorderStyle.FixedSingle;
+        
+        // DateTimePicker kontrolleri
+        dtp_gecerlilikBaslangic.BackColor = Color.FromArgb(182, 176, 159);
+        dtp_gecerlilikBitis.BackColor = Color.FromArgb(182, 176, 159);
+        
+        // Button kontrolleri
+        btn_kaydet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_kaydet.FlatStyle = FlatStyle.Flat;
+        
+        btn_sil.BackColor = Color.FromArgb(182, 176, 159);
+        btn_sil.FlatStyle = FlatStyle.Flat;
+        
+        btn_temizle.BackColor = Color.FromArgb(182, 176, 159);
+        btn_temizle.FlatStyle = FlatStyle.Flat;
+        
+        btn_filtre.BackColor = Color.FromArgb(182, 176, 159);
+        btn_filtre.FlatStyle = FlatStyle.Flat;
+
         // Tarife türü combo
         cb_tarifeTuru.Items.Clear();
         cb_tarifeTuru.Items.AddRange(new object[] 

@@ -44,7 +44,7 @@ public partial class MainForm : Form
     {
         InitializeComponent();
         cb_subeIl.SelectedIndexChanged += cb_subeIl_SelectedIndexChanged;
-        cb_aracSube.SelectedIndexChanged += cb_aracSube_SelectedIndexChanged_Araç;
+        cb_aracSube.SelectedIndexChanged += cb_aracSube_SelectedIndexChanged;
         // Gönderi: müşteri seçince adresleri doldur
         cb_gonderiGonderen.SelectedIndexChanged += cb_gonderiGonderen_SelectedIndexChanged;
         cb_gonderiAlici.SelectedIndexChanged += cb_gonderiAlici_SelectedIndexChanged;
@@ -279,7 +279,7 @@ public partial class MainForm : Form
     }
 
     // -------------------------------------------------- ARAÇ BÖLÜMÜ --------------------------------------------------
-    private void cb_aracSube_SelectedIndexChanged_Araç(object sender, EventArgs e)
+    private void cb_aracSube_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (cb_aracSube.SelectedValue is int subeId)
         {
@@ -311,6 +311,62 @@ public partial class MainForm : Form
         this.BackColor = Color.FromArgb(242, 242, 242);
 
         splitContainer1.BackColor = Color.FromArgb(234, 228, 213);
+        
+        // DataGridView başlık stilleri - dgv_gonderiler
+        dgv_gonderiler.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_gonderiler.BorderStyle = BorderStyle.None;
+        dgv_gonderiler.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_gonderiler.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_gonderiler.EnableHeadersVisualStyles = false;
+        dgv_gonderiler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_gonderiler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+        
+        // DataGridView başlık stilleri - dgv_seciliGonderiDetay
+        dgv_seciliGonderiDetay.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_seciliGonderiDetay.BorderStyle = BorderStyle.None;
+        dgv_seciliGonderiDetay.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_seciliGonderiDetay.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_seciliGonderiDetay.EnableHeadersVisualStyles = false;
+        dgv_seciliGonderiDetay.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_seciliGonderiDetay.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+        
+        // DataGridView başlık stilleri - dgv_musteriler
+        dgv_musteriler.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_musteriler.BorderStyle = BorderStyle.None;
+        dgv_musteriler.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_musteriler.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_musteriler.EnableHeadersVisualStyles = false;
+        dgv_musteriler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_musteriler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+        
+        // DataGridView başlık stilleri - dgv_personeller
+        dgv_personeller.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_personeller.BorderStyle = BorderStyle.None;
+        dgv_personeller.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_personeller.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_personeller.EnableHeadersVisualStyles = false;
+        dgv_personeller.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_personeller.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+        
+        // DataGridView başlık stilleri - dgv_subeler
+        dgv_subeler.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_subeler.BorderStyle = BorderStyle.None;
+        dgv_subeler.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_subeler.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_subeler.EnableHeadersVisualStyles = false;
+        dgv_subeler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_subeler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+        
+        // DataGridView başlık stilleri - dgv_araclar
+        dgv_araclar.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_araclar.BorderStyle = BorderStyle.None;
+        dgv_araclar.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+        dgv_araclar.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+        dgv_araclar.EnableHeadersVisualStyles = false;
+        dgv_araclar.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_araclar.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+
+
         cb_gonderiGonderen.BackColor = Color.FromArgb(182, 176, 159);
         cb_gonderiGonderenAdres.BackColor = Color.FromArgb(182, 176, 159);
         cb_gonderiAlici.BackColor = Color.FromArgb(182, 176, 159);
@@ -1023,7 +1079,7 @@ public partial class MainForm : Form
             var exitVal = row.Cells["IstenCikisTarihi"].Value;
             if (exitVal == null || exitVal == DBNull.Value)
             {
-                dtp_personelIstencikis.Value = DateTime.Now;
+                dtp_personelIstencikis.Value = dtp_personelIstencikis.MinDate;
                 dtp_personelIstencikis.Enabled = true;
             }
             else
