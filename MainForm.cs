@@ -308,6 +308,158 @@ public partial class MainForm : Form
 
     private void MainForm_Load(object sender, EventArgs e)
     {
+        this.BackColor = Color.FromArgb(242, 242, 242);
+
+        splitContainer1.BackColor = Color.FromArgb(234, 228, 213);
+        cb_gonderiGonderen.BackColor = Color.FromArgb(182, 176, 159);
+        cb_gonderiGonderenAdres.BackColor = Color.FromArgb(182, 176, 159);
+        cb_gonderiAlici.BackColor = Color.FromArgb(182, 176, 159);
+        cb_gonderiAliciAdres.BackColor = Color.FromArgb(182, 176, 159);
+
+        cb_gonderiGonderen.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_gonderiGonderenAdres.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_gonderiAlici.ForeColor = Color.FromArgb(0, 0, 0);
+        cb_gonderiAliciAdres.ForeColor = Color.FromArgb(0, 0, 0);
+
+        cb_gonderiGonderen.FlatStyle = FlatStyle.Flat;
+        cb_gonderiGonderenAdres.FlatStyle = FlatStyle.Flat;
+        cb_gonderiAlici.FlatStyle = FlatStyle.Flat;
+        cb_gonderiAliciAdres.FlatStyle = FlatStyle.Flat;
+
+        tb_gonderiTakipNo.BackColor = Color.FromArgb(182, 176, 159);
+        nud_gonderiAgirlik.BackColor = Color.FromArgb(182, 176, 159);
+        tb_gonderiBoyut.BackColor = Color.FromArgb(182, 176, 159);
+        cb_gonderiTeslimatTip.BackColor = Color.FromArgb(182, 176, 159);
+        cb_gonderiCikisSube.BackColor = Color.FromArgb(182, 176, 159);
+        cb_gonderiAtananKurye.BackColor = Color.FromArgb(182, 176, 159);
+        dtp_gonderiTarih.BackColor = Color.FromArgb(182, 176, 159);
+        dtp_gonderiTahminiTeslimTarih.BackColor = Color.FromArgb(182, 176, 159);
+
+
+        tb_gonderiTakipNo.BorderStyle = BorderStyle.FixedSingle;
+        nud_gonderiAgirlik.BorderStyle = BorderStyle.FixedSingle;
+        tb_gonderiBoyut.BorderStyle = BorderStyle.FixedSingle;
+        cb_gonderiTeslimatTip.FlatStyle = FlatStyle.Flat;
+        cb_gonderiCikisSube.FlatStyle = FlatStyle.Flat;
+        cb_gonderiAtananKurye.FlatStyle = FlatStyle.Flat;
+
+        nud_gonderiUcret.BackColor = Color.FromArgb(182, 176, 159);
+        nud_gonderiEkMasraf.BackColor = Color.FromArgb(182, 176, 159);
+        nud_gonderiIndirim.BackColor = Color.FromArgb(182, 176, 159);
+        tb_gonderiToplamFiyat.BackColor = Color.FromArgb(182, 176, 159);
+        btn_gonderiTarifeYonetim.BackColor = Color.FromArgb(182, 176, 159);
+
+        
+        nud_gonderiUcret.BorderStyle = BorderStyle.FixedSingle;
+        nud_gonderiEkMasraf.BorderStyle = BorderStyle.FixedSingle;
+        nud_gonderiIndirim.BorderStyle = BorderStyle.FixedSingle;
+        tb_gonderiToplamFiyat.BorderStyle = BorderStyle.FixedSingle;
+
+        btn_gonderiKayitSil.FlatStyle = FlatStyle.Flat;
+        btn_gonderiOlustur.FlatStyle = FlatStyle.Flat;
+        btn_gonderiFormTemizle.FlatStyle = FlatStyle.Flat;
+        btn_gonderiSurecYonetim.FlatStyle = FlatStyle.Flat;
+
+        btn_gonderiKayitSil.BackColor = Color.FromArgb(182, 176, 159);
+        btn_gonderiFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
+        btn_gonderiOlustur.BackColor = Color.FromArgb(182, 176, 159);
+        btn_gonderiSurecYonetim.BackColor = Color.FromArgb(182, 176, 159);
+
+        tb_filtreTakipNo.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreTeslimAlanAdSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        cb_filtreIdTipSec.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreId.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreIdAdSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        btn_gonderiAra.BackColor = Color.FromArgb(182, 176, 159);
+
+        tb_filtreTakipNo.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreTeslimAlanAdSoyad.BorderStyle = BorderStyle.FixedSingle;
+        cb_filtreIdTipSec.FlatStyle = FlatStyle.Flat;
+        tb_filtreId.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreIdAdSoyad.BorderStyle = BorderStyle.FixedSingle;
+        btn_gonderiAra.FlatStyle = FlatStyle.Flat;
+
+        dgv_gonderiler.BorderStyle = BorderStyle.None;
+        dgv_seciliGonderiDetay.BorderStyle = BorderStyle.None;
+
+        dgv_gonderiler.BackgroundColor = Color.FromArgb(182, 176, 159);
+        dgv_seciliGonderiDetay.BackgroundColor = Color.FromArgb(182, 176, 159);
+
+        splitContainer2.BackColor = Color.FromArgb(234, 228, 213);
+        tb_musteriAd.BackColor = Color.FromArgb(182, 176, 159);
+        tb_musteriSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        tb_musteriTel.BackColor = Color.FromArgb(182, 176, 159);
+        tb_musteriEposta.BackColor = Color.FromArgb(182, 176, 159);
+        tb_musteriNot.BackColor = Color.FromArgb(182, 176, 159);
+        btnMusterAdresYonet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_musteriKaydet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_musteriKayitSil.BackColor = Color.FromArgb(182, 176, 159);
+        btn_musteriFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
+
+        tb_musteriFiltre.BackColor = Color.FromArgb(182, 176, 159);
+
+        dgv_musteriler.BorderStyle = BorderStyle.None;
+        dgv_musteriler.BackgroundColor = Color.FromArgb(182, 176, 159);
+
+        splitContainer3.BackColor = Color.FromArgb(234, 228, 213);
+        cb_personelFiltre.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_personeller.BorderStyle = BorderStyle.None;
+        dgv_personeller.BackgroundColor = Color.FromArgb(182, 176, 159);
+
+        btn_personelAra.BackColor = Color.FromArgb(182, 176, 159);
+        tb_personelAd.BackColor = Color.FromArgb(182, 176, 159);
+        tb_personelSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        tb_personelTel.BackColor = Color.FromArgb(182, 176, 159);
+        tb_personelMail.BackColor = Color.FromArgb(182, 176, 159);
+        tb_personelSifre.BackColor = Color.FromArgb(182, 176, 159);
+        cb_personelRol.BackColor = Color.FromArgb(182, 176, 159);
+        cb_personelArac.BackColor = Color.FromArgb(182, 176, 159);
+        cb_personelSube.BackColor = Color.FromArgb(182, 176, 159);
+        cb_personelCinsiyet.BackColor = Color.FromArgb(182, 176, 159);
+        nud_personelMaas.BackColor = Color.FromArgb(182, 176, 159);
+        btn_tempSifre.BackColor = Color.FromArgb(182, 176, 159);
+        cb_personelEhliyet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_personelKaydet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_personelKayitSil.BackColor = Color.FromArgb(182, 176, 159);
+        btn_personelFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
+
+        splitContainer4.BackColor = Color.FromArgb(234, 228, 213);
+        cb_subeFiltre.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_subeler.BorderStyle = BorderStyle.None;
+        dgv_subeler.BackgroundColor = Color.FromArgb(182, 176, 159);
+        btn_subeAra.BackColor = Color.FromArgb(182, 176, 159);
+        tb_subeAd.BackColor = Color.FromArgb(182, 176, 159);
+        cb_subeTip.BackColor = Color.FromArgb(182, 176, 159);
+        tb_subeTel.BackColor = Color.FromArgb(182, 176, 159);
+        tb_subeMail.BackColor = Color.FromArgb(182, 176, 159);
+        cb_subeIl.BackColor = Color.FromArgb(182, 176, 159);
+        cb_subeIlce.BackColor = Color.FromArgb(182, 176, 159);
+        nud_subeKapasite.BackColor = Color.FromArgb(182, 176, 159);
+        cb_subeCalismaSaat.BackColor = Color.FromArgb(182, 176, 159);
+        tbm_subeAcikAdres.BackColor = Color.FromArgb(182, 176, 159);
+        btn_subeKaydet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_subeKayitSil.BackColor = Color.FromArgb(182, 176, 159);
+        btn_subeFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
+
+        splitContainer5.BackColor = Color.FromArgb(234, 228, 213);
+        cb_aracFiltre.BackColor = Color.FromArgb(182, 176, 159);
+        dgv_araclar.BorderStyle = BorderStyle.None;
+        dgv_araclar.BackgroundColor = Color.FromArgb(182, 176, 159);
+        btn_aracAra.BackColor = Color.FromArgb(182, 176, 159);
+        tb_aracPlaka.BackColor = Color.FromArgb(182, 176, 159);
+        cb_aracTip.BackColor = Color.FromArgb(182, 176, 159);
+        cb_aracSube.BackColor = Color.FromArgb(182, 176, 159);
+        nud_aracKapasite.BackColor = Color.FromArgb(182, 176, 159);
+        tb_aracGps.BackColor = Color.FromArgb(182, 176, 159);
+        cb_aracDurum.BackColor = Color.FromArgb(182, 176, 159);
+        btn_aracKaydet.BackColor = Color.FromArgb(182, 176, 159);
+        btn_aracSil.BackColor = Color.FromArgb(182, 176, 159);
+        btn_aracFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
+
+
+
+
+
         VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
         VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
         cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
@@ -386,7 +538,7 @@ public partial class MainForm : Form
         cb_filtreIdTipSec.Items.Add("-");
         cb_filtreIdTipSec.Items.Add("Gönderen");
         cb_filtreIdTipSec.Items.Add("Alıcı");
-        cb_filtreIdTipSec.Items.Add("Kurye"); 
+        cb_filtreIdTipSec.Items.Add("Kurye");
         cb_filtreIdTipSec.SelectedIndex = 0;
         // Gönderi Combobox ve Grid bağlama
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
@@ -448,7 +600,7 @@ public partial class MainForm : Form
             nud_gonderiUcret.Value = row.Cells["Ucret"].Value != DBNull.Value ? Convert.ToDecimal(row.Cells["Ucret"].Value) : 0;
             nud_gonderiIndirim.Value = row.Cells["IndirimTutar"].Value != DBNull.Value ? Convert.ToDecimal(row.Cells["IndirimTutar"].Value) : 0;
             nud_gonderiEkMasraf.Value = row.Cells["EkMasraf"].Value != DBNull.Value ? Convert.ToDecimal(row.Cells["EkMasraf"].Value) : 0;
-            
+
             // Veritabanından ilgili gönderiyi yükleyerek FK bilgilerini al
             if (secilenGonderiId.HasValue)
             {
@@ -490,7 +642,7 @@ public partial class MainForm : Form
                         cb_gonderiAliciAdres.SelectedValue = gonderi.AliciAdresId.Value;
 
                     // Çıkış Şubesi (önce kolonu kontrol et)
-                    try 
+                    try
                     {
                         var cikisSubeCell = row.Cells["CikisSubeId"];
                         if (cikisSubeCell != null && cikisSubeCell.Value != DBNull.Value)
@@ -499,7 +651,7 @@ public partial class MainForm : Form
                             cb_gonderiCikisSube.SelectedValue = cikisSubeId;
                         }
                     }
-                    catch 
+                    catch
                     {
                         // CikisSubeId kolonu yoksa sessizce devam et
                     }
@@ -1747,5 +1899,10 @@ public partial class MainForm : Form
             cb_gonderiTeslimatTip.Items.AddRange(new object[] { "Standart", "Hızlı", "Aynı Gün", "Randevulu" });
             cb_gonderiTeslimatTip.SelectedIndex = 0;
         }
+    }
+
+    private void dtp_gonderiTarih_ValueChanged(object sender, EventArgs e)
+    {
+
     }
 }
