@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
+            tabPageGonderi = new TabPage();
             splitContainer1 = new SplitContainer();
             btn_gonderiFormTemizle = new Button();
             btn_gonderiKayitSil = new Button();
@@ -92,7 +92,7 @@
             label18 = new Label();
             tb_filtreTakipNo = new TextBox();
             label17 = new Label();
-            tabPage2 = new TabPage();
+            tabPageMYonetim = new TabPage();
             splitContainer2 = new SplitContainer();
             groupBox8 = new GroupBox();
             dgv_musteriler = new DataGridView();
@@ -115,7 +115,7 @@
             label23 = new Label();
             label22 = new Label();
             label21 = new Label();
-            tabPage3 = new TabPage();
+            tabPageOperasyon = new TabPage();
             tabControl2 = new TabControl();
             tabPage6 = new TabPage();
             splitContainer3 = new SplitContainer();
@@ -374,7 +374,7 @@
             textBox45 = new TextBox();
             label115 = new Label();
             tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
+            tabPageGonderi.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -392,7 +392,7 @@
             groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgv_seciliGonderiDetay).BeginInit();
             groupBox5.SuspendLayout();
-            tabPage2.SuspendLayout();
+            tabPageMYonetim.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
             splitContainer2.Panel2.SuspendLayout();
@@ -400,7 +400,7 @@
             groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgv_musteriler).BeginInit();
             groupBox9.SuspendLayout();
-            tabPage3.SuspendLayout();
+            tabPageOperasyon.SuspendLayout();
             tabControl2.SuspendLayout();
             tabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
@@ -468,9 +468,9 @@
             // 
             // tabControl1
             // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
+            tabControl1.Controls.Add(tabPageGonderi);
+            tabControl1.Controls.Add(tabPageMYonetim);
+            tabControl1.Controls.Add(tabPageOperasyon);
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Dock = DockStyle.Fill;
@@ -484,18 +484,18 @@
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 0;
             // 
-            // tabPage1
+            // tabPageGonderi
             // 
-            tabPage1.Controls.Add(splitContainer1);
-            tabPage1.Font = new Font("Arial", 10F, FontStyle.Italic);
-            tabPage1.Location = new Point(4, 29);
-            tabPage1.Margin = new Padding(3, 4, 3, 4);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3, 4, 3, 4);
-            tabPage1.Size = new Size(1362, 716);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "Gönderi İşlemleri";
-            tabPage1.UseVisualStyleBackColor = true;
+            tabPageGonderi.Controls.Add(splitContainer1);
+            tabPageGonderi.Font = new Font("Arial", 10F, FontStyle.Italic);
+            tabPageGonderi.Location = new Point(4, 29);
+            tabPageGonderi.Margin = new Padding(3, 4, 3, 4);
+            tabPageGonderi.Name = "tabPageGonderi";
+            tabPageGonderi.Padding = new Padding(3, 4, 3, 4);
+            tabPageGonderi.Size = new Size(1362, 716);
+            tabPageGonderi.TabIndex = 0;
+            tabPageGonderi.Text = "Gönderi İşlemleri";
+            tabPageGonderi.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
@@ -1147,18 +1147,18 @@
             label17.TabIndex = 26;
             label17.Text = "Takip No:";
             // 
-            // tabPage2
+            // tabPageMYonetim
             // 
-            tabPage2.Controls.Add(splitContainer2);
-            tabPage2.Font = new Font("Arial", 10F, FontStyle.Italic);
-            tabPage2.Location = new Point(4, 29);
-            tabPage2.Margin = new Padding(3, 4, 3, 4);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3, 4, 3, 4);
-            tabPage2.Size = new Size(1362, 716);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Müşteri Yönetimi";
-            tabPage2.UseVisualStyleBackColor = true;
+            tabPageMYonetim.Controls.Add(splitContainer2);
+            tabPageMYonetim.Font = new Font("Arial", 10F, FontStyle.Italic);
+            tabPageMYonetim.Location = new Point(4, 29);
+            tabPageMYonetim.Margin = new Padding(3, 4, 3, 4);
+            tabPageMYonetim.Name = "tabPageMYonetim";
+            tabPageMYonetim.Padding = new Padding(3, 4, 3, 4);
+            tabPageMYonetim.Size = new Size(1362, 716);
+            tabPageMYonetim.TabIndex = 1;
+            tabPageMYonetim.Text = "Müşteri Yönetimi";
+            tabPageMYonetim.UseVisualStyleBackColor = true;
             // 
             // splitContainer2
             // 
@@ -1401,17 +1401,17 @@
             label21.TabIndex = 0;
             label21.Text = "Ad:";
             // 
-            // tabPage3
+            // tabPageOperasyon
             // 
-            tabPage3.Controls.Add(tabControl2);
-            tabPage3.Font = new Font("Arial", 10F, FontStyle.Italic);
-            tabPage3.Location = new Point(4, 29);
-            tabPage3.Margin = new Padding(3, 4, 3, 4);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1362, 716);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Operasyon Yönetimi";
-            tabPage3.UseVisualStyleBackColor = true;
+            tabPageOperasyon.Controls.Add(tabControl2);
+            tabPageOperasyon.Font = new Font("Arial", 10F, FontStyle.Italic);
+            tabPageOperasyon.Location = new Point(4, 29);
+            tabPageOperasyon.Margin = new Padding(3, 4, 3, 4);
+            tabPageOperasyon.Name = "tabPageOperasyon";
+            tabPageOperasyon.Size = new Size(1362, 716);
+            tabPageOperasyon.TabIndex = 2;
+            tabPageOperasyon.Text = "Operasyon Yönetimi";
+            tabPageOperasyon.UseVisualStyleBackColor = true;
             // 
             // tabControl2
             // 
@@ -1429,10 +1429,10 @@
             // tabPage6
             // 
             tabPage6.Controls.Add(splitContainer3);
-            tabPage6.Location = new Point(4, 25);
+            tabPage6.Location = new Point(4, 26);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(1354, 687);
+            tabPage6.Size = new Size(1354, 686);
             tabPage6.TabIndex = 0;
             tabPage6.Text = "Personel";
             tabPage6.UseVisualStyleBackColor = true;
@@ -1450,7 +1450,7 @@
             // splitContainer3.Panel2
             // 
             splitContainer3.Panel2.Controls.Add(groupBox12);
-            splitContainer3.Size = new Size(1348, 681);
+            splitContainer3.Size = new Size(1348, 680);
             splitContainer3.SplitterDistance = 842;
             splitContainer3.TabIndex = 2;
             // 
@@ -1461,7 +1461,7 @@
             groupBox10.Controls.Add(dgv_personeller);
             groupBox10.Controls.Add(label27);
             groupBox10.Dock = DockStyle.Bottom;
-            groupBox10.Location = new Point(0, -13);
+            groupBox10.Location = new Point(0, -14);
             groupBox10.Name = "groupBox10";
             groupBox10.Size = new Size(842, 694);
             groupBox10.TabIndex = 0;
@@ -1547,7 +1547,7 @@
             groupBox12.Dock = DockStyle.Right;
             groupBox12.Location = new Point(23, 0);
             groupBox12.Name = "groupBox12";
-            groupBox12.Size = new Size(479, 681);
+            groupBox12.Size = new Size(479, 680);
             groupBox12.TabIndex = 0;
             groupBox12.TabStop = false;
             groupBox12.Text = "Personel Bilgileri";
@@ -1899,10 +1899,10 @@
             // tabPage7
             // 
             tabPage7.Controls.Add(splitContainer4);
-            tabPage7.Location = new Point(4, 25);
+            tabPage7.Location = new Point(4, 26);
             tabPage7.Name = "tabPage7";
             tabPage7.Padding = new Padding(3);
-            tabPage7.Size = new Size(1354, 687);
+            tabPage7.Size = new Size(1354, 686);
             tabPage7.TabIndex = 1;
             tabPage7.Text = "Şube";
             tabPage7.UseVisualStyleBackColor = true;
@@ -1920,7 +1920,7 @@
             // splitContainer4.Panel2
             // 
             splitContainer4.Panel2.Controls.Add(groupBox14);
-            splitContainer4.Size = new Size(1348, 681);
+            splitContainer4.Size = new Size(1348, 680);
             splitContainer4.SplitterDistance = 842;
             splitContainer4.TabIndex = 3;
             // 
@@ -1931,7 +1931,7 @@
             groupBox13.Controls.Add(dgv_subeler);
             groupBox13.Controls.Add(label42);
             groupBox13.Dock = DockStyle.Bottom;
-            groupBox13.Location = new Point(0, -13);
+            groupBox13.Location = new Point(0, -14);
             groupBox13.Name = "groupBox13";
             groupBox13.Size = new Size(842, 694);
             groupBox13.TabIndex = 0;
@@ -2004,7 +2004,7 @@
             groupBox14.Dock = DockStyle.Right;
             groupBox14.Location = new Point(23, 0);
             groupBox14.Name = "groupBox14";
-            groupBox14.Size = new Size(479, 681);
+            groupBox14.Size = new Size(479, 680);
             groupBox14.TabIndex = 0;
             groupBox14.TabStop = false;
             groupBox14.Text = "Şube Bilgileri";
@@ -4039,7 +4039,7 @@
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
+            tabPageGonderi.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
@@ -4062,7 +4062,7 @@
             ((System.ComponentModel.ISupportInitialize)dgv_seciliGonderiDetay).EndInit();
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
-            tabPage2.ResumeLayout(false);
+            tabPageMYonetim.ResumeLayout(false);
             splitContainer2.Panel1.ResumeLayout(false);
             splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
@@ -4072,7 +4072,7 @@
             ((System.ComponentModel.ISupportInitialize)dgv_musteriler).EndInit();
             groupBox9.ResumeLayout(false);
             groupBox9.PerformLayout();
-            tabPage3.ResumeLayout(false);
+            tabPageOperasyon.ResumeLayout(false);
             tabControl2.ResumeLayout(false);
             tabPage6.ResumeLayout(false);
             splitContainer3.Panel1.ResumeLayout(false);
@@ -4161,9 +4161,9 @@
 
         #endregion
         private TabControl tabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
-        private TabPage tabPage3;
+        private TabPage tabPageGonderi;
+        private TabPage tabPageMYonetim;
+        private TabPage tabPageOperasyon;
         private TabPage tabPage4;
         private TabPage tabPage5;
         private SplitContainer splitContainer1;

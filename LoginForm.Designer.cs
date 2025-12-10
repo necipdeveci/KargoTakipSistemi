@@ -32,13 +32,13 @@
             label3 = new Label();
             panel3 = new Panel();
             panel5 = new Panel();
-            textBox2 = new TextBox();
+            tb_loginSifre = new TextBox();
             label2 = new Label();
             panel2 = new Panel();
-            button1 = new Button();
+            btn_login = new Button();
             panel4 = new Panel();
             label1 = new Label();
-            textBox1 = new TextBox();
+            tb_loginEposta = new TextBox();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             panel5.SuspendLayout();
@@ -77,24 +77,24 @@
             // 
             // panel5
             // 
-            panel5.Controls.Add(textBox2);
+            panel5.Controls.Add(tb_loginSifre);
             panel5.Controls.Add(label2);
             panel5.Location = new Point(12, 75);
             panel5.Name = "panel5";
             panel5.Size = new Size(237, 46);
             panel5.TabIndex = 8;
             // 
-            // textBox2
+            // tb_loginSifre
             // 
-            textBox2.BorderStyle = BorderStyle.FixedSingle;
-            textBox2.Dock = DockStyle.Bottom;
-            textBox2.Font = new Font("Consolas", 12F);
-            textBox2.Location = new Point(0, 20);
-            textBox2.MaxLength = 20;
-            textBox2.Name = "textBox2";
-            textBox2.PasswordChar = '*';
-            textBox2.Size = new Size(237, 26);
-            textBox2.TabIndex = 2;
+            tb_loginSifre.BorderStyle = BorderStyle.FixedSingle;
+            tb_loginSifre.Dock = DockStyle.Bottom;
+            tb_loginSifre.Font = new Font("Consolas", 12F);
+            tb_loginSifre.Location = new Point(0, 20);
+            tb_loginSifre.MaxLength = 20;
+            tb_loginSifre.Name = "tb_loginSifre";
+            tb_loginSifre.PasswordChar = '*';
+            tb_loginSifre.Size = new Size(237, 26);
+            tb_loginSifre.TabIndex = 2;
             // 
             // label2
             // 
@@ -108,30 +108,30 @@
             // 
             // panel2
             // 
-            panel2.Controls.Add(button1);
+            panel2.Controls.Add(btn_login);
             panel2.Controls.Add(panel4);
             panel2.Location = new Point(12, 6);
             panel2.Name = "panel2";
             panel2.Size = new Size(240, 153);
             panel2.TabIndex = 6;
             // 
-            // button1
+            // btn_login
             // 
-            button1.BackColor = Color.Lavender;
-            button1.FlatAppearance.BorderColor = Color.Gray;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(140, 127);
-            button1.Name = "button1";
-            button1.Size = new Size(100, 26);
-            button1.TabIndex = 3;
-            button1.Text = "Giriş yap";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            btn_login.BackColor = Color.Lavender;
+            btn_login.FlatAppearance.BorderColor = Color.Gray;
+            btn_login.FlatStyle = FlatStyle.Flat;
+            btn_login.Location = new Point(140, 127);
+            btn_login.Name = "btn_login";
+            btn_login.Size = new Size(100, 26);
+            btn_login.TabIndex = 3;
+            btn_login.Text = "Giriş yap";
+            btn_login.UseVisualStyleBackColor = false;
+            btn_login.Click += btn_login_Click;
             // 
             // panel4
             // 
             panel4.Controls.Add(label1);
-            panel4.Controls.Add(textBox1);
+            panel4.Controls.Add(tb_loginEposta);
             panel4.Location = new Point(0, 17);
             panel4.Name = "panel4";
             panel4.Size = new Size(237, 46);
@@ -143,20 +143,20 @@
             label1.Font = new Font("Consolas", 12F);
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(126, 19);
+            label1.Size = new Size(153, 19);
             label1.TabIndex = 8;
-            label1.Text = "kullanıcı adı";
+            label1.Text = "personel e posta";
             // 
-            // textBox1
+            // tb_loginEposta
             // 
-            textBox1.BorderStyle = BorderStyle.FixedSingle;
-            textBox1.Dock = DockStyle.Bottom;
-            textBox1.Font = new Font("Consolas", 12F, FontStyle.Regular, GraphicsUnit.Point, 162);
-            textBox1.Location = new Point(0, 20);
-            textBox1.MaxLength = 20;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(237, 26);
-            textBox1.TabIndex = 1;
+            tb_loginEposta.BorderStyle = BorderStyle.FixedSingle;
+            tb_loginEposta.Dock = DockStyle.Bottom;
+            tb_loginEposta.Font = new Font("Consolas", 12F, FontStyle.Regular, GraphicsUnit.Point, 162);
+            tb_loginEposta.Location = new Point(0, 20);
+            tb_loginEposta.MaxLength = 20;
+            tb_loginEposta.Name = "tb_loginEposta";
+            tb_loginEposta.Size = new Size(237, 26);
+            tb_loginEposta.TabIndex = 1;
             // 
             // LoginForm
             // 
@@ -187,13 +187,13 @@
         private Panel panel1;
         private Panel panel3;
         private Label label3;
-        private TextBox textBox1;
+        private TextBox tb_loginEposta;
         private Panel panel5;
         private Panel panel2;
         private Panel panel4;
         private Label label2;
         private Label label1;
-        private Button button1;
-        private TextBox textBox2;
+        private Button btn_login;
+        private TextBox tb_loginSifre;
     }
 }

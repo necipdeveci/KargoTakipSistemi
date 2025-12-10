@@ -7,8 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace kargotakipsistemi;
+
+
 
 public partial class MainForm : Form
 {
@@ -40,8 +43,237 @@ public partial class MainForm : Form
         secilenGonderiId = null;
     }
 
-    public MainForm()
+
+
+private List<TabPage> _allTabPages;
+private List<TabPage> _allTabPages2; // tabControl2 için
+
+    // MainForm.cs içinde ApplyRoleBasedTabPermissions metodunu bulun ve şu değişiklikleri yapın:
+
+    private void ApplyRoleBasedTabPermissions()
     {
+        // TabControl1 kontrolü
+        if (tabControl1 == null) return;
+
+        // İlk çağırmada tüm sekmeleri sakla
+        if (_allTabPages == null)
+            _allTabPages = tabControl1.TabPages.Cast<TabPage>().ToList();
+
+        // tabControl2 için de sakla (Operasyon sekmesi içinde)
+        if (_allTabPages2 == null && tabControl2 != null)
+            _allTabPages2 = tabControl2.TabPages.Cast<TabPage>().ToList();
+
+        // Eğer CurrentUser yoksa tüm sekmeleri gizle (güvenlik-first)
+        if (CurrentUser == null || CurrentUser.Rol?.RolAd == null)
+        {
+            tabControl1.TabPages.Clear();
+            if (tabControl2 != null) tabControl2.TabPages.Clear();
+            return;
+        }
+
+        string rolAd = CurrentUser.Rol.RolAd.Trim();
+
+        // ======================================
+        // ROL BAZLI SEKME İZİNLERİ
+        // RolSeedData.cs dosyasındaki 18 rol tanımına göre yapılandırılmıştır
+        // ======================================
+
+        var roleToAllowedTabs = new Dictionary<string, RoleTabPermissions>(StringComparer.OrdinalIgnoreCase)
+        {
+            // ======================================
+            // YÖNETİCİ ROLLERİ - Geniş Erişim
+            // ======================================
+            
+            // Rol 1: Sistem Yöneticisi -> SADECE ANA İŞLEVSEL SEKMELERE ERİŞİM (tabPage4 ve tabPage5 KALDIRILDI)
+            { "Sistem Yöneticisi", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim", "tabPage4", "tabPage5"}, // tabPage4 ve tabPage5 kaldırıldı
+                OperationTabs = _allTabPages2?.Select(t => t.Name).ToArray() ?? Array.Empty<string>()
+            }},
+            
+            // Rol 2: Genel Müdür -> tabPage4 ve tabPage5 KALDIRILDI
+            { "Genel Müdür", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim" }, // tabPage4 ve tabPage5 kaldırıldı
+                OperationTabs = new[] { "tabPage6", "tabPage7", "tabPage8" }
+            }},
+            
+            // Rol 3: Bölge Müdürü -> Gönderi + Operasyon (Tüm Alt Sekmeler) + Müşteri
+            { "Bölge Müdürü", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim" },
+                OperationTabs = new[] { "tabPage6", "tabPage7", "tabPage8" }
+            }},
+            
+            // Rol 4: Şube Müdürü -> Gönderi + Operasyon (Personel, Araç)
+            { "Şube Müdürü", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim" },
+                OperationTabs = new[] { "tabPage6", "tabPage8" } // Personel ve Araç
+            }},
+            
+            // ======================================
+            // OPERASYON ROLLERİ - Alan İşlemleri
+            // ======================================
+            
+            // Rol 5: Kurye -> Sadece Gönderi Takibi
+            { "Kurye", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi" },
+                OperationTabs = Array.Empty<string>()
+            }},
+            
+            // Rol 6: Dağıtım Sorumlusu -> Gönderi + Operasyon (Personel, Araç)
+            { "Dağıtım Sorumlusu", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6", "tabPage8" }
+            }},
+            
+            // Rol 7: Transfer Personeli -> Gönderi + Şube Bilgileri
+            { "Transfer Personeli", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage7" } // Sadece Şube
+            }},
+            
+            // Rol 8: Depo Görevlisi -> Sadece Gönderi Kabul/Çıkış
+            { "Depo Görevlisi", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi" },
+                OperationTabs = Array.Empty<string>()
+            }},
+            
+            // ======================================
+            // MÜŞTERİ HİZMETLERİ ROLLERİ
+            // ======================================
+            
+            // Rol 9: Müşteri Hizmetleri -> Gönderi + Müşteri
+            { "Müşteri Hizmetleri", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageMYonetim" },
+                OperationTabs = Array.Empty<string>()
+            }},
+            
+            // Rol 10: Kargo Kabul -> Gönderi + Müşteri
+            { "Kargo Kabul", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageMYonetim" },
+                OperationTabs = Array.Empty<string>()
+            }},
+            
+            // Rol 11: Çağrı Merkezi -> Gönderi + Müşteri
+            { "Çağrı Merkezi", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageMYonetim" },
+                OperationTabs = Array.Empty<string>()
+            }},
+            
+            // ======================================
+            // DESTEK VE YÖNETİM ROLLERİ
+            // ======================================
+            
+            // Rol 12: Muhasebe -> Gönderi + Müşteri (Fatura İçin)
+            { "Muhasebe", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageMYonetim" },
+                OperationTabs = Array.Empty<string>()
+            }},
+            
+            // Rol 13: İnsan Kaynakları -> Sadece Personel Yönetimi
+            { "İnsan Kaynakları", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6" } // Sadece Personel
+            }},
+            
+            // Rol 14: Filo Yöneticisi -> Operasyon (Personel, Araç)
+            { "Filo Yöneticisi", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6", "tabPage8" } // Personel ve Araç
+            }},
+            
+            // Rol 15: IT Destek -> Operasyon (Personel, Şube) - Sistem Ayarları
+            { "IT Destek", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6", "tabPage7" }
+            }},
+            
+            // Rol 16: Kalite Kontrol -> Gönderi + Müşteri + Personel
+            { "Kalite Kontrol", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageGonderi", "tabPageMYonetim", "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6" }
+            }},
+            
+            // Rol 17: Güvenlik -> Operasyon (Personel, Araç Giriş/Çıkış)
+            { "Güvenlik", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6", "tabPage8" }
+            }},
+            
+            // Rol 18: Eğitim Koordinatörü -> Sadece Personel
+            { "Eğitim Koordinatörü", new RoleTabPermissions
+            {
+                MainTabs = new[] { "tabPageOperasyon" },
+                OperationTabs = new[] { "tabPage6" }
+            }}
+        };
+
+        // Ana TabControl (tabControl1) temizle ve izinleri uygula
+        tabControl1.TabPages.Clear();
+
+        if (roleToAllowedTabs.TryGetValue(rolAd, out var permissions))
+        {
+            // Ana sekmeleri ekle (tabPage4 ve tabPage5 HİÇBİR ROLDE YOK, OTOMATIK GİZLİ KALACAK)
+            foreach (var name in permissions.MainTabs.Distinct())
+            {
+                var tp = _allTabPages.FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
+                if (tp != null)
+                    tabControl1.TabPages.Add(tp);
+            }
+
+            // Operasyon alt sekmelerini ekle (eğer Operasyon sekmesi varsa)
+            if (tabControl2 != null && _allTabPages2 != null)
+            {
+                tabControl2.TabPages.Clear();
+                foreach (var name in permissions.OperationTabs.Distinct())
+                {
+                    var tp = _allTabPages2.FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
+                    if (tp != null)
+                        tabControl2.TabPages.Add(tp);
+                }
+            }
+        }
+        else
+        {
+            // Rol tanımlı değilse uyarı ver
+            MessageBox.Show($"'{rolAd}' rolü için sekme izni tanımlı değil.\nLütfen sistem yöneticisi ile iletişime geçin.",
+                "Yetki Hatası", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        // Boş sekme uyarısı
+        if (tabControl1.TabPages.Count == 0)
+        {
+            MessageBox.Show($"'{rolAd}' rolü için görüntülenebilir ana sekme bulunmamaktadır.",
+                "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+
+// Yardımcı sınıf - Rol izinlerini tutmak için
+private class RoleTabPermissions
+{
+    public string[] MainTabs { get; set; } = Array.Empty<string>();
+    public string[] OperationTabs { get; set; } = Array.Empty<string>();
+}
+
+    private Personel CurrentUser;
+    public MainForm(Personel currentUser)
+    {
+        CurrentUser = currentUser;
         InitializeComponent();
         cb_subeIl.SelectedIndexChanged += cb_subeIl_SelectedIndexChanged;
         cb_aracSube.SelectedIndexChanged += cb_aracSube_SelectedIndexChanged;
@@ -308,6 +540,8 @@ public partial class MainForm : Form
 
     private void MainForm_Load(object sender, EventArgs e)
     {
+        _allTabPages = tabControl1.TabPages.Cast<TabPage>().ToList();
+
         this.BackColor = Color.FromArgb(242, 242, 242);
 
         splitContainer1.BackColor = Color.FromArgb(234, 228, 213);
@@ -611,6 +845,8 @@ public partial class MainForm : Form
         VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
         // İlk yüklemede hesaplamayı tetikle
         GonderiFiyatHesaplaVeGuncelle();
+
+        ApplyRoleBasedTabPermissions();
     }
 
     // Gönderen seçilince adresleri doldur
@@ -739,7 +975,7 @@ public partial class MainForm : Form
 
     private void btn_gonderiOlustur_Click(object? sender, EventArgs e)
     {
-        // Yeni doğrulama: alan boşları ve tutarlılık
+        // MainForm.cs içinde btn_gonderiOlustur_Click metodunda GonderiDogrulayici.Dogrula çağrısı:
         if (!kargotakipsistemi.Dogrulamalar.GonderiDogrulayici.Dogrula(
             cb_gonderiGonderen,
             cb_gonderiGonderenAdres,
@@ -749,10 +985,10 @@ public partial class MainForm : Form
             nud_gonderiAgirlik,
             cb_gonderiTeslimatTip,
             dtp_gonderiTarih,
-            dtp_gonderiTahminiTeslimTarih,
+            dtp_gonderiTahminiTeslimTarih, // <-- eksik olan parametre
             nud_gonderiUcret,
             nud_gonderiIndirim,
-            nud_gonderiEkMasraf))
+            nud_gonderiEkMasraf)) // <-- eksik olan parametre eklendi
         {
             return; // doğrulama başarısız
         }
@@ -1519,7 +1755,13 @@ public partial class MainForm : Form
         var form = new AdresEkleForm(secilenPersonelId.Value, "Personel");
         form.ShowDialog();
     }
-    private void btn_tempSifre_Click(object sender, EventArgs e) { }
+    private void btn_tempSifre_Click(object sender, EventArgs e)
+    {
+        // 4 haneli rastgele sayısal şifre üret (1000-9999 arası)
+        Random rnd = new Random();
+        string tempSifre = rnd.Next(1000, 10000).ToString();
+        tb_personelSifre.Text = tempSifre;
+    }
     private void btn_subeAra_Click(object sender, EventArgs e)
     {
         if (cb_subeFiltre.SelectedItem != null)
