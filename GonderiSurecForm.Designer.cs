@@ -16,14 +16,17 @@ namespace kargotakipsistemi.Forms
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.SuspendLayout();
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "GonderiSurecForm";
-            this.Text = "GonderiSurecForm";
-            this.ResumeLayout(false);
+            SuspendLayout();
+            // 
+            // GonderiSurecForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Name = "GonderiSurecForm";
+            Text = "GonderiSurecForm";
+            Load += GonderiSurecForm_Load;
+            ResumeLayout(false);
         }
     }
 }

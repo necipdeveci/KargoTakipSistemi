@@ -31,7 +31,7 @@ namespace kargotakipsistemi.Forms
         private ComboBox cbIslemTipi = new() { DropDownStyle = ComboBoxStyle.DropDownList };
         private ComboBox cbIslemSonucu = new() { DropDownStyle = ComboBoxStyle.DropDownList };
         // Teslimat kodu artık readonly
-        private TextBox tbTeslimatKodu = new() { Width = 160, MaxLength = 4, PlaceholderText = "Otomatik", ReadOnly = true }; 
+        private TextBox tbTeslimatKodu = new() { Width = 160, MaxLength = 4, PlaceholderText = "Otomatik", ReadOnly = true };
         private TextBox tbIlgiliKisiAd = new() { Width = 220, MaxLength = 100 };
         private TextBox tbIlgiliKisiTel = new() { Width = 140, MaxLength = 15 };
         private ComboBox cbSube = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 220 };
@@ -62,7 +62,7 @@ namespace kargotakipsistemi.Forms
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Padding = new Padding(12);
             KeyPreview = true;
-            
+
             // Renk teması ayarları (MainForm ile tutarlı)
             this.BackColor = Color.FromArgb(234, 228, 213);
 
@@ -105,53 +105,53 @@ namespace kargotakipsistemi.Forms
 
             SuspendLayout();
             table.SuspendLayout();
-            
+
             // Kontrol stillerini ayarla
             cbDurumAd.BackColor = Color.FromArgb(182, 176, 159);
             cbDurumAd.FlatStyle = FlatStyle.Flat;
-            
+
             tbAciklama.BackColor = Color.FromArgb(182, 176, 159);
             tbAciklama.BorderStyle = BorderStyle.FixedSingle;
-            
+
             cbIslemTipi.BackColor = Color.FromArgb(182, 176, 159);
             cbIslemTipi.FlatStyle = FlatStyle.Flat;
-            
+
             cbIslemSonucu.BackColor = Color.FromArgb(182, 176, 159);
             cbIslemSonucu.FlatStyle = FlatStyle.Flat;
-            
+
             tbTeslimatKodu.BackColor = Color.FromArgb(182, 176, 159);
             tbTeslimatKodu.BorderStyle = BorderStyle.FixedSingle;
-            
+
             tbIlgiliKisiAd.BackColor = Color.FromArgb(182, 176, 159);
             tbIlgiliKisiAd.BorderStyle = BorderStyle.FixedSingle;
-            
+
             tbIlgiliKisiTel.BackColor = Color.FromArgb(182, 176, 159);
             tbIlgiliKisiTel.BorderStyle = BorderStyle.FixedSingle;
-            
+
             cbSube.BackColor = Color.FromArgb(182, 176, 159);
             cbSube.FlatStyle = FlatStyle.Flat;
-            
+
             cbPersonel.BackColor = Color.FromArgb(182, 176, 159);
             cbPersonel.FlatStyle = FlatStyle.Flat;
-            
+
             cbArac.BackColor = Color.FromArgb(182, 176, 159);
             cbArac.FlatStyle = FlatStyle.Flat;
-            
+
             dtpIslemBaslangic.BackColor = Color.FromArgb(182, 176, 159);
             dtpIslemBitis.BackColor = Color.FromArgb(182, 176, 159);
             dtpDurumTarih.BackColor = Color.FromArgb(182, 176, 159);
-            
+
             tbTeslimEdilenKisi.BackColor = Color.FromArgb(182, 176, 159);
             tbTeslimEdilenKisi.BorderStyle = BorderStyle.FixedSingle;
-            
+
             dtpTeslimTarih.BackColor = Color.FromArgb(182, 176, 159);
-            
+
             btnDurumEkle.BackColor = Color.FromArgb(182, 176, 159);
             btnDurumEkle.FlatStyle = FlatStyle.Flat;
-            
+
             btnTeslimEt.BackColor = Color.FromArgb(182, 176, 159);
             btnTeslimEt.FlatStyle = FlatStyle.Flat;
-            
+
             btnKapat.BackColor = Color.FromArgb(182, 176, 159);
             btnKapat.FlatStyle = FlatStyle.Flat;
 
@@ -304,7 +304,7 @@ namespace kargotakipsistemi.Forms
                 gecerli = false;
             }
 
-            // Varsa seçilebilir listeler için (kayıt yoksa zorunlu tutma)
+            // Şube ve Personel seçimi zorunlu (kayıt varsa)
             if (cbSube.Items.Count > 0 && cbSube.SelectedIndex < 0)
             {
                 ep.SetError(cbSube, "Şube seçin.");
@@ -315,11 +315,9 @@ namespace kargotakipsistemi.Forms
                 ep.SetError(cbPersonel, "Personel seçin.");
                 gecerli = false;
             }
-            if (cbArac.Items.Count > 0 && cbArac.SelectedIndex < 0)
-            {
-                ep.SetError(cbArac, "Araç seçin.");
-                gecerli = false;
-            }
+            
+            // Araç seçimi OPSIYONEL (zorunlu değil, kaldırıldı)
+            // Tüm işlemlerde araç kullanılmaz, bu yüzden zorunlu tutulmamalı
 
             // Tarih tutarlılığı
             if (dtpIslemBaslangic.Checked && dtpIslemBitis.Checked && dtpIslemBaslangic.Value > dtpIslemBitis.Value)
@@ -366,20 +364,38 @@ namespace kargotakipsistemi.Forms
         private void ReferansListeleriniDoldur()
         {
             using var ctx = new KtsContext();
+            
+            // Şube listesi
             cbSube.DataSource = ctx.Subeler.OrderBy(s => s.SubeAd).ToList();
             cbSube.DisplayMember = nameof(Sube.SubeAd);
             cbSube.ValueMember = nameof(Sube.SubeId);
             cbSube.SelectedIndex = cbSube.Items.Count > 0 ? 0 : -1;
 
+            // Personel listesi
             cbPersonel.DataSource = ctx.Personeller.OrderBy(p => p.Ad).ToList();
             cbPersonel.DisplayMember = nameof(Personel.Ad);
             cbPersonel.ValueMember = nameof(Personel.PersonelId);
             cbPersonel.SelectedIndex = cbPersonel.Items.Count > 0 ? 0 : -1;
 
-            cbArac.DataSource = ctx.Araclar.OrderBy(a => a.Plaka).ToList();
-            cbArac.DisplayMember = nameof(Arac.Plaka);
-            cbArac.ValueMember = nameof(Arac.AracId);
-            cbArac.SelectedIndex = cbArac.Items.Count > 0 ? 0 : -1;
+            // Araç listesi - Boş seçenek ile (opsiyonel)
+            var araclar = ctx.Araclar.OrderBy(a => a.Plaka).ToList();
+            
+            // Anonim tip ile boş seçenek ekle
+            var aracListesi = new System.Collections.Generic.List<dynamic> 
+            { 
+                new { AracId = (int?)null, Plaka = "-- Araç Seçilmedi --" } 
+            };
+            
+            // Mevcut araçları ekle
+            foreach (var arac in araclar)
+            {
+                aracListesi.Add(new { AracId = (int?)arac.AracId, Plaka = arac.Plaka });
+            }
+            
+            cbArac.DataSource = aracListesi;
+            cbArac.DisplayMember = "Plaka";
+            cbArac.ValueMember = "AracId";
+            cbArac.SelectedIndex = 0; // Varsayılan olarak "Araç Seçilmedi" seçili olsun
         }
 
         private void YukuYukleVeAlanlariDoldur()
@@ -524,6 +540,11 @@ namespace kargotakipsistemi.Forms
             MessageBox.Show("Teslim işlemi tamamlandı.");
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void GonderiSurecForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

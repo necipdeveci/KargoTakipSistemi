@@ -45,8 +45,8 @@ public partial class MainForm : Form
 
 
 
-private List<TabPage> _allTabPages;
-private List<TabPage> _allTabPages2; // tabControl2 için
+    private List<TabPage> _allTabPages;
+    private List<TabPage> _allTabPages2; // tabControl2 için
 
     // MainForm.cs içinde ApplyRoleBasedTabPermissions metodunu bulun ve şu değişiklikleri yapın:
 
@@ -87,7 +87,7 @@ private List<TabPage> _allTabPages2; // tabControl2 için
             // Rol 1: Sistem Yöneticisi -> SADECE ANA İŞLEVSEL SEKMELERE ERİŞİM (tabPage4 ve tabPage5 KALDIRILDI)
             { "Sistem Yöneticisi", new RoleTabPermissions
             {
-                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim", "tabPage4", "tabPage5"}, // tabPage4 ve tabPage5 kaldırıldı
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim"}, //, "tabPage4", "tabPage5" tabPage4 ve tabPage5 kaldırıldı
                 OperationTabs = _allTabPages2?.Select(t => t.Name).ToArray() ?? Array.Empty<string>()
             }},
             
@@ -263,12 +263,12 @@ private List<TabPage> _allTabPages2; // tabControl2 için
         }
     }
 
-// Yardımcı sınıf - Rol izinlerini tutmak için
-private class RoleTabPermissions
-{
-    public string[] MainTabs { get; set; } = Array.Empty<string>();
-    public string[] OperationTabs { get; set; } = Array.Empty<string>();
-}
+    // Yardımcı sınıf - Rol izinlerini tutmak için
+    private class RoleTabPermissions
+    {
+        public string[] MainTabs { get; set; } = Array.Empty<string>();
+        public string[] OperationTabs { get; set; } = Array.Empty<string>();
+    }
 
     private Personel CurrentUser;
     public MainForm(Personel currentUser)
@@ -545,7 +545,7 @@ private class RoleTabPermissions
         this.BackColor = Color.FromArgb(242, 242, 242);
 
         splitContainer1.BackColor = Color.FromArgb(234, 228, 213);
-        
+
         // DataGridView başlık stilleri - dgv_gonderiler
         dgv_gonderiler.BackgroundColor = Color.FromArgb(182, 176, 159);
         dgv_gonderiler.BorderStyle = BorderStyle.None;
@@ -554,7 +554,7 @@ private class RoleTabPermissions
         dgv_gonderiler.EnableHeadersVisualStyles = false;
         dgv_gonderiler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_gonderiler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // DataGridView başlık stilleri - dgv_seciliGonderiDetay
         dgv_seciliGonderiDetay.BackgroundColor = Color.FromArgb(182, 176, 159);
         dgv_seciliGonderiDetay.BorderStyle = BorderStyle.None;
@@ -563,7 +563,7 @@ private class RoleTabPermissions
         dgv_seciliGonderiDetay.EnableHeadersVisualStyles = false;
         dgv_seciliGonderiDetay.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_seciliGonderiDetay.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // DataGridView başlık stilleri - dgv_musteriler
         dgv_musteriler.BackgroundColor = Color.FromArgb(182, 176, 159);
         dgv_musteriler.BorderStyle = BorderStyle.None;
@@ -572,7 +572,7 @@ private class RoleTabPermissions
         dgv_musteriler.EnableHeadersVisualStyles = false;
         dgv_musteriler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_musteriler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // DataGridView başlık stilleri - dgv_personeller
         dgv_personeller.BackgroundColor = Color.FromArgb(182, 176, 159);
         dgv_personeller.BorderStyle = BorderStyle.None;
@@ -581,7 +581,7 @@ private class RoleTabPermissions
         dgv_personeller.EnableHeadersVisualStyles = false;
         dgv_personeller.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_personeller.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // DataGridView başlık stilleri - dgv_subeler
         dgv_subeler.BackgroundColor = Color.FromArgb(182, 176, 159);
         dgv_subeler.BorderStyle = BorderStyle.None;
@@ -590,7 +590,7 @@ private class RoleTabPermissions
         dgv_subeler.EnableHeadersVisualStyles = false;
         dgv_subeler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_subeler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // DataGridView başlık stilleri - dgv_araclar
         dgv_araclar.BackgroundColor = Color.FromArgb(182, 176, 159);
         dgv_araclar.BorderStyle = BorderStyle.None;
@@ -639,7 +639,7 @@ private class RoleTabPermissions
         tb_gonderiToplamFiyat.BackColor = Color.FromArgb(182, 176, 159);
         btn_gonderiTarifeYonetim.BackColor = Color.FromArgb(182, 176, 159);
 
-        
+
         nud_gonderiUcret.BorderStyle = BorderStyle.FixedSingle;
         nud_gonderiEkMasraf.BorderStyle = BorderStyle.FixedSingle;
         nud_gonderiIndirim.BorderStyle = BorderStyle.FixedSingle;
@@ -655,19 +655,62 @@ private class RoleTabPermissions
         btn_gonderiOlustur.BackColor = Color.FromArgb(182, 176, 159);
         btn_gonderiSurecYonetim.BackColor = Color.FromArgb(182, 176, 159);
 
+        // ========== GÖNDERİ FİLTRELEME KONTROLÜ STİLLERİ ==========
         tb_filtreTakipNo.BackColor = Color.FromArgb(182, 176, 159);
-        tb_filtreTeslimAlanAdSoyad.BackColor = Color.FromArgb(182, 176, 159);
-        cb_filtreIdTipSec.BackColor = Color.FromArgb(182, 176, 159);
-        tb_filtreId.BackColor = Color.FromArgb(182, 176, 159);
-        tb_filtreIdAdSoyad.BackColor = Color.FromArgb(182, 176, 159);
-        btn_gonderiAra.BackColor = Color.FromArgb(182, 176, 159);
-
         tb_filtreTakipNo.BorderStyle = BorderStyle.FixedSingle;
-        tb_filtreTeslimAlanAdSoyad.BorderStyle = BorderStyle.FixedSingle;
-        cb_filtreIdTipSec.FlatStyle = FlatStyle.Flat;
-        tb_filtreId.BorderStyle = BorderStyle.FixedSingle;
-        tb_filtreIdAdSoyad.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreTakipNo.ForeColor = Color.FromArgb(0, 0, 0);
+
+        tb_filtreGonderenAd.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreGonderenAd.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreGonderenAd.ForeColor = Color.FromArgb(0, 0, 0);
+
+        tb_filtreGonderenSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreGonderenSoyad.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreGonderenSoyad.ForeColor = Color.FromArgb(0, 0, 0);
+
+        tb_filtreAliciAd.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreAliciAd.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreAliciAd.ForeColor = Color.FromArgb(0, 0, 0);
+
+        tb_filtreAliciSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreAliciSoyad.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreAliciSoyad.ForeColor = Color.FromArgb(0, 0, 0);
+
+        tb_filtreKuryeAd.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreKuryeAd.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreKuryeAd.ForeColor = Color.FromArgb(0, 0, 0);
+
+        tb_filtreKuryeSoyad.BackColor = Color.FromArgb(182, 176, 159);
+        tb_filtreKuryeSoyad.BorderStyle = BorderStyle.FixedSingle;
+        tb_filtreKuryeSoyad.ForeColor = Color.FromArgb(0, 0, 0);
+
+        cb_filtreDurumAd.BackColor = Color.FromArgb(182, 176, 159);
+        cb_filtreDurumAd.FlatStyle = FlatStyle.Flat;
+        cb_filtreDurumAd.ForeColor = Color.FromArgb(0, 0, 0);
+
+        cb_filtreIslemSonuc.BackColor = Color.FromArgb(182, 176, 159);
+        cb_filtreIslemSonuc.FlatStyle = FlatStyle.Flat;
+        cb_filtreIslemSonuc.ForeColor = Color.FromArgb(0, 0, 0);
+
+        cb_filtreGonderenSehir.BackColor = Color.FromArgb(182, 176, 159);
+        cb_filtreGonderenSehir.FlatStyle = FlatStyle.Flat;
+        cb_filtreGonderenSehir.ForeColor = Color.FromArgb(0, 0, 0);
+
+        cb_filtreAlanSehir.BackColor = Color.FromArgb(182, 176, 159);
+        cb_filtreAlanSehir.FlatStyle = FlatStyle.Flat;
+        cb_filtreAlanSehir.ForeColor = Color.FromArgb(0, 0, 0);
+
+        dtp_filtreIlkTarih.BackColor = Color.FromArgb(182, 176, 159);
+        dtp_filtreSonTarih.BackColor = Color.FromArgb(182, 176, 159);
+
+        btn_gonderiAra.BackColor = Color.FromArgb(182, 176, 159);
         btn_gonderiAra.FlatStyle = FlatStyle.Flat;
+        btn_gonderiAra.ForeColor = Color.FromArgb(0, 0, 0);
+
+        btn_filtreRaporOlustur.BackColor = Color.FromArgb(182, 176, 159);
+        btn_filtreRaporOlustur.FlatStyle = FlatStyle.Flat;
+        btn_filtreRaporOlustur.ForeColor = Color.FromArgb(0, 0, 0);
+        // =======================================================
 
         dgv_gonderiler.BorderStyle = BorderStyle.None;
         dgv_seciliGonderiDetay.BorderStyle = BorderStyle.None;
@@ -747,9 +790,6 @@ private class RoleTabPermissions
         btn_aracFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
 
 
-
-
-
         VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
         VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
         cb_personelRol.SelectedIndex = cb_personelRol.Items.Count > 0 ? 0 : -1;
@@ -823,13 +863,7 @@ private class RoleTabPermissions
             }
         }
 
-        // ID Tip Seç ComboBox'ını doldur
-        cb_filtreIdTipSec.Items.Clear();
-        cb_filtreIdTipSec.Items.Add("-");
-        cb_filtreIdTipSec.Items.Add("Gönderen");
-        cb_filtreIdTipSec.Items.Add("Alıcı");
-        cb_filtreIdTipSec.Items.Add("Kurye");
-        cb_filtreIdTipSec.SelectedIndex = 0;
+
         // Gönderi Combobox ve Grid bağlama
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiGonderen, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
         VeriBaglamaServisi.KomboyaBagla(cb_gonderiAlici, ctx => ctx.Musteriler.OrderBy(m => m.Ad), nameof(Musteri.Ad), nameof(Musteri.MusteriId));
@@ -843,6 +877,71 @@ private class RoleTabPermissions
         TeslimatTipiCombosunuDoldur();
 
         VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+
+        // ========== GÖNDERİ FİLTRELEME COMBOBOX'LARINI DOLDUR ==========
+
+        using (var context = new KtsContext())
+        {
+            // Durum Adı filtresi - GonderiDurumGecmisi tablosundan benzersiz durum adlarını al
+            var durumAdlari = context.GonderiDurumGecmisi
+                .Where(gdg => !string.IsNullOrEmpty(gdg.DurumAd))
+                .Select(gdg => gdg.DurumAd)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
+
+            cb_filtreDurumAd.Items.Clear();
+            cb_filtreDurumAd.Items.Add("-"); // Seçim yapılmadığında tüm kayıtları göster
+            if (durumAdlari.Any())
+            {
+                cb_filtreDurumAd.Items.AddRange(durumAdlari.Cast<object>().ToArray());
+            }
+            cb_filtreDurumAd.SelectedIndex = 0; // "-" seçili gelsin
+
+            // İşlem Sonucu filtresi - GonderiDurumGecmisi tablosundan benzersiz işlem sonuçlarını al
+            var islemSonuclari = context.GonderiDurumGecmisi
+                .Where(gdg => !string.IsNullOrEmpty(gdg.IslemSonucu))
+                .Select(gdg => gdg.IslemSonucu)
+                .Distinct()
+                .OrderBy(i => i)
+                .ToList();
+
+            cb_filtreIslemSonuc.Items.Clear();
+            cb_filtreIslemSonuc.Items.Add("-");
+            if (islemSonuclari.Any())
+            {
+                cb_filtreIslemSonuc.Items.AddRange(islemSonuclari.Cast<object>().ToArray());
+            }
+            cb_filtreIslemSonuc.SelectedIndex = 0;
+
+            // Gönderen Şehir filtresi - Adresler ve Iller tablosundan benzersiz il adlarını al
+            var gonderenSehirler = context.Adresler
+                .Include(a => a.Il)
+                .Where(a => a.Il != null && !string.IsNullOrEmpty(a.Il.IlAd))
+                .Select(a => a.Il.IlAd)
+                .Distinct()
+                .OrderBy(s => s)
+                .ToList();
+
+            cb_filtreGonderenSehir.Items.Clear();
+            cb_filtreGonderenSehir.Items.Add("-");
+            if (gonderenSehirler.Any())
+            {
+                cb_filtreGonderenSehir.Items.AddRange(gonderenSehirler.Cast<object>().ToArray());
+            }
+            cb_filtreGonderenSehir.SelectedIndex = 0;
+
+            // Alıcı Şehir filtresi - aynı liste kullanılabilir
+            cb_filtreAlanSehir.Items.Clear();
+            cb_filtreAlanSehir.Items.Add("-");
+            if (gonderenSehirler.Any())
+            {
+                cb_filtreAlanSehir.Items.AddRange(gonderenSehirler.Cast<object>().ToArray());
+            }
+            cb_filtreAlanSehir.SelectedIndex = 0;
+        }
+        // ============================================================
+
         // İlk yüklemede hesaplamayı tetikle
         GonderiFiyatHesaplaVeGuncelle();
 
@@ -1101,21 +1200,33 @@ private class RoleTabPermissions
             dtp_gonderiTahminiTeslimTarih
         );
 
-        // Arama/Filtreleme kontrolleri temizleme
+        // Filtreleme kontrollerini temizle
         KontrolleriTemizle(
             tb_filtreTakipNo,
-            tb_filtreId,
-            tb_filtreIdAdSoyad,
-            tb_filtreTeslimAlanAdSoyad,
-            cb_filtreIdTipSec
+            tb_filtreGonderenAd,
+            tb_filtreGonderenSoyad,
+            tb_filtreAliciAd,
+            tb_filtreAliciSoyad,
+            tb_filtreKuryeAd,
+            tb_filtreKuryeSoyad
         );
+
+        // ComboBox filtrelerini sıfırla
+        if (cb_filtreDurumAd.Items.Count > 0)
+            cb_filtreDurumAd.SelectedIndex = 0; // "-" seçeneğine dön
+
+        if (cb_filtreIslemSonuc.Items.Count > 0)
+            cb_filtreIslemSonuc.SelectedIndex = 0; // "-" seçeneğine dön
+
+        if (cb_filtreGonderenSehir.Items.Count > 0)
+            cb_filtreGonderenSehir.SelectedIndex = 0; // "-" seçeneğine dön
+
+        if (cb_filtreAlanSehir.Items.Count > 0)
+            cb_filtreAlanSehir.SelectedIndex = 0; // "-" seçeneğine dön
 
         // Tarih filtrelerini bugüne ayarla
         dtp_filtreIlkTarih.Value = DateTime.Today;
         dtp_filtreSonTarih.Value = DateTime.Today;
-
-        // ID Tip Seç combobox'ını varsayılan değere ayarla
-        cb_filtreIdTipSec.SelectedIndex = 0; // "-" seçeneği
 
         // Grid'i yeniden yükle
         VeriBaglamaServisi.IzgaraBagla(dgv_gonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
@@ -1140,102 +1251,108 @@ private class RoleTabPermissions
     {
         using var ctx = new KtsContext();
 
-        // Tüm gönderi sorgusunu başlat - TÜM ALANLARI GETİR
-        IQueryable<Gonderi> query = ctx.Gonderiler
+        // Temel sorgu - tüm gönderileri çek
+        var query = ctx.Gonderiler
             .Include(g => g.Gonderen)
             .Include(g => g.Alici)
             .Include(g => g.Kurye)
-            .Include(g => g.GonderenAdres)
-            .Include(g => g.AliciAdres);
+            .Include(g => g.GonderenAdres).ThenInclude(a => a.Il)
+            .Include(g => g.AliciAdres).ThenInclude(a => a.Il)
+            .AsQueryable();
 
-        bool filtreLandiMi = false;
+        // Tarih aralığı filtresi
+        DateTime ilkTarih = dtp_filtreIlkTarih.Value.Date;
+        DateTime sonTarih = dtp_filtreSonTarih.Value.Date.AddDays(1).AddSeconds(-1);
+        query = query.Where(g => g.GonderiTarihi >= ilkTarih && g.GonderiTarihi <= sonTarih);
 
-        // GRUP 1: Takip No Filtresi (tek başına çalışır)
-        var takipNo = tb_filtreTakipNo.Text.Trim();
-        if (!string.IsNullOrEmpty(takipNo))
+        // Takip No filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreTakipNo.Text))
         {
-            query = query.Where(g => EF.Functions.Like(g.TakipNo, "%" + takipNo + "%"));
-            filtreLandiMi = true;
+            string takipNo = tb_filtreTakipNo.Text.Trim();
+            query = query.Where(g => g.TakipNo.Contains(takipNo));
         }
 
-        // GRUP 2: ID/Ad-Soyad Filtresi (birlikte çalışır, Grup 1'den bağımsız)
-        var secilenTip = cb_filtreIdTipSec.SelectedItem?.ToString();
-        var idText = tb_filtreId.Text.Trim();
-        var adSoyad = tb_filtreIdAdSoyad.Text.Trim();
-
-        // "-" seçiliyse veya seçim yoksa bu grubu atla
-        bool grup2Aktif = !string.IsNullOrEmpty(secilenTip) &&
-                          secilenTip != "-" &&
-                          (!string.IsNullOrEmpty(idText) || !string.IsNullOrEmpty(adSoyad));
-
-        if (grup2Aktif)
+        // Durum Adı filtresi
+        if (cb_filtreDurumAd.SelectedItem != null && cb_filtreDurumAd.SelectedItem.ToString() != "-")
         {
-            // ID ile filtreleme
-            if (!string.IsNullOrEmpty(idText) && int.TryParse(idText, out int arananId))
-            {
-                switch (secilenTip)
-                {
-                    case "Gönderen":
-                        query = query.Where(g => g.GonderenId == arananId);
-                        break;
-                    case "Alıcı":
-                        query = query.Where(g => g.AliciId == arananId);
-                        break;
-                    case "Kurye":
-                        query = query.Where(g => g.KuryeId == arananId);
-                        break;
-                }
-            }
-            // Ad-Soyad ile filtreleme
-            else if (!string.IsNullOrEmpty(adSoyad))
-            {
-                switch (secilenTip)
-                {
-                    case "Gönderen":
-                        query = query.Where(g =>
-                            EF.Functions.Like(g.Gonderen.Ad + " " + g.Gonderen.Soyad, "%" + adSoyad + "%") ||
-                            EF.Functions.Like(g.Gonderen.Ad, "%" + adSoyad + "%") ||
-                            EF.Functions.Like(g.Gonderen.Soyad, "%" + adSoyad + "%"));
-                        break;
-                    case "Alıcı":
-                        query = query.Where(g =>
-                            EF.Functions.Like(g.Alici.Ad + " " + g.Alici.Soyad, "%" + adSoyad + "%") ||
-                            EF.Functions.Like(g.Alici.Ad, "%" + adSoyad + "%") ||
-                            EF.Functions.Like(g.Alici.Soyad, "%" + adSoyad + "%"));
-                        break;
-                    case "Kurye":
-                        query = query.Where(g => g.Kurye != null && (
-                            EF.Functions.Like(g.Kurye.Ad + " " + g.Kurye.Soyad, "%" + adSoyad + "%") ||
-                            EF.Functions.Like(g.Kurye.Ad, "%" + adSoyad + "%") ||
-                            EF.Functions.Like(g.Kurye.Soyad, "%" + adSoyad + "%")));
-                        break;
-                }
-            }
-
-            filtreLandiMi = true;
+            string durumAd = cb_filtreDurumAd.SelectedItem.ToString();
+            var gonderilerWithDurum = ctx.GonderiDurumGecmisi
+                .Where(gdg => gdg.DurumAd == durumAd)
+                .Select(gdg => gdg.GonderiId)
+                .Distinct()
+                .ToList();
+            query = query.Where(g => gonderilerWithDurum.Contains(g.GonderiId));
         }
 
-        // GRUP 3: Teslim Alan Kişi Filtresi (tek başına çalışır)
-        var teslimAlanAd = tb_filtreTeslimAlanAdSoyad.Text.Trim();
-        if (!string.IsNullOrEmpty(teslimAlanAd))
+        // İşlem Sonucu filtresi
+        if (cb_filtreIslemSonuc.SelectedItem != null && cb_filtreIslemSonuc.SelectedItem.ToString() != "-")
         {
-            query = query.Where(g =>
-                g.TeslimEdilenKisi != null &&
-                EF.Functions.Like(g.TeslimEdilenKisi, "%" + teslimAlanAd + "%"));
-            filtreLandiMi = true;
+            string islemSonuc = cb_filtreIslemSonuc.SelectedItem.ToString();
+            var gonderilerWithSonuc = ctx.GonderiDurumGecmisi
+                .Where(gdg => gdg.IslemSonucu == islemSonuc)
+                .Select(gdg => gdg.GonderiId)
+                .Distinct()
+                .ToList();
+            query = query.Where(g => gonderilerWithSonuc.Contains(g.GonderiId));
         }
 
-        // GRUP 4: Tarih Aralığı Filtresi
-        if (!filtreLandiMi || dtp_filtreIlkTarih.Value.Date != DateTime.Today.Date ||
-            dtp_filtreSonTarih.Value.Date != DateTime.Today.Date)
+        // Gönderen Adı filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreGonderenAd.Text))
         {
-            DateTime ilkTarih = dtp_filtreIlkTarih.Value.Date;
-            DateTime sonTarih = dtp_filtreSonTarih.Value.Date.AddDays(1).AddSeconds(-1);
-
-            query = query.Where(g => g.GonderiTarihi >= ilkTarih && g.GonderiTarihi <= sonTarih);
+            string gonderenAd = tb_filtreGonderenAd.Text.Trim();
+            query = query.Where(g => g.Gonderen.Ad.Contains(gonderenAd));
         }
 
-        // Sonuçları TÜM ALANLARLA grid'e bağla
+        // Gönderen Soyadı filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreGonderenSoyad.Text))
+        {
+            string gonderenSoyad = tb_filtreGonderenSoyad.Text.Trim();
+            query = query.Where(g => g.Gonderen.Soyad.Contains(gonderenSoyad));
+        }
+
+        // Alıcı Adı filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreAliciAd.Text))
+        {
+            string aliciAd = tb_filtreAliciAd.Text.Trim();
+            query = query.Where(g => g.Alici.Ad.Contains(aliciAd));
+        }
+
+        // Alıcı Soyadı filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreAliciSoyad.Text))
+        {
+            string aliciSoyad = tb_filtreAliciSoyad.Text.Trim();
+            query = query.Where(g => g.Alici.Soyad.Contains(aliciSoyad));
+        }
+
+        // Kurye Adı filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreKuryeAd.Text))
+        {
+            string kuryeAd = tb_filtreKuryeAd.Text.Trim();
+            query = query.Where(g => g.Kurye != null && g.Kurye.Ad.Contains(kuryeAd));
+        }
+
+        // Kurye Soyadı filtresi
+        if (!string.IsNullOrWhiteSpace(tb_filtreKuryeSoyad.Text))
+        {
+            string kuryeSoyad = tb_filtreKuryeSoyad.Text.Trim();
+            query = query.Where(g => g.Kurye != null && g.Kurye.Soyad.Contains(kuryeSoyad));
+        }
+
+        // Gönderen Şehir filtresi
+        if (cb_filtreGonderenSehir.SelectedItem != null && cb_filtreGonderenSehir.SelectedItem.ToString() != "-")
+        {
+            string gonderenSehir = cb_filtreGonderenSehir.SelectedItem.ToString();
+            query = query.Where(g => g.GonderenAdres != null && g.GonderenAdres.Il.IlAd == gonderenSehir);
+        }
+
+        // Alan Şehir filtresi
+        if (cb_filtreAlanSehir.SelectedItem != null && cb_filtreAlanSehir.SelectedItem.ToString() != "-")
+        {
+            string alanSehir = cb_filtreAlanSehir.SelectedItem.ToString();
+            query = query.Where(g => g.AliciAdres != null && g.AliciAdres.Il.IlAd == alanSehir);
+        }
+
+        // Sonuçları sırala ve projeksiyon uygula
         var sonuclar = query
             .OrderByDescending(g => g.GonderiTarihi)
             .Select(g => new
@@ -1250,6 +1367,8 @@ private class RoleTabPermissions
                 KuryeId = g.KuryeId,
                 GonderenAdres = g.GonderenAdres != null ? g.GonderenAdres.AcikAdres : "",
                 AliciAdres = g.AliciAdres != null ? g.AliciAdres.AcikAdres : "",
+                GonderenSehir = g.GonderenAdres != null && g.GonderenAdres.Il != null ? g.GonderenAdres.Il.IlAd : "",
+                AliciSehir = g.AliciAdres != null && g.AliciAdres.Il != null ? g.AliciAdres.Il.IlAd : "",
                 g.GonderiTarihi,
                 g.TahminiTeslimTarihi,
                 g.TeslimTarihi,
@@ -1265,13 +1384,65 @@ private class RoleTabPermissions
                 g.KayitTarihi,
                 g.GuncellemeTarihi,
                 g.IptalTarihi
-            }).ToList();
+            })
+            .ToList();
 
-        dgv_gonderiler.DataSource = sonuclar;
+        // Durum bilgilerini ayrı sorguda çek (performans için)
+        var gonderiIds = sonuclar.Select(s => s.GonderiId).ToList();
+        var durumBilgileri = ctx.GonderiDurumGecmisi
+            .Where(gdg => gonderiIds.Contains(gdg.GonderiId))
+            .GroupBy(gdg => gdg.GonderiId)
+            .Select(g => new
+            {
+                GonderiId = g.Key,
+                SonDurum = g.Where(x => x.SonDurumMu).Select(x => x.DurumAd).FirstOrDefault() ?? "",
+                IslemSonucu = g.OrderByDescending(x => x.Tarih).Select(x => x.IslemSonucu).FirstOrDefault() ?? ""
+            })
+            .ToList();
 
-        if (sonuclar.Count == 0)
+        // Sonuçları birleştir
+        var sonuclarWithDurum = sonuclar.Select(s => new
         {
-            MessageBox.Show("Arama kriterlerine uygun gönderi bulunamadı.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            s.GonderiId,
+            s.TakipNo,
+            s.GonderenAd,
+            s.GonderenId,
+            s.AliciAd,
+            s.AliciId,
+            s.KuryeAd,
+            s.KuryeId,
+            s.GonderenAdres,
+            s.AliciAdres,
+            s.GonderenSehir,
+            s.AliciSehir,
+            s.GonderiTarihi,
+            s.TahminiTeslimTarihi,
+            s.TeslimTarihi,
+            s.TeslimatTipi,
+            s.Agirlik,
+            s.Boyut,
+            s.Ucret,
+            s.IndirimTutar,
+            s.EkMasraf,
+            s.ToplamUcret,
+            s.TeslimEdilenKisi,
+            s.IadeDurumu,
+            s.KayitTarihi,
+            s.GuncellemeTarihi,
+            s.IptalTarihi,
+            SonDurum = durumBilgileri.FirstOrDefault(d => d.GonderiId == s.GonderiId)?.SonDurum ?? "",
+            IslemSonucu = durumBilgileri.FirstOrDefault(d => d.GonderiId == s.GonderiId)?.IslemSonucu ?? ""
+        }).ToList();
+
+        dgv_gonderiler.DataSource = sonuclarWithDurum;
+
+        if (sonuclarWithDurum.Count == 0)
+        {
+            MessageBox.Show("Filtreleme kriterlerine uygun gönderi bulunamadı.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        else
+        {
+            MessageBox.Show($"{sonuclarWithDurum.Count} adet gönderi bulundu.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 
@@ -1874,17 +2045,17 @@ private class RoleTabPermissions
         cb_subeTip.Items.Add("Şube");
         cb_subeTip.Items.Add("Dağıtım Noktası");
         cb_subeTip.Items.Add("Depo");
-        cb_subeTip.Items.Add("Transfer merkezi");
-        cb_subeTip.Items.Add("Kargo kabul");
-        cb_subeTip.Items.Add("Teslimat noktası");
+        cb_subeTip.Items.Add("Transfer Merkezi");
+        cb_subeTip.Items.Add("Kargo Kabul");
+        cb_subeTip.Items.Add("Teslimat Noktası");
         cb_subeCalismaSaat.Items.Clear();
         cb_subeCalismaSaat.Items.Add("08:00 - 17:00");
         cb_subeCalismaSaat.Items.Add("09:00 - 18:00");
         cb_subeCalismaSaat.Items.Add("10:00 - 19:00");
-        cb_subeCalismaSaat.Items.Add("24 saat açık");
-        cb_subeCalismaSaat.Items.Add("Hafta içi 09:00 - 18:00");
-        cb_subeCalismaSaat.Items.Add("Hafta sonu kapalı");
-        cb_subeCalismaSaat.Items.Add("Hafta sonu 10:00 - 16:00");
+        cb_subeCalismaSaat.Items.Add("24 Saat Açık");
+        cb_subeCalismaSaat.Items.Add("Hafta İçi 09:00 - 18:00");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu Kapalı");
+        cb_subeCalismaSaat.Items.Add("Hafta Sonu 10:00 - 16:00");
         VeriBaglamaServisi.KomboyaBagla(cb_subeIl, ctx => ctx.Iller, "IlIdVeAd", "IlId");
         btn_subeKaydet.Text = "Kaydet";
     }
@@ -2200,6 +2371,11 @@ private class RoleTabPermissions
     }
 
     private void dtp_gonderiTarih_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void btn_filtreRaporOlustur_Click(object sender, EventArgs e)
     {
 
     }

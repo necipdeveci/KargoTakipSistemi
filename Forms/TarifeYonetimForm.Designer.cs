@@ -15,424 +15,427 @@ namespace kargotakipsistemi.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.dgv_tarifeler = new System.Windows.Forms.DataGridView();
-            this.cb_tarifeTuru = new System.Windows.Forms.ComboBox();
-            this.tb_tarifeAdi = new System.Windows.Forms.TextBox();
-            this.cb_teslimatTipi = new System.Windows.Forms.ComboBox();
-            this.nud_minDeger = new System.Windows.Forms.NumericUpDown();
-            this.nud_maxDeger = new System.Windows.Forms.NumericUpDown();
-            this.nud_deger = new System.Windows.Forms.NumericUpDown();
-            this.cb_birim = new System.Windows.Forms.ComboBox();
-            this.ckb_aktif = new System.Windows.Forms.CheckBox();
-            this.nud_oncelik = new System.Windows.Forms.NumericUpDown();
-            this.dtp_gecerlilikBaslangic = new System.Windows.Forms.DateTimePicker();
-            this.dtp_gecerlilikBitis = new System.Windows.Forms.DateTimePicker();
-            this.ckb_suresizGecerli = new System.Windows.Forms.CheckBox();
-            this.tb_aciklama = new System.Windows.Forms.TextBox();
-            this.btn_kaydet = new System.Windows.Forms.Button();
-            this.btn_sil = new System.Windows.Forms.Button();
-            this.btn_temizle = new System.Windows.Forms.Button();
-            this.cb_tarifeTuruFiltre = new System.Windows.Forms.ComboBox();
-            this.btn_filtre = new System.Windows.Forms.Button();
-            this.ckb_minDegerYok = new System.Windows.Forms.CheckBox();
-            this.ckb_maxDegerYok = new System.Windows.Forms.CheckBox();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.lbl_tarifeTuru = new System.Windows.Forms.Label();
-            this.lbl_tarifeAdi = new System.Windows.Forms.Label();
-            this.lbl_teslimatTipi = new System.Windows.Forms.Label();
-            this.lbl_minDeger = new System.Windows.Forms.Label();
-            this.lbl_maxDeger = new System.Windows.Forms.Label();
-            this.lbl_deger = new System.Windows.Forms.Label();
-            this.lbl_birim = new System.Windows.Forms.Label();
-            this.lbl_oncelik = new System.Windows.Forms.Label();
-            this.lbl_gecerlilikBaslangic = new System.Windows.Forms.Label();
-            this.lbl_gecerlilikBitis = new System.Windows.Forms.Label();
-            this.lbl_aciklama = new System.Windows.Forms.Label();
-            this.lbl_filtre = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.dgv_tarifeler)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_minDeger)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_maxDeger)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_deger)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_oncelik)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            dgv_tarifeler = new DataGridView();
+            cb_tarifeTuru = new ComboBox();
+            tb_tarifeAdi = new TextBox();
+            cb_teslimatTipi = new ComboBox();
+            nud_minDeger = new NumericUpDown();
+            nud_maxDeger = new NumericUpDown();
+            nud_deger = new NumericUpDown();
+            cb_birim = new ComboBox();
+            ckb_aktif = new CheckBox();
+            nud_oncelik = new NumericUpDown();
+            dtp_gecerlilikBaslangic = new DateTimePicker();
+            dtp_gecerlilikBitis = new DateTimePicker();
+            ckb_suresizGecerli = new CheckBox();
+            tb_aciklama = new TextBox();
+            btn_kaydet = new Button();
+            btn_sil = new Button();
+            btn_temizle = new Button();
+            cb_tarifeTuruFiltre = new ComboBox();
+            btn_filtre = new Button();
+            ckb_minDegerYok = new CheckBox();
+            ckb_maxDegerYok = new CheckBox();
+            toolTip1 = new ToolTip(components);
+            lbl_tarifeTuru = new Label();
+            lbl_tarifeAdi = new Label();
+            lbl_teslimatTipi = new Label();
+            lbl_minDeger = new Label();
+            lbl_maxDeger = new Label();
+            lbl_deger = new Label();
+            lbl_birim = new Label();
+            lbl_oncelik = new Label();
+            lbl_gecerlilikBaslangic = new Label();
+            lbl_gecerlilikBitis = new Label();
+            lbl_aciklama = new Label();
+            lbl_filtre = new Label();
+            ((System.ComponentModel.ISupportInitialize)dgv_tarifeler).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nud_minDeger).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nud_maxDeger).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nud_deger).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nud_oncelik).BeginInit();
+            SuspendLayout();
             // 
             // dgv_tarifeler
             // 
-            this.dgv_tarifeler.AllowUserToAddRows = false;
-            this.dgv_tarifeler.AllowUserToDeleteRows = false;
-            this.dgv_tarifeler.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgv_tarifeler.Location = new System.Drawing.Point(12, 80);
-            this.dgv_tarifeler.Name = "dgv_tarifeler";
-            this.dgv_tarifeler.ReadOnly = true;
-            this.dgv_tarifeler.Size = new System.Drawing.Size(960, 300);
-            this.dgv_tarifeler.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.dgv_tarifeler, "Mevcut fiyatlandýrma tarifelerinin listesi");
-            // 
-            // lbl_filtre
-            // 
-            this.lbl_filtre.AutoSize = true;
-            this.lbl_filtre.Location = new System.Drawing.Point(12, 35);
-            this.lbl_filtre.Name = "lbl_filtre";
-            this.lbl_filtre.Size = new System.Drawing.Size(78, 15);
-            this.lbl_filtre.TabIndex = 100;
-            this.lbl_filtre.Text = "Tarife Türü Filtre:";
-            // 
-            // cb_tarifeTuruFiltre
-            // 
-            this.cb_tarifeTuruFiltre.FormattingEnabled = true;
-            this.cb_tarifeTuruFiltre.Location = new System.Drawing.Point(120, 30);
-            this.cb_tarifeTuruFiltre.Name = "cb_tarifeTuruFiltre";
-            this.cb_tarifeTuruFiltre.Size = new System.Drawing.Size(200, 23);
-            this.cb_tarifeTuruFiltre.TabIndex = 18;
-            this.toolTip1.SetToolTip(this.cb_tarifeTuruFiltre, "Tarifeleri türüne göre filtreleyin");
-            // 
-            // btn_filtre
-            // 
-            this.btn_filtre.Location = new System.Drawing.Point(350, 28);
-            this.btn_filtre.Name = "btn_filtre";
-            this.btn_filtre.Size = new System.Drawing.Size(100, 30);
-            this.btn_filtre.TabIndex = 19;
-            this.btn_filtre.Text = "Filtrele";
-            this.btn_filtre.UseVisualStyleBackColor = true;
-            this.btn_filtre.Click += new System.EventHandler(this.Btn_filtre_Click);
-            this.toolTip1.SetToolTip(this.btn_filtre, "Seçili türe göre tarifeleri filtrele");
-            // 
-            // lbl_tarifeTuru
-            // 
-            this.lbl_tarifeTuru.AutoSize = true;
-            this.lbl_tarifeTuru.Location = new System.Drawing.Point(12, 405);
-            this.lbl_tarifeTuru.Name = "lbl_tarifeTuru";
-            this.lbl_tarifeTuru.Size = new System.Drawing.Size(68, 15);
-            this.lbl_tarifeTuru.TabIndex = 101;
-            this.lbl_tarifeTuru.Text = "Tarife Türü:";
+            dgv_tarifeler.AllowUserToAddRows = false;
+            dgv_tarifeler.AllowUserToDeleteRows = false;
+            dgv_tarifeler.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv_tarifeler.Location = new Point(12, 80);
+            dgv_tarifeler.Name = "dgv_tarifeler";
+            dgv_tarifeler.ReadOnly = true;
+            dgv_tarifeler.Size = new Size(960, 300);
+            dgv_tarifeler.TabIndex = 0;
+            toolTip1.SetToolTip(dgv_tarifeler, "Mevcut fiyatlandýrma tarifelerinin listesi");
             // 
             // cb_tarifeTuru
             // 
-            this.cb_tarifeTuru.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_tarifeTuru.FormattingEnabled = true;
-            this.cb_tarifeTuru.Location = new System.Drawing.Point(120, 400);
-            this.cb_tarifeTuru.Name = "cb_tarifeTuru";
-            this.cb_tarifeTuru.Size = new System.Drawing.Size(200, 23);
-            this.cb_tarifeTuru.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.cb_tarifeTuru, "Tarife kategorisi: Aðýrlýk, Hacim, Teslimat Tipi vb.");
-            // 
-            // lbl_tarifeAdi
-            // 
-            this.lbl_tarifeAdi.AutoSize = true;
-            this.lbl_tarifeAdi.Location = new System.Drawing.Point(12, 435);
-            this.lbl_tarifeAdi.Name = "lbl_tarifeAdi";
-            this.lbl_tarifeAdi.Size = new System.Drawing.Size(64, 15);
-            this.lbl_tarifeAdi.TabIndex = 102;
-            this.lbl_tarifeAdi.Text = "Tarife Adý:";
+            cb_tarifeTuru.DropDownStyle = ComboBoxStyle.DropDownList;
+            cb_tarifeTuru.FormattingEnabled = true;
+            cb_tarifeTuru.Location = new Point(120, 400);
+            cb_tarifeTuru.Name = "cb_tarifeTuru";
+            cb_tarifeTuru.Size = new Size(200, 23);
+            cb_tarifeTuru.TabIndex = 1;
+            toolTip1.SetToolTip(cb_tarifeTuru, "Tarife kategorisi: Aðýrlýk, Hacim, Teslimat Tipi vb.");
             // 
             // tb_tarifeAdi
             // 
-            this.tb_tarifeAdi.Location = new System.Drawing.Point(120, 430);
-            this.tb_tarifeAdi.Name = "tb_tarifeAdi";
-            this.tb_tarifeAdi.Size = new System.Drawing.Size(200, 23);
-            this.tb_tarifeAdi.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.tb_tarifeAdi, "Tarifeyi tanýmlayan benzersiz isim (ör: 0-1 kg Arasý)");
-            // 
-            // lbl_teslimatTipi
-            // 
-            this.lbl_teslimatTipi.AutoSize = true;
-            this.lbl_teslimatTipi.Location = new System.Drawing.Point(12, 465);
-            this.lbl_teslimatTipi.Name = "lbl_teslimatTipi";
-            this.lbl_teslimatTipi.Size = new System.Drawing.Size(80, 15);
-            this.lbl_teslimatTipi.TabIndex = 103;
-            this.lbl_teslimatTipi.Text = "Teslimat Tipi:";
-            this.lbl_teslimatTipi.Visible = false;
+            tb_tarifeAdi.Location = new Point(120, 430);
+            tb_tarifeAdi.Name = "tb_tarifeAdi";
+            tb_tarifeAdi.Size = new Size(200, 23);
+            tb_tarifeAdi.TabIndex = 2;
+            toolTip1.SetToolTip(tb_tarifeAdi, "Tarifeyi tanýmlayan benzersiz isim (ör: 0-1 kg Arasý)");
             // 
             // cb_teslimatTipi
             // 
-            this.cb_teslimatTipi.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_teslimatTipi.FormattingEnabled = true;
-            this.cb_teslimatTipi.Location = new System.Drawing.Point(120, 460);
-            this.cb_teslimatTipi.Name = "cb_teslimatTipi";
-            this.cb_teslimatTipi.Size = new System.Drawing.Size(200, 23);
-            this.cb_teslimatTipi.TabIndex = 3;
-            this.cb_teslimatTipi.Visible = false;
-            this.toolTip1.SetToolTip(this.cb_teslimatTipi, "Teslimat çarpaný için teslimat tipi seçin (Standart, Hýzlý, Ayný Gün vb.)");
-            // 
-            // lbl_minDeger
-            // 
-            this.lbl_minDeger.AutoSize = true;
-            this.lbl_minDeger.Location = new System.Drawing.Point(12, 495);
-            this.lbl_minDeger.Name = "lbl_minDeger";
-            this.lbl_minDeger.Size = new System.Drawing.Size(97, 15);
-            this.lbl_minDeger.TabIndex = 104;
-            this.lbl_minDeger.Text = "Minimum Deðer:";
+            cb_teslimatTipi.DropDownStyle = ComboBoxStyle.DropDownList;
+            cb_teslimatTipi.FormattingEnabled = true;
+            cb_teslimatTipi.Location = new Point(120, 460);
+            cb_teslimatTipi.Name = "cb_teslimatTipi";
+            cb_teslimatTipi.Size = new Size(200, 23);
+            cb_teslimatTipi.TabIndex = 3;
+            toolTip1.SetToolTip(cb_teslimatTipi, "Teslimat çarpaný için teslimat tipi seçin (Standart, Hýzlý, Ayný Gün vb.)");
+            cb_teslimatTipi.Visible = false;
             // 
             // nud_minDeger
             // 
-            this.nud_minDeger.DecimalPlaces = 2;
-            this.nud_minDeger.Location = new System.Drawing.Point(120, 490);
-            this.nud_minDeger.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            this.nud_minDeger.Name = "nud_minDeger";
-            this.nud_minDeger.Size = new System.Drawing.Size(120, 23);
-            this.nud_minDeger.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.nud_minDeger, "Tarifeye dahil olan minimum deðer (aðýrlýk/hacim vb.)");
-            //
-            // ckb_minDegerYok
-            //
-            this.ckb_minDegerYok.AutoSize = true;
-            this.ckb_minDegerYok.Location = new System.Drawing.Point(250, 492);
-            this.ckb_minDegerYok.Name = "ckb_minDegerYok";
-            this.ckb_minDegerYok.Size = new System.Drawing.Size(50, 19);
-            this.ckb_minDegerYok.TabIndex = 5;
-            this.ckb_minDegerYok.Text = "Yok";
-            this.ckb_minDegerYok.UseVisualStyleBackColor = true;
-            this.toolTip1.SetToolTip(this.ckb_minDegerYok, "Alt sýnýr yok (0'dan baþla)");
-            // 
-            // lbl_maxDeger
-            // 
-            this.lbl_maxDeger.AutoSize = true;
-            this.lbl_maxDeger.Location = new System.Drawing.Point(12, 525);
-            this.lbl_maxDeger.Name = "lbl_maxDeger";
-            this.lbl_maxDeger.Size = new System.Drawing.Size(102, 15);
-            this.lbl_maxDeger.TabIndex = 105;
-            this.lbl_maxDeger.Text = "Maksimum Deðer:";
+            nud_minDeger.DecimalPlaces = 2;
+            nud_minDeger.Location = new Point(120, 490);
+            nud_minDeger.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nud_minDeger.Name = "nud_minDeger";
+            nud_minDeger.Size = new Size(120, 23);
+            nud_minDeger.TabIndex = 4;
+            toolTip1.SetToolTip(nud_minDeger, "Tarifeye dahil olan minimum deðer (aðýrlýk/hacim vb.)");
             // 
             // nud_maxDeger
             // 
-            this.nud_maxDeger.DecimalPlaces = 2;
-            this.nud_maxDeger.Location = new System.Drawing.Point(120, 520);
-            this.nud_maxDeger.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            this.nud_maxDeger.Name = "nud_maxDeger";
-            this.nud_maxDeger.Size = new System.Drawing.Size(120, 23);
-            this.nud_maxDeger.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.nud_maxDeger, "Tarifeye dahil olan maksimum deðer (üst sýnýr)");
-            //
-            // ckb_maxDegerYok
-            //
-            this.ckb_maxDegerYok.AutoSize = true;
-            this.ckb_maxDegerYok.Location = new System.Drawing.Point(250, 522);
-            this.ckb_maxDegerYok.Name = "ckb_maxDegerYok";
-            this.ckb_maxDegerYok.Size = new System.Drawing.Size(50, 19);
-            this.ckb_maxDegerYok.TabIndex = 7;
-            this.ckb_maxDegerYok.Text = "Yok";
-            this.ckb_maxDegerYok.UseVisualStyleBackColor = true;
-            this.toolTip1.SetToolTip(this.ckb_maxDegerYok, "Üst sýnýr yok (sonsuz)");
-            // 
-            // lbl_deger
-            // 
-            this.lbl_deger.AutoSize = true;
-            this.lbl_deger.Location = new System.Drawing.Point(12, 555);
-            this.lbl_deger.Name = "lbl_deger";
-            this.lbl_deger.Size = new System.Drawing.Size(86, 15);
-            this.lbl_deger.TabIndex = 106;
-            this.lbl_deger.Text = "Ücret/Çarpan:";
+            nud_maxDeger.DecimalPlaces = 2;
+            nud_maxDeger.Location = new Point(120, 520);
+            nud_maxDeger.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nud_maxDeger.Name = "nud_maxDeger";
+            nud_maxDeger.Size = new Size(120, 23);
+            nud_maxDeger.TabIndex = 6;
+            toolTip1.SetToolTip(nud_maxDeger, "Tarifeye dahil olan maksimum deðer (üst sýnýr)");
             // 
             // nud_deger
             // 
-            this.nud_deger.DecimalPlaces = 4;
-            this.nud_deger.Location = new System.Drawing.Point(120, 550);
-            this.nud_deger.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            this.nud_deger.Name = "nud_deger";
-            this.nud_deger.Size = new System.Drawing.Size(120, 23);
-            this.toolTip1.SetToolTip(this.nud_deger, "Uygulanacak ücret miktarý veya çarpan deðeri");
-            // 
-            // lbl_birim
-            // 
-            this.lbl_birim.AutoSize = true;
-            this.lbl_birim.Location = new System.Drawing.Point(12, 585);
-            this.lbl_birim.Name = "lbl_birim";
-            this.lbl_birim.Size = new System.Drawing.Size(40, 15);
-            this.lbl_birim.TabIndex = 107;
-            this.lbl_birim.Text = "Birim:";
+            nud_deger.DecimalPlaces = 4;
+            nud_deger.Location = new Point(120, 550);
+            nud_deger.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nud_deger.Name = "nud_deger";
+            nud_deger.Size = new Size(120, 23);
+            nud_deger.TabIndex = 113;
+            toolTip1.SetToolTip(nud_deger, "Uygulanacak ücret miktarý veya çarpan deðeri");
             // 
             // cb_birim
             // 
-            this.cb_birim.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_birim.FormattingEnabled = true;
-            this.cb_birim.Location = new System.Drawing.Point(120, 580);
-            this.cb_birim.Name = "cb_birim";
-            this.cb_birim.Size = new System.Drawing.Size(120, 23);
-            this.cb_birim.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.cb_birim, "Deðer birimi (TL/kg, TL, Çarpan, %)");
+            cb_birim.DropDownStyle = ComboBoxStyle.DropDownList;
+            cb_birim.FormattingEnabled = true;
+            cb_birim.Location = new Point(120, 580);
+            cb_birim.Name = "cb_birim";
+            cb_birim.Size = new Size(120, 23);
+            cb_birim.TabIndex = 9;
+            toolTip1.SetToolTip(cb_birim, "Deðer birimi (TL/kg, TL, Çarpan, %)");
             // 
             // ckb_aktif
             // 
-            this.ckb_aktif.AutoSize = true;
-            this.ckb_aktif.Checked = true;
-            this.ckb_aktif.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckb_aktif.Location = new System.Drawing.Point(350, 402);
-            this.ckb_aktif.Name = "ckb_aktif";
-            this.ckb_aktif.Size = new System.Drawing.Size(53, 19);
-            this.ckb_aktif.TabIndex = 10;
-            this.ckb_aktif.Text = "Aktif";
-            this.ckb_aktif.UseVisualStyleBackColor = true;
-            this.toolTip1.SetToolTip(this.ckb_aktif, "Bu tarife þu anda aktif mi? (Pasif tarifeler hesaplamalarda kullanýlmaz)");
-            // 
-            // lbl_oncelik
-            // 
-            this.lbl_oncelik.AutoSize = true;
-            this.lbl_oncelik.Location = new System.Drawing.Point(350, 435);
-            this.lbl_oncelik.Name = "lbl_oncelik";
-            this.lbl_oncelik.Size = new System.Drawing.Size(51, 15);
-            this.lbl_oncelik.TabIndex = 108;
-            this.lbl_oncelik.Text = "Öncelik:";
+            ckb_aktif.AutoSize = true;
+            ckb_aktif.Checked = true;
+            ckb_aktif.CheckState = CheckState.Checked;
+            ckb_aktif.Location = new Point(350, 402);
+            ckb_aktif.Name = "ckb_aktif";
+            ckb_aktif.Size = new Size(51, 19);
+            ckb_aktif.TabIndex = 10;
+            ckb_aktif.Text = "Aktif";
+            toolTip1.SetToolTip(ckb_aktif, "Bu tarife þu anda aktif mi? (Pasif tarifeler hesaplamalarda kullanýlmaz)");
+            ckb_aktif.UseVisualStyleBackColor = true;
             // 
             // nud_oncelik
             // 
-            this.nud_oncelik.Location = new System.Drawing.Point(450, 430);
-            this.nud_oncelik.Maximum = new decimal(new int[] { 999, 0, 0, 0 });
-            this.nud_oncelik.Name = "nud_oncelik";
-            this.nud_oncelik.Size = new System.Drawing.Size(80, 23);
-            this.toolTip1.SetToolTip(this.nud_oncelik, "Sýralama önceliði (düþük numara önce kontrol edilir)");
-            // 
-            // lbl_gecerlilikBaslangic
-            // 
-            this.lbl_gecerlilikBaslangic.AutoSize = true;
-            this.lbl_gecerlilikBaslangic.Location = new System.Drawing.Point(350, 465);
-            this.lbl_gecerlilikBaslangic.Name = "lbl_gecerlilikBaslangic";
-            this.lbl_gecerlilikBaslangic.Size = new System.Drawing.Size(86, 15);
-            this.lbl_gecerlilikBaslangic.TabIndex = 109;
-            this.lbl_gecerlilikBaslangic.Text = "Geçerlilik Baþl.:";
+            nud_oncelik.Location = new Point(450, 430);
+            nud_oncelik.Maximum = new decimal(new int[] { 999, 0, 0, 0 });
+            nud_oncelik.Name = "nud_oncelik";
+            nud_oncelik.Size = new Size(80, 23);
+            nud_oncelik.TabIndex = 112;
+            toolTip1.SetToolTip(nud_oncelik, "Sýralama önceliði (düþük numara önce kontrol edilir)");
             // 
             // dtp_gecerlilikBaslangic
             // 
-            this.dtp_gecerlilikBaslangic.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtp_gecerlilikBaslangic.Location = new System.Drawing.Point(450, 460);
-            this.dtp_gecerlilikBaslangic.Name = "dtp_gecerlilikBaslangic";
-            this.dtp_gecerlilikBaslangic.Size = new System.Drawing.Size(120, 23);
-            this.dtp_gecerlilikBaslangic.TabIndex = 12;
-            this.toolTip1.SetToolTip(this.dtp_gecerlilikBaslangic, "Tarifeyi geçerlilik baþlangýç tarihi");
-            // 
-            // lbl_gecerlilikBitis
-            // 
-            this.lbl_gecerlilikBitis.AutoSize = true;
-            this.lbl_gecerlilikBitis.Location = new System.Drawing.Point(350, 495);
-            this.lbl_gecerlilikBitis.Name = "lbl_gecerlilikBitis";
-            this.lbl_gecerlilikBitis.Size = new System.Drawing.Size(82, 15);
-            this.lbl_gecerlilikBitis.TabIndex = 110;
-            this.lbl_gecerlilikBitis.Text = "Geçerlilik Bitiþ:";
+            dtp_gecerlilikBaslangic.Format = DateTimePickerFormat.Short;
+            dtp_gecerlilikBaslangic.Location = new Point(450, 460);
+            dtp_gecerlilikBaslangic.Name = "dtp_gecerlilikBaslangic";
+            dtp_gecerlilikBaslangic.Size = new Size(120, 23);
+            dtp_gecerlilikBaslangic.TabIndex = 12;
+            toolTip1.SetToolTip(dtp_gecerlilikBaslangic, "Tarifeyi geçerlilik baþlangýç tarihi");
             // 
             // dtp_gecerlilikBitis
             // 
-            this.dtp_gecerlilikBitis.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtp_gecerlilikBitis.Location = new System.Drawing.Point(450, 490);
-            this.dtp_gecerlilikBitis.Name = "dtp_gecerlilikBitis";
-            this.dtp_gecerlilikBitis.Size = new System.Drawing.Size(120, 23);
-            this.dtp_gecerlilikBitis.TabIndex = 13;
-            this.toolTip1.SetToolTip(this.dtp_gecerlilikBitis, "Tarifeyi geçerlilik bitiþ tarihi (süresiz ise iþaretlemeyin)");
+            dtp_gecerlilikBitis.Format = DateTimePickerFormat.Short;
+            dtp_gecerlilikBitis.Location = new Point(450, 490);
+            dtp_gecerlilikBitis.Name = "dtp_gecerlilikBitis";
+            dtp_gecerlilikBitis.Size = new Size(120, 23);
+            dtp_gecerlilikBitis.TabIndex = 13;
+            toolTip1.SetToolTip(dtp_gecerlilikBitis, "Tarifeyi geçerlilik bitiþ tarihi (süresiz ise iþaretlemeyin)");
             // 
             // ckb_suresizGecerli
             // 
-            this.ckb_suresizGecerli.AutoSize = true;
-            this.ckb_suresizGecerli.Checked = true;
-            this.ckb_suresizGecerli.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckb_suresizGecerli.Location = new System.Drawing.Point(580, 492);
-            this.ckb_suresizGecerli.Name = "ckb_suresizGecerli";
-            this.ckb_suresizGecerli.Size = new System.Drawing.Size(69, 19);
-            this.ckb_suresizGecerli.TabIndex = 14;
-            this.ckb_suresizGecerli.Text = "Süresiz";
-            this.ckb_suresizGecerli.UseVisualStyleBackColor = true;
-            this.toolTip1.SetToolTip(this.ckb_suresizGecerli, "Tarife sonsuz zamana kadar geçerli");
-            // 
-            // lbl_aciklama
-            // 
-            this.lbl_aciklama.AutoSize = true;
-            this.lbl_aciklama.Location = new System.Drawing.Point(12, 615);
-            this.lbl_aciklama.Name = "lbl_aciklama";
-            this.lbl_aciklama.Size = new System.Drawing.Size(64, 15);
-            this.lbl_aciklama.TabIndex = 111;
-            this.lbl_aciklama.Text = "Açýklama:";
+            ckb_suresizGecerli.AutoSize = true;
+            ckb_suresizGecerli.Checked = true;
+            ckb_suresizGecerli.CheckState = CheckState.Checked;
+            ckb_suresizGecerli.Location = new Point(580, 492);
+            ckb_suresizGecerli.Name = "ckb_suresizGecerli";
+            ckb_suresizGecerli.Size = new Size(62, 19);
+            ckb_suresizGecerli.TabIndex = 14;
+            ckb_suresizGecerli.Text = "Süresiz";
+            toolTip1.SetToolTip(ckb_suresizGecerli, "Tarife sonsuz zamana kadar geçerli");
+            ckb_suresizGecerli.UseVisualStyleBackColor = true;
             // 
             // tb_aciklama
             // 
-            this.tb_aciklama.Location = new System.Drawing.Point(120, 610);
-            this.tb_aciklama.Multiline = true;
-            this.tb_aciklama.Name = "tb_aciklama";
-            this.tb_aciklama.Size = new System.Drawing.Size(400, 60);
-            this.tb_aciklama.TabIndex = 15;
-            this.toolTip1.SetToolTip(this.tb_aciklama, "Tarife hakkýnda ek bilgi veya notlar");
+            tb_aciklama.Location = new Point(120, 610);
+            tb_aciklama.Multiline = true;
+            tb_aciklama.Name = "tb_aciklama";
+            tb_aciklama.Size = new Size(400, 60);
+            tb_aciklama.TabIndex = 15;
+            toolTip1.SetToolTip(tb_aciklama, "Tarife hakkýnda ek bilgi veya notlar");
             // 
             // btn_kaydet
             // 
-            this.btn_kaydet.Location = new System.Drawing.Point(700, 400);
-            this.btn_kaydet.Name = "btn_kaydet";
-            this.btn_kaydet.Size = new System.Drawing.Size(100, 30);
-            this.btn_kaydet.TabIndex = 16;
-            this.btn_kaydet.Text = "Kaydet";
-            this.btn_kaydet.UseVisualStyleBackColor = true;
-            this.btn_kaydet.Click += new System.EventHandler(this.Btn_kaydet_Click);
-            this.toolTip1.SetToolTip(this.btn_kaydet, "Yeni tarife ekle veya mevcut tarifeyi güncelle");
+            btn_kaydet.Location = new Point(700, 400);
+            btn_kaydet.Name = "btn_kaydet";
+            btn_kaydet.Size = new Size(100, 30);
+            btn_kaydet.TabIndex = 16;
+            btn_kaydet.Text = "Kaydet";
+            toolTip1.SetToolTip(btn_kaydet, "Yeni tarife ekle veya mevcut tarifeyi güncelle");
+            btn_kaydet.UseVisualStyleBackColor = true;
+            btn_kaydet.Click += Btn_kaydet_Click;
             // 
             // btn_sil
             // 
-            this.btn_sil.Location = new System.Drawing.Point(700, 440);
-            this.btn_sil.Name = "btn_sil";
-            this.btn_sil.Size = new System.Drawing.Size(100, 30);
-            this.btn_sil.TabIndex = 17;
-            this.btn_sil.Text = "Sil";
-            this.btn_sil.UseVisualStyleBackColor = true;
-            this.btn_sil.Click += new System.EventHandler(this.Btn_sil_Click);
-            this.toolTip1.SetToolTip(this.btn_sil, "Seçili tarifeyi veritabanýndan sil");
+            btn_sil.Location = new Point(700, 440);
+            btn_sil.Name = "btn_sil";
+            btn_sil.Size = new Size(100, 30);
+            btn_sil.TabIndex = 17;
+            btn_sil.Text = "Sil";
+            toolTip1.SetToolTip(btn_sil, "Seçili tarifeyi veritabanýndan sil");
+            btn_sil.UseVisualStyleBackColor = true;
+            btn_sil.Click += Btn_sil_Click;
             // 
             // btn_temizle
             // 
-            this.btn_temizle.Location = new System.Drawing.Point(700, 480);
-            this.btn_temizle.Name = "btn_temizle";
-            this.btn_temizle.Size = new System.Drawing.Size(100, 30);
-            this.btn_temizle.TabIndex = 18;
-            this.btn_temizle.Text = "Temizle";
-            this.btn_temizle.UseVisualStyleBackColor = true;
-            this.btn_temizle.Click += new System.EventHandler(this.Btn_temizle_Click);
-            this.toolTip1.SetToolTip(this.btn_temizle, "Formu temizle ve yeni kayýt moduna geç");
+            btn_temizle.Location = new Point(700, 480);
+            btn_temizle.Name = "btn_temizle";
+            btn_temizle.Size = new Size(100, 30);
+            btn_temizle.TabIndex = 18;
+            btn_temizle.Text = "Temizle";
+            toolTip1.SetToolTip(btn_temizle, "Formu temizle ve yeni kayýt moduna geç");
+            btn_temizle.UseVisualStyleBackColor = true;
+            btn_temizle.Click += Btn_temizle_Click;
+            // 
+            // cb_tarifeTuruFiltre
+            // 
+            cb_tarifeTuruFiltre.FormattingEnabled = true;
+            cb_tarifeTuruFiltre.Location = new Point(120, 30);
+            cb_tarifeTuruFiltre.Name = "cb_tarifeTuruFiltre";
+            cb_tarifeTuruFiltre.Size = new Size(200, 23);
+            cb_tarifeTuruFiltre.TabIndex = 18;
+            toolTip1.SetToolTip(cb_tarifeTuruFiltre, "Tarifeleri türüne göre filtreleyin");
+            // 
+            // btn_filtre
+            // 
+            btn_filtre.Location = new Point(350, 28);
+            btn_filtre.Name = "btn_filtre";
+            btn_filtre.Size = new Size(100, 30);
+            btn_filtre.TabIndex = 19;
+            btn_filtre.Text = "Filtrele";
+            toolTip1.SetToolTip(btn_filtre, "Seçili türe göre tarifeleri filtrele");
+            btn_filtre.UseVisualStyleBackColor = true;
+            btn_filtre.Click += Btn_filtre_Click;
+            // 
+            // ckb_minDegerYok
+            // 
+            ckb_minDegerYok.AutoSize = true;
+            ckb_minDegerYok.Location = new Point(250, 492);
+            ckb_minDegerYok.Name = "ckb_minDegerYok";
+            ckb_minDegerYok.Size = new Size(45, 19);
+            ckb_minDegerYok.TabIndex = 5;
+            ckb_minDegerYok.Text = "Yok";
+            toolTip1.SetToolTip(ckb_minDegerYok, "Alt sýnýr yok (0'dan baþla)");
+            ckb_minDegerYok.UseVisualStyleBackColor = true;
+            // 
+            // ckb_maxDegerYok
+            // 
+            ckb_maxDegerYok.AutoSize = true;
+            ckb_maxDegerYok.Location = new Point(250, 522);
+            ckb_maxDegerYok.Name = "ckb_maxDegerYok";
+            ckb_maxDegerYok.Size = new Size(45, 19);
+            ckb_maxDegerYok.TabIndex = 7;
+            ckb_maxDegerYok.Text = "Yok";
+            toolTip1.SetToolTip(ckb_maxDegerYok, "Üst sýnýr yok (sonsuz)");
+            ckb_maxDegerYok.UseVisualStyleBackColor = true;
+            // 
+            // lbl_tarifeTuru
+            // 
+            lbl_tarifeTuru.AutoSize = true;
+            lbl_tarifeTuru.Location = new Point(12, 405);
+            lbl_tarifeTuru.Name = "lbl_tarifeTuru";
+            lbl_tarifeTuru.Size = new Size(67, 15);
+            lbl_tarifeTuru.TabIndex = 101;
+            lbl_tarifeTuru.Text = "Tarife Türü:";
+            // 
+            // lbl_tarifeAdi
+            // 
+            lbl_tarifeAdi.AutoSize = true;
+            lbl_tarifeAdi.Location = new Point(12, 435);
+            lbl_tarifeAdi.Name = "lbl_tarifeAdi";
+            lbl_tarifeAdi.Size = new Size(60, 15);
+            lbl_tarifeAdi.TabIndex = 102;
+            lbl_tarifeAdi.Text = "Tarife Adý:";
+            // 
+            // lbl_teslimatTipi
+            // 
+            lbl_teslimatTipi.AutoSize = true;
+            lbl_teslimatTipi.Location = new Point(12, 465);
+            lbl_teslimatTipi.Name = "lbl_teslimatTipi";
+            lbl_teslimatTipi.Size = new Size(77, 15);
+            lbl_teslimatTipi.TabIndex = 103;
+            lbl_teslimatTipi.Text = "Teslimat Tipi:";
+            lbl_teslimatTipi.Visible = false;
+            // 
+            // lbl_minDeger
+            // 
+            lbl_minDeger.AutoSize = true;
+            lbl_minDeger.Location = new Point(12, 495);
+            lbl_minDeger.Name = "lbl_minDeger";
+            lbl_minDeger.Size = new Size(97, 15);
+            lbl_minDeger.TabIndex = 104;
+            lbl_minDeger.Text = "Minimum Deðer:";
+            // 
+            // lbl_maxDeger
+            // 
+            lbl_maxDeger.AutoSize = true;
+            lbl_maxDeger.Location = new Point(12, 525);
+            lbl_maxDeger.Name = "lbl_maxDeger";
+            lbl_maxDeger.Size = new Size(104, 15);
+            lbl_maxDeger.TabIndex = 105;
+            lbl_maxDeger.Text = "Maksimum Deðer:";
+            // 
+            // lbl_deger
+            // 
+            lbl_deger.AutoSize = true;
+            lbl_deger.Location = new Point(12, 555);
+            lbl_deger.Name = "lbl_deger";
+            lbl_deger.Size = new Size(81, 15);
+            lbl_deger.TabIndex = 106;
+            lbl_deger.Text = "Ücret/Çarpan:";
+            // 
+            // lbl_birim
+            // 
+            lbl_birim.AutoSize = true;
+            lbl_birim.Location = new Point(12, 585);
+            lbl_birim.Name = "lbl_birim";
+            lbl_birim.Size = new Size(38, 15);
+            lbl_birim.TabIndex = 107;
+            lbl_birim.Text = "Birim:";
+            // 
+            // lbl_oncelik
+            // 
+            lbl_oncelik.AutoSize = true;
+            lbl_oncelik.Location = new Point(350, 435);
+            lbl_oncelik.Name = "lbl_oncelik";
+            lbl_oncelik.Size = new Size(50, 15);
+            lbl_oncelik.TabIndex = 108;
+            lbl_oncelik.Text = "Öncelik:";
+            // 
+            // lbl_gecerlilikBaslangic
+            // 
+            lbl_gecerlilikBaslangic.AutoSize = true;
+            lbl_gecerlilikBaslangic.Location = new Point(350, 465);
+            lbl_gecerlilikBaslangic.Name = "lbl_gecerlilikBaslangic";
+            lbl_gecerlilikBaslangic.Size = new Size(85, 15);
+            lbl_gecerlilikBaslangic.TabIndex = 109;
+            lbl_gecerlilikBaslangic.Text = "Geçerlilik Baþl.:";
+            // 
+            // lbl_gecerlilikBitis
+            // 
+            lbl_gecerlilikBitis.AutoSize = true;
+            lbl_gecerlilikBitis.Location = new Point(350, 495);
+            lbl_gecerlilikBitis.Name = "lbl_gecerlilikBitis";
+            lbl_gecerlilikBitis.Size = new Size(83, 15);
+            lbl_gecerlilikBitis.TabIndex = 110;
+            lbl_gecerlilikBitis.Text = "Geçerlilik Bitiþ:";
+            // 
+            // lbl_aciklama
+            // 
+            lbl_aciklama.AutoSize = true;
+            lbl_aciklama.Location = new Point(12, 615);
+            lbl_aciklama.Name = "lbl_aciklama";
+            lbl_aciklama.Size = new Size(59, 15);
+            lbl_aciklama.TabIndex = 111;
+            lbl_aciklama.Text = "Açýklama:";
+            // 
+            // lbl_filtre
+            // 
+            lbl_filtre.AutoSize = true;
+            lbl_filtre.Location = new Point(12, 35);
+            lbl_filtre.Name = "lbl_filtre";
+            lbl_filtre.Size = new Size(96, 15);
+            lbl_filtre.TabIndex = 100;
+            lbl_filtre.Text = "Tarife Türü Filtre:";
             // 
             // TarifeYonetimForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 691);
-            this.Controls.Add(this.lbl_aciklama);
-            this.Controls.Add(this.lbl_gecerlilikBitis);
-            this.Controls.Add(this.lbl_gecerlilikBaslangic);
-            this.Controls.Add(this.lbl_oncelik);
-            this.Controls.Add(this.lbl_birim);
-            this.Controls.Add(this.lbl_deger);
-            this.Controls.Add(this.lbl_maxDeger);
-            this.Controls.Add(this.lbl_minDeger);
-            this.Controls.Add(this.lbl_teslimatTipi);
-            this.Controls.Add(this.lbl_tarifeAdi);
-            this.Controls.Add(this.lbl_tarifeTuru);
-            this.Controls.Add(this.lbl_filtre);
-            this.Controls.Add(this.btn_filtre);
-            this.Controls.Add(this.cb_tarifeTuruFiltre);
-            this.Controls.Add(this.btn_temizle);
-            this.Controls.Add(this.btn_sil);
-            this.Controls.Add(this.btn_kaydet);
-            this.Controls.Add(this.tb_aciklama);
-            this.Controls.Add(this.ckb_suresizGecerli);
-            this.Controls.Add(this.dtp_gecerlilikBitis);
-            this.Controls.Add(this.dtp_gecerlilikBaslangic);
-            this.Controls.Add(this.nud_oncelik);
-            this.Controls.Add(this.ckb_aktif);
-            this.Controls.Add(this.cb_birim);
-            this.Controls.Add(this.nud_deger);
-            this.Controls.Add(this.ckb_maxDegerYok);
-            this.Controls.Add(this.nud_maxDeger);
-            this.Controls.Add(this.ckb_minDegerYok);
-            this.Controls.Add(this.nud_minDeger);
-            this.Controls.Add(this.cb_teslimatTipi);
-            this.Controls.Add(this.tb_tarifeAdi);
-            this.Controls.Add(this.cb_tarifeTuru);
-            this.Controls.Add(this.dgv_tarifeler);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "TarifeYonetimForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Fiyatlandýrma Tarife Yönetimi";
-            ((System.ComponentModel.ISupportInitialize)(this.dgv_tarifeler)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_minDeger)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_maxDeger)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_deger)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_oncelik)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(984, 691);
+            Controls.Add(lbl_aciklama);
+            Controls.Add(lbl_gecerlilikBitis);
+            Controls.Add(lbl_gecerlilikBaslangic);
+            Controls.Add(lbl_oncelik);
+            Controls.Add(lbl_birim);
+            Controls.Add(lbl_deger);
+            Controls.Add(lbl_maxDeger);
+            Controls.Add(lbl_minDeger);
+            Controls.Add(lbl_teslimatTipi);
+            Controls.Add(lbl_tarifeAdi);
+            Controls.Add(lbl_tarifeTuru);
+            Controls.Add(lbl_filtre);
+            Controls.Add(btn_filtre);
+            Controls.Add(cb_tarifeTuruFiltre);
+            Controls.Add(btn_temizle);
+            Controls.Add(btn_sil);
+            Controls.Add(btn_kaydet);
+            Controls.Add(tb_aciklama);
+            Controls.Add(ckb_suresizGecerli);
+            Controls.Add(dtp_gecerlilikBitis);
+            Controls.Add(dtp_gecerlilikBaslangic);
+            Controls.Add(nud_oncelik);
+            Controls.Add(ckb_aktif);
+            Controls.Add(cb_birim);
+            Controls.Add(nud_deger);
+            Controls.Add(ckb_maxDegerYok);
+            Controls.Add(nud_maxDeger);
+            Controls.Add(ckb_minDegerYok);
+            Controls.Add(nud_minDeger);
+            Controls.Add(cb_teslimatTipi);
+            Controls.Add(tb_tarifeAdi);
+            Controls.Add(cb_tarifeTuru);
+            Controls.Add(dgv_tarifeler);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "TarifeYonetimForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Fiyatlandýrma Tarife Yönetimi";
+            Load += TarifeYonetimForm_Load;
+            ((System.ComponentModel.ISupportInitialize)dgv_tarifeler).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nud_minDeger).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nud_maxDeger).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nud_deger).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nud_oncelik).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

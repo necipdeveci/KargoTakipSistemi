@@ -27,7 +27,7 @@ public partial class TarifeYonetimForm : Form
     {
         // Renk temasý ayarlarý (MainForm ile tutarlý)
         this.BackColor = Color.FromArgb(234, 228, 213);
-        
+
         // DataGridView renklendirme
         dgv_tarifeler.BackgroundColor = Color.FromArgb(234, 228, 213);
         dgv_tarifeler.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
@@ -35,71 +35,69 @@ public partial class TarifeYonetimForm : Form
         dgv_tarifeler.EnableHeadersVisualStyles = false;
         dgv_tarifeler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_tarifeler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // ComboBox kontrolleri
         cb_tarifeTuru.BackColor = Color.FromArgb(182, 176, 159);
         cb_tarifeTuru.ForeColor = Color.FromArgb(0, 0, 0);
         cb_tarifeTuru.FlatStyle = FlatStyle.Flat;
-        
+
         cb_teslimatTipi.BackColor = Color.FromArgb(182, 176, 159);
         cb_teslimatTipi.ForeColor = Color.FromArgb(0, 0, 0);
         cb_teslimatTipi.FlatStyle = FlatStyle.Flat;
-        
+
         cb_birim.BackColor = Color.FromArgb(182, 176, 159);
         cb_birim.ForeColor = Color.FromArgb(0, 0, 0);
         cb_birim.FlatStyle = FlatStyle.Flat;
-        
+
         cb_tarifeTuruFiltre.BackColor = Color.FromArgb(182, 176, 159);
         cb_tarifeTuruFiltre.ForeColor = Color.FromArgb(0, 0, 0);
         cb_tarifeTuruFiltre.FlatStyle = FlatStyle.Flat;
-        
+
         // TextBox kontrolleri
         tb_tarifeAdi.BackColor = Color.FromArgb(182, 176, 159);
         tb_tarifeAdi.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_aciklama.BackColor = Color.FromArgb(182, 176, 159);
         tb_aciklama.BorderStyle = BorderStyle.FixedSingle;
-        
+
         // NumericUpDown kontrolleri
         nud_minDeger.BackColor = Color.FromArgb(182, 176, 159);
         nud_minDeger.BorderStyle = BorderStyle.FixedSingle;
-        
+
         nud_maxDeger.BackColor = Color.FromArgb(182, 176, 159);
         nud_maxDeger.BorderStyle = BorderStyle.FixedSingle;
-        
+
         nud_deger.BackColor = Color.FromArgb(182, 176, 159);
         nud_deger.BorderStyle = BorderStyle.FixedSingle;
         nud_deger.TabIndex = 8;
-        
+
         nud_oncelik.BackColor = Color.FromArgb(182, 176, 159);
         nud_oncelik.BorderStyle = BorderStyle.FixedSingle;
-        
+
         // DateTimePicker kontrolleri
         dtp_gecerlilikBaslangic.BackColor = Color.FromArgb(182, 176, 159);
         dtp_gecerlilikBitis.BackColor = Color.FromArgb(182, 176, 159);
-        
+
         // Button kontrolleri
         btn_kaydet.BackColor = Color.FromArgb(182, 176, 159);
         btn_kaydet.FlatStyle = FlatStyle.Flat;
-        
+
         btn_sil.BackColor = Color.FromArgb(182, 176, 159);
         btn_sil.FlatStyle = FlatStyle.Flat;
-        
+
         btn_temizle.BackColor = Color.FromArgb(182, 176, 159);
         btn_temizle.FlatStyle = FlatStyle.Flat;
-        
+
         btn_filtre.BackColor = Color.FromArgb(182, 176, 159);
         btn_filtre.FlatStyle = FlatStyle.Flat;
 
         // Tarife türü combo
         cb_tarifeTuru.Items.Clear();
-        cb_tarifeTuru.Items.AddRange(new object[] 
-        { 
-            "AgirlikTarife", 
-            "HacimEkUcret", 
-            "TeslimatCarpan", 
-            "EkMasrafEsik", 
-            "IndirimEsik" 
+        cb_tarifeTuru.Items.AddRange(new object[]
+        {
+            "AgirlikTarife",
+            "HacimEkUcret",
+            "TeslimatCarpan"
         });
         cb_tarifeTuru.SelectedIndex = 0;
         cb_tarifeTuru.SelectedIndexChanged += Cb_tarifeTuru_SelectedIndexChanged;
@@ -114,7 +112,7 @@ public partial class TarifeYonetimForm : Form
             "Randevulu Teslimat"
         });
         cb_teslimatTipi.SelectedIndex = 0;
-        
+
         // Baþlangýçta teslimat tipi alanlarýný gizle
         lbl_teslimatTipi.Visible = false;
         cb_teslimatTipi.Visible = false;
@@ -122,13 +120,13 @@ public partial class TarifeYonetimForm : Form
         // Filtre combo (Tümü seçeneði ile)
         cb_tarifeTuruFiltre.Items.Clear();
         cb_tarifeTuruFiltre.Items.Add("Tümü");
-        cb_tarifeTuruFiltre.Items.AddRange(new object[] 
-        { 
-            "AgirlikTarife", 
-            "HacimEkUcret", 
-            "TeslimatCarpan", 
-            "EkMasrafEsik", 
-            "IndirimEsik" 
+        cb_tarifeTuruFiltre.Items.AddRange(new object[]
+        {
+            "AgirlikTarife",
+            "HacimEkUcret",
+            "TeslimatCarpan",
+            "EkMasrafEsik",
+            "IndirimEsik"
         });
         cb_tarifeTuruFiltre.SelectedIndex = 0;
 
@@ -146,7 +144,7 @@ public partial class TarifeYonetimForm : Form
         // Tarih varsayýlanlarý
         dtp_gecerlilikBaslangic.Value = DateTime.Now;
         ckb_suresizGecerli.Checked = true;
-        ckb_suresizGecerli.CheckedChanged += (s, e) => 
+        ckb_suresizGecerli.CheckedChanged += (s, e) =>
         {
             dtp_gecerlilikBitis.Enabled = !ckb_suresizGecerli.Checked;
         };
@@ -200,8 +198,8 @@ public partial class TarifeYonetimForm : Form
                 t.Birim,
                 t.Aktif,
                 t.Oncelik,
-                Gecerlilik = t.GecerlilikBitis == null 
-                    ? "Süresiz" 
+                Gecerlilik = t.GecerlilikBitis == null
+                    ? "Süresiz"
                     : $"{t.GecerlilikBaslangic:dd.MM.yyyy} - {t.GecerlilikBitis:dd.MM.yyyy}",
                 t.Aciklama
             })
@@ -223,7 +221,7 @@ public partial class TarifeYonetimForm : Form
             {
                 cb_tarifeTuru.SelectedItem = tarife.TarifeTuru;
                 tb_tarifeAdi.Text = tarife.TarifeAdi;
-                
+
                 // Teslimat tipi varsa seç
                 if (!string.IsNullOrEmpty(tarife.TeslimatTipi) && cb_teslimatTipi.Items.Contains(tarife.TeslimatTipi))
                 {
@@ -286,7 +284,7 @@ public partial class TarifeYonetimForm : Form
 
         tarife.TarifeTuru = cb_tarifeTuru.SelectedItem?.ToString() ?? "AgirlikTarife";
         tarife.TarifeAdi = tb_tarifeAdi.Text.Trim();
-        
+
         // TeslimatCarpan seçiliyse teslimat tipini kaydet
         if (tarife.TarifeTuru == "TeslimatCarpan")
         {
@@ -311,7 +309,7 @@ public partial class TarifeYonetimForm : Form
             _context.FiyatlandirmaTarifeler.Add(tarife);
 
         _context.SaveChanges();
-        MessageBox.Show(yeniKayit ? "Tarife eklendi!" : "Tarife güncellendi!", "Baþarýlý", 
+        MessageBox.Show(yeniKayit ? "Tarife eklendi!" : "Tarife güncellendi!", "Baþarýlý",
             MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         TarifeleriYukle();
@@ -326,7 +324,7 @@ public partial class TarifeYonetimForm : Form
             return;
         }
 
-        var onay = MessageBox.Show("Seçili tarifeyi silmek istediðinize emin misiniz?", 
+        var onay = MessageBox.Show("Seçili tarifeyi silmek istediðinize emin misiniz?",
             "Silme Onayý", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
         if (onay == DialogResult.Yes)
@@ -351,7 +349,7 @@ public partial class TarifeYonetimForm : Form
     private void Btn_filtre_Click(object? sender, EventArgs e)
     {
         string? filtre = cb_tarifeTuruFiltre.SelectedItem?.ToString();
-        
+
         // "Tümü" veya boþ ise filtre yok
         if (string.IsNullOrEmpty(filtre) || filtre == "Tümü")
         {
@@ -388,5 +386,10 @@ public partial class TarifeYonetimForm : Form
             _context?.Dispose();
         }
         base.Dispose(disposing);
+    }
+
+    private void TarifeYonetimForm_Load(object sender, EventArgs e)
+    {
+
     }
 }

@@ -35,6 +35,9 @@ namespace kargotakipsistemi
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            
+            // İlişkileri ve konfigürasyonları tanımla
             // Ilce - Il (Cascade)
             modelBuilder.Entity<Ilce>()
                 .HasOne(i => i.Il)
@@ -344,8 +347,14 @@ namespace kargotakipsistemi
             // Her ilçe için 2 mahalle (Toplam: 243 * 2 = 486)
             MahalleSeedData.Seed(modelBuilder);
             
-            // Fiyatlandırma tarifeleri (Toplam: 18 tarife - 5 kategori)
+            // Fiyatlandırma tarifeleri - GÜNCELLENDİ (7 kayıt)
             FiyatlandirmaTarifeSeedData.Seed(modelBuilder);
+            
+            // ======================================
+            // KAPSAMLI SEED DATA - YENİ EKLENEN
+            // Personel, Şube, Araç, Müşteri, Adres, Gönderi
+            // ======================================
+            KapsamliSeedData.Seed(modelBuilder);
         }
     }
 }

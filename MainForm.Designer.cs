@@ -77,21 +77,37 @@
             groupBox7 = new GroupBox();
             dgv_seciliGonderiDetay = new DataGridView();
             groupBox5 = new GroupBox();
-            tb_filtreTeslimAlanAdSoyad = new TextBox();
+            btn_filtreRaporOlustur = new Button();
+            groupBox28 = new GroupBox();
+            cb_filtreAlanSehir = new ComboBox();
+            label131 = new Label();
+            cb_filtreGonderenSehir = new ComboBox();
+            label130 = new Label();
+            tb_filtreKuryeSoyad = new TextBox();
+            tb_filtreKuryeAd = new TextBox();
+            label128 = new Label();
+            label127 = new Label();
+            groupBox27 = new GroupBox();
+            tb_filtreAliciSoyad = new TextBox();
+            tb_filtreAliciAd = new TextBox();
+            tb_filtreGonderenSoyad = new TextBox();
+            tb_filtreGonderenAd = new TextBox();
+            label126 = new Label();
             label125 = new Label();
-            tb_filtreIdAdSoyad = new TextBox();
             label124 = new Label();
-            dtp_filtreSonTarih = new DateTimePicker();
-            label123 = new Label();
             label122 = new Label();
-            tb_filtreId = new TextBox();
-            btn_gonderiAra = new Button();
-            label19 = new Label();
-            dtp_filtreIlkTarih = new DateTimePicker();
-            cb_filtreIdTipSec = new ComboBox();
+            groupBox21 = new GroupBox();
+            cb_filtreIslemSonuc = new ComboBox();
+            label129 = new Label();
+            cb_filtreDurumAd = new ComboBox();
             label18 = new Label();
             tb_filtreTakipNo = new TextBox();
             label17 = new Label();
+            dtp_filtreSonTarih = new DateTimePicker();
+            label123 = new Label();
+            label19 = new Label();
+            dtp_filtreIlkTarih = new DateTimePicker();
+            btn_gonderiAra = new Button();
             tabPageMYonetim = new TabPage();
             splitContainer2 = new SplitContainer();
             groupBox8 = new GroupBox();
@@ -392,6 +408,9 @@
             groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgv_seciliGonderiDetay).BeginInit();
             groupBox5.SuspendLayout();
+            groupBox28.SuspendLayout();
+            groupBox27.SuspendLayout();
+            groupBox21.SuspendLayout();
             tabPageMYonetim.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
@@ -474,7 +493,7 @@
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Font = new Font("Century Gothic", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 162);
+            tabControl1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 162);
             tabControl1.ItemSize = new Size(269, 25);
             tabControl1.Location = new Point(0, 0);
             tabControl1.Margin = new Padding(3, 4, 3, 4);
@@ -993,159 +1012,325 @@
             // 
             // groupBox5
             // 
-            groupBox5.Controls.Add(tb_filtreTeslimAlanAdSoyad);
-            groupBox5.Controls.Add(label125);
-            groupBox5.Controls.Add(tb_filtreIdAdSoyad);
-            groupBox5.Controls.Add(label124);
-            groupBox5.Controls.Add(dtp_filtreSonTarih);
-            groupBox5.Controls.Add(label123);
-            groupBox5.Controls.Add(label122);
-            groupBox5.Controls.Add(tb_filtreId);
+            groupBox5.Controls.Add(btn_filtreRaporOlustur);
+            groupBox5.Controls.Add(groupBox28);
+            groupBox5.Controls.Add(groupBox27);
+            groupBox5.Controls.Add(groupBox21);
             groupBox5.Controls.Add(btn_gonderiAra);
-            groupBox5.Controls.Add(label19);
-            groupBox5.Controls.Add(dtp_filtreIlkTarih);
-            groupBox5.Controls.Add(cb_filtreIdTipSec);
-            groupBox5.Controls.Add(label18);
-            groupBox5.Controls.Add(tb_filtreTakipNo);
-            groupBox5.Controls.Add(label17);
             groupBox5.Dock = DockStyle.Top;
             groupBox5.Location = new Point(0, 0);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(898, 120);
             groupBox5.TabIndex = 28;
             groupBox5.TabStop = false;
-            groupBox5.Text = "Gönderi Arama";
+            groupBox5.Text = "Gönderi Filtreleme";
             // 
-            // tb_filtreTeslimAlanAdSoyad
+            // btn_filtreRaporOlustur
             // 
-            tb_filtreTeslimAlanAdSoyad.Location = new Point(96, 80);
-            tb_filtreTeslimAlanAdSoyad.Name = "tb_filtreTeslimAlanAdSoyad";
-            tb_filtreTeslimAlanAdSoyad.Size = new Size(147, 23);
-            tb_filtreTeslimAlanAdSoyad.TabIndex = 39;
+            btn_filtreRaporOlustur.FlatStyle = FlatStyle.Flat;
+            btn_filtreRaporOlustur.Location = new Point(755, 73);
+            btn_filtreRaporOlustur.Name = "btn_filtreRaporOlustur";
+            btn_filtreRaporOlustur.Size = new Size(137, 46);
+            btn_filtreRaporOlustur.TabIndex = 39;
+            btn_filtreRaporOlustur.Text = "Rapor Oluştur";
+            btn_filtreRaporOlustur.UseVisualStyleBackColor = true;
+            btn_filtreRaporOlustur.Click += btn_filtreRaporOlustur_Click;
+            // 
+            // groupBox28
+            // 
+            groupBox28.Controls.Add(cb_filtreAlanSehir);
+            groupBox28.Controls.Add(label131);
+            groupBox28.Controls.Add(cb_filtreGonderenSehir);
+            groupBox28.Controls.Add(label130);
+            groupBox28.Controls.Add(tb_filtreKuryeSoyad);
+            groupBox28.Controls.Add(tb_filtreKuryeAd);
+            groupBox28.Controls.Add(label128);
+            groupBox28.Controls.Add(label127);
+            groupBox28.Font = new Font("Arial", 8.25F, FontStyle.Italic, GraphicsUnit.Point, 162);
+            groupBox28.Location = new Point(556, 14);
+            groupBox28.Name = "groupBox28";
+            groupBox28.Size = new Size(173, 106);
+            groupBox28.TabIndex = 38;
+            groupBox28.TabStop = false;
+            groupBox28.Text = "Diğer";
+            // 
+            // cb_filtreAlanSehir
+            // 
+            cb_filtreAlanSehir.FormattingEnabled = true;
+            cb_filtreAlanSehir.Location = new Point(99, 80);
+            cb_filtreAlanSehir.Name = "cb_filtreAlanSehir";
+            cb_filtreAlanSehir.Size = new Size(60, 22);
+            cb_filtreAlanSehir.TabIndex = 56;
+            // 
+            // label131
+            // 
+            label131.AutoSize = true;
+            label131.Font = new Font("Arial", 7.25F);
+            label131.Location = new Point(99, 65);
+            label131.Name = "label131";
+            label131.Size = new Size(60, 13);
+            label131.TabIndex = 55;
+            label131.Text = "Alan Şehir:";
+            // 
+            // cb_filtreGonderenSehir
+            // 
+            cb_filtreGonderenSehir.FormattingEnabled = true;
+            cb_filtreGonderenSehir.Location = new Point(8, 80);
+            cb_filtreGonderenSehir.Name = "cb_filtreGonderenSehir";
+            cb_filtreGonderenSehir.Size = new Size(85, 22);
+            cb_filtreGonderenSehir.TabIndex = 47;
+            // 
+            // label130
+            // 
+            label130.AutoSize = true;
+            label130.Font = new Font("Arial", 7.25F);
+            label130.Location = new Point(8, 64);
+            label130.Name = "label130";
+            label130.Size = new Size(85, 13);
+            label130.TabIndex = 46;
+            label130.Text = "Gönderen Şehir:";
+            // 
+            // tb_filtreKuryeSoyad
+            // 
+            tb_filtreKuryeSoyad.Location = new Point(84, 33);
+            tb_filtreKuryeSoyad.Name = "tb_filtreKuryeSoyad";
+            tb_filtreKuryeSoyad.Size = new Size(70, 20);
+            tb_filtreKuryeSoyad.TabIndex = 54;
+            // 
+            // tb_filtreKuryeAd
+            // 
+            tb_filtreKuryeAd.Location = new Point(8, 33);
+            tb_filtreKuryeAd.Name = "tb_filtreKuryeAd";
+            tb_filtreKuryeAd.Size = new Size(70, 20);
+            tb_filtreKuryeAd.TabIndex = 51;
+            // 
+            // label128
+            // 
+            label128.AutoSize = true;
+            label128.Font = new Font("Arial", 7.25F);
+            label128.Location = new Point(8, 15);
+            label128.Name = "label128";
+            label128.Size = new Size(55, 13);
+            label128.TabIndex = 52;
+            label128.Text = "Kurye Adı:";
+            // 
+            // label127
+            // 
+            label127.AutoSize = true;
+            label127.Font = new Font("Arial", 7.25F);
+            label127.Location = new Point(84, 13);
+            label127.Name = "label127";
+            label127.Size = new Size(73, 13);
+            label127.TabIndex = 53;
+            label127.Text = "Kurye Soyadı:";
+            // 
+            // groupBox27
+            // 
+            groupBox27.Controls.Add(tb_filtreAliciSoyad);
+            groupBox27.Controls.Add(tb_filtreAliciAd);
+            groupBox27.Controls.Add(tb_filtreGonderenSoyad);
+            groupBox27.Controls.Add(tb_filtreGonderenAd);
+            groupBox27.Controls.Add(label126);
+            groupBox27.Controls.Add(label125);
+            groupBox27.Controls.Add(label124);
+            groupBox27.Controls.Add(label122);
+            groupBox27.Font = new Font("Arial", 8.25F, FontStyle.Italic, GraphicsUnit.Point, 162);
+            groupBox27.Location = new Point(328, 14);
+            groupBox27.Name = "groupBox27";
+            groupBox27.Size = new Size(205, 106);
+            groupBox27.TabIndex = 37;
+            groupBox27.TabStop = false;
+            groupBox27.Text = "Müşteri";
+            // 
+            // tb_filtreAliciSoyad
+            // 
+            tb_filtreAliciSoyad.Location = new Point(105, 80);
+            tb_filtreAliciSoyad.Name = "tb_filtreAliciSoyad";
+            tb_filtreAliciSoyad.Size = new Size(93, 20);
+            tb_filtreAliciSoyad.TabIndex = 50;
+            // 
+            // tb_filtreAliciAd
+            // 
+            tb_filtreAliciAd.Location = new Point(6, 80);
+            tb_filtreAliciAd.Name = "tb_filtreAliciAd";
+            tb_filtreAliciAd.Size = new Size(93, 20);
+            tb_filtreAliciAd.TabIndex = 49;
+            // 
+            // tb_filtreGonderenSoyad
+            // 
+            tb_filtreGonderenSoyad.Location = new Point(105, 33);
+            tb_filtreGonderenSoyad.Name = "tb_filtreGonderenSoyad";
+            tb_filtreGonderenSoyad.Size = new Size(93, 20);
+            tb_filtreGonderenSoyad.TabIndex = 48;
+            // 
+            // tb_filtreGonderenAd
+            // 
+            tb_filtreGonderenAd.Location = new Point(6, 33);
+            tb_filtreGonderenAd.Name = "tb_filtreGonderenAd";
+            tb_filtreGonderenAd.Size = new Size(93, 20);
+            tb_filtreGonderenAd.TabIndex = 44;
+            // 
+            // label126
+            // 
+            label126.AutoSize = true;
+            label126.Font = new Font("Arial", 7.25F);
+            label126.Location = new Point(6, 64);
+            label126.Name = "label126";
+            label126.Size = new Size(49, 13);
+            label126.TabIndex = 47;
+            label126.Text = "Alıcı Adı:";
             // 
             // label125
             // 
             label125.AutoSize = true;
-            label125.Font = new Font("Arial", 8.5F);
-            label125.Location = new Point(27, 56);
+            label125.Font = new Font("Arial", 7.25F);
+            label125.Location = new Point(105, 64);
             label125.Name = "label125";
-            label125.Size = new Size(126, 15);
-            label125.TabIndex = 38;
-            label125.Text = "Teslim Alan Ad Soyad:";
-            // 
-            // tb_filtreIdAdSoyad
-            // 
-            tb_filtreIdAdSoyad.Location = new Point(321, 80);
-            tb_filtreIdAdSoyad.Name = "tb_filtreIdAdSoyad";
-            tb_filtreIdAdSoyad.Size = new Size(147, 23);
-            tb_filtreIdAdSoyad.TabIndex = 37;
+            label125.Size = new Size(67, 13);
+            label125.TabIndex = 46;
+            label125.Text = "Alıcı Soyadı:";
             // 
             // label124
             // 
             label124.AutoSize = true;
-            label124.Font = new Font("Arial", 8.5F);
-            label124.Location = new Point(249, 85);
+            label124.Font = new Font("Arial", 7.25F);
+            label124.Location = new Point(105, 15);
             label124.Name = "label124";
-            label124.Size = new Size(61, 15);
-            label124.TabIndex = 36;
-            label124.Text = "Ad Soyad:";
-            // 
-            // dtp_filtreSonTarih
-            // 
-            dtp_filtreSonTarih.Location = new Point(558, 51);
-            dtp_filtreSonTarih.Name = "dtp_filtreSonTarih";
-            dtp_filtreSonTarih.Size = new Size(191, 23);
-            dtp_filtreSonTarih.TabIndex = 35;
-            // 
-            // label123
-            // 
-            label123.AutoSize = true;
-            label123.Font = new Font("Arial", 8.5F);
-            label123.Location = new Point(490, 55);
-            label123.Name = "label123";
-            label123.Size = new Size(62, 15);
-            label123.TabIndex = 34;
-            label123.Text = "Son Tarih:";
+            label124.Size = new Size(93, 13);
+            label124.TabIndex = 45;
+            label124.Text = "Gönderen Soyadı:";
             // 
             // label122
             // 
             label122.AutoSize = true;
-            label122.Font = new Font("Arial", 8.5F);
-            label122.Location = new Point(249, 56);
+            label122.Font = new Font("Arial", 7.25F);
+            label122.Location = new Point(6, 17);
             label122.Name = "label122";
-            label122.Size = new Size(41, 15);
-            label122.TabIndex = 33;
-            label122.Text = "ID Gir:";
+            label122.Size = new Size(75, 13);
+            label122.TabIndex = 44;
+            label122.Text = "Gönderen Adı:";
             // 
-            // tb_filtreId
+            // groupBox21
             // 
-            tb_filtreId.Location = new Point(321, 51);
-            tb_filtreId.Name = "tb_filtreId";
-            tb_filtreId.Size = new Size(147, 23);
-            tb_filtreId.TabIndex = 32;
+            groupBox21.Controls.Add(cb_filtreIslemSonuc);
+            groupBox21.Controls.Add(label129);
+            groupBox21.Controls.Add(cb_filtreDurumAd);
+            groupBox21.Controls.Add(label18);
+            groupBox21.Controls.Add(tb_filtreTakipNo);
+            groupBox21.Controls.Add(label17);
+            groupBox21.Controls.Add(dtp_filtreSonTarih);
+            groupBox21.Controls.Add(label123);
+            groupBox21.Controls.Add(label19);
+            groupBox21.Controls.Add(dtp_filtreIlkTarih);
+            groupBox21.Font = new Font("Arial", 8.25F, FontStyle.Italic);
+            groupBox21.Location = new Point(30, 14);
+            groupBox21.Name = "groupBox21";
+            groupBox21.Size = new Size(292, 106);
+            groupBox21.TabIndex = 36;
+            groupBox21.TabStop = false;
+            groupBox21.Text = "Gönderi";
+            // 
+            // cb_filtreIslemSonuc
+            // 
+            cb_filtreIslemSonuc.FormattingEnabled = true;
+            cb_filtreIslemSonuc.Location = new Point(206, 72);
+            cb_filtreIslemSonuc.Name = "cb_filtreIslemSonuc";
+            cb_filtreIslemSonuc.Size = new Size(74, 22);
+            cb_filtreIslemSonuc.TabIndex = 45;
+            // 
+            // label129
+            // 
+            label129.AutoSize = true;
+            label129.Font = new Font("Arial", 7.25F);
+            label129.Location = new Point(127, 77);
+            label129.Name = "label129";
+            label129.Size = new Size(74, 13);
+            label129.TabIndex = 44;
+            label129.Text = "İşlem Sonucu:";
+            // 
+            // cb_filtreDurumAd
+            // 
+            cb_filtreDurumAd.FormattingEnabled = true;
+            cb_filtreDurumAd.Location = new Point(206, 44);
+            cb_filtreDurumAd.Name = "cb_filtreDurumAd";
+            cb_filtreDurumAd.Size = new Size(74, 22);
+            cb_filtreDurumAd.TabIndex = 43;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Font = new Font("Arial", 7.25F);
+            label18.Location = new Point(142, 46);
+            label18.Name = "label18";
+            label18.Size = new Size(59, 13);
+            label18.TabIndex = 42;
+            label18.Text = "Durum Adı:";
+            // 
+            // tb_filtreTakipNo
+            // 
+            tb_filtreTakipNo.Location = new Point(199, 18);
+            tb_filtreTakipNo.Name = "tb_filtreTakipNo";
+            tb_filtreTakipNo.Size = new Size(81, 20);
+            tb_filtreTakipNo.TabIndex = 41;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Font = new Font("Arial", 7.25F);
+            label17.Location = new Point(142, 22);
+            label17.Name = "label17";
+            label17.Size = new Size(51, 13);
+            label17.TabIndex = 40;
+            label17.Text = "Takip No:";
+            // 
+            // dtp_filtreSonTarih
+            // 
+            dtp_filtreSonTarih.Font = new Font("Arial", 7.25F, FontStyle.Italic);
+            dtp_filtreSonTarih.Format = DateTimePickerFormat.Short;
+            dtp_filtreSonTarih.Location = new Point(59, 43);
+            dtp_filtreSonTarih.Name = "dtp_filtreSonTarih";
+            dtp_filtreSonTarih.Size = new Size(74, 19);
+            dtp_filtreSonTarih.TabIndex = 39;
+            // 
+            // label123
+            // 
+            label123.AutoSize = true;
+            label123.Font = new Font("Arial", 7.25F);
+            label123.Location = new Point(6, 46);
+            label123.Name = "label123";
+            label123.Size = new Size(56, 13);
+            label123.TabIndex = 38;
+            label123.Text = "Son Tarih:";
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Arial", 7.25F);
+            label19.Location = new Point(6, 23);
+            label19.Name = "label19";
+            label19.Size = new Size(47, 13);
+            label19.TabIndex = 37;
+            label19.Text = "İlk Tarih:";
+            // 
+            // dtp_filtreIlkTarih
+            // 
+            dtp_filtreIlkTarih.Font = new Font("Arial", 7.25F, FontStyle.Italic);
+            dtp_filtreIlkTarih.Format = DateTimePickerFormat.Short;
+            dtp_filtreIlkTarih.Location = new Point(59, 18);
+            dtp_filtreIlkTarih.Name = "dtp_filtreIlkTarih";
+            dtp_filtreIlkTarih.Size = new Size(74, 19);
+            dtp_filtreIlkTarih.TabIndex = 36;
             // 
             // btn_gonderiAra
             // 
             btn_gonderiAra.FlatStyle = FlatStyle.Flat;
             btn_gonderiAra.Location = new Point(755, 21);
             btn_gonderiAra.Name = "btn_gonderiAra";
-            btn_gonderiAra.Size = new Size(137, 82);
+            btn_gonderiAra.Size = new Size(137, 46);
             btn_gonderiAra.TabIndex = 0;
             btn_gonderiAra.Text = "Filtrele";
             btn_gonderiAra.UseVisualStyleBackColor = true;
             btn_gonderiAra.Click += btn_gonderiAra_Click;
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Font = new Font("Arial", 8.5F);
-            label19.Location = new Point(490, 26);
-            label19.Name = "label19";
-            label19.Size = new Size(52, 15);
-            label19.TabIndex = 31;
-            label19.Text = "İlk Tarih:";
-            // 
-            // dtp_filtreIlkTarih
-            // 
-            dtp_filtreIlkTarih.Location = new Point(558, 22);
-            dtp_filtreIlkTarih.Name = "dtp_filtreIlkTarih";
-            dtp_filtreIlkTarih.Size = new Size(191, 23);
-            dtp_filtreIlkTarih.TabIndex = 30;
-            // 
-            // cb_filtreIdTipSec
-            // 
-            cb_filtreIdTipSec.FormattingEnabled = true;
-            cb_filtreIdTipSec.Location = new Point(321, 21);
-            cb_filtreIdTipSec.Name = "cb_filtreIdTipSec";
-            cb_filtreIdTipSec.Size = new Size(147, 24);
-            cb_filtreIdTipSec.TabIndex = 29;
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Font = new Font("Arial", 8.5F);
-            label18.Location = new Point(249, 26);
-            label18.Name = "label18";
-            label18.Size = new Size(66, 15);
-            label18.TabIndex = 28;
-            label18.Text = "ID Tip Seç:";
-            // 
-            // tb_filtreTakipNo
-            // 
-            tb_filtreTakipNo.Location = new Point(91, 21);
-            tb_filtreTakipNo.Name = "tb_filtreTakipNo";
-            tb_filtreTakipNo.Size = new Size(147, 23);
-            tb_filtreTakipNo.TabIndex = 27;
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Font = new Font("Arial", 8.5F);
-            label17.Location = new Point(27, 26);
-            label17.Name = "label17";
-            label17.Size = new Size(58, 15);
-            label17.TabIndex = 26;
-            label17.Text = "Takip No:";
             // 
             // tabPageMYonetim
             // 
@@ -1419,7 +1604,7 @@
             tabControl2.Controls.Add(tabPage7);
             tabControl2.Controls.Add(tabPage8);
             tabControl2.Dock = DockStyle.Fill;
-            tabControl2.Font = new Font("Century Gothic", 9.75F);
+            tabControl2.Font = new Font("Microsoft Sans Serif", 9.75F);
             tabControl2.Location = new Point(0, 0);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
@@ -1429,10 +1614,10 @@
             // tabPage6
             // 
             tabPage6.Controls.Add(splitContainer3);
-            tabPage6.Location = new Point(4, 26);
+            tabPage6.Location = new Point(4, 25);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(1354, 686);
+            tabPage6.Size = new Size(1354, 687);
             tabPage6.TabIndex = 0;
             tabPage6.Text = "Personel";
             tabPage6.UseVisualStyleBackColor = true;
@@ -1450,7 +1635,7 @@
             // splitContainer3.Panel2
             // 
             splitContainer3.Panel2.Controls.Add(groupBox12);
-            splitContainer3.Size = new Size(1348, 680);
+            splitContainer3.Size = new Size(1348, 681);
             splitContainer3.SplitterDistance = 842;
             splitContainer3.TabIndex = 2;
             // 
@@ -1461,7 +1646,7 @@
             groupBox10.Controls.Add(dgv_personeller);
             groupBox10.Controls.Add(label27);
             groupBox10.Dock = DockStyle.Bottom;
-            groupBox10.Location = new Point(0, -14);
+            groupBox10.Location = new Point(0, -13);
             groupBox10.Name = "groupBox10";
             groupBox10.Size = new Size(842, 694);
             groupBox10.TabIndex = 0;
@@ -1474,7 +1659,7 @@
             cb_personelFiltre.FormattingEnabled = true;
             cb_personelFiltre.Location = new Point(113, 28);
             cb_personelFiltre.Name = "cb_personelFiltre";
-            cb_personelFiltre.Size = new Size(136, 25);
+            cb_personelFiltre.Size = new Size(136, 24);
             cb_personelFiltre.TabIndex = 2;
             // 
             // btn_personelAra
@@ -1547,7 +1732,7 @@
             groupBox12.Dock = DockStyle.Right;
             groupBox12.Location = new Point(23, 0);
             groupBox12.Name = "groupBox12";
-            groupBox12.Size = new Size(479, 680);
+            groupBox12.Size = new Size(479, 681);
             groupBox12.TabIndex = 0;
             groupBox12.TabStop = false;
             groupBox12.Text = "Personel Bilgileri";
@@ -1558,7 +1743,7 @@
             cb_personelEhliyet.FormattingEnabled = true;
             cb_personelEhliyet.Location = new Point(23, 291);
             cb_personelEhliyet.Name = "cb_personelEhliyet";
-            cb_personelEhliyet.Size = new Size(136, 25);
+            cb_personelEhliyet.Size = new Size(136, 24);
             cb_personelEhliyet.TabIndex = 39;
             // 
             // dtp_personelDogumTarih
@@ -1566,7 +1751,7 @@
             dtp_personelDogumTarih.Checked = false;
             dtp_personelDogumTarih.Location = new Point(257, 59);
             dtp_personelDogumTarih.Name = "dtp_personelDogumTarih";
-            dtp_personelDogumTarih.Size = new Size(202, 23);
+            dtp_personelDogumTarih.Size = new Size(202, 22);
             dtp_personelDogumTarih.TabIndex = 38;
             // 
             // label30
@@ -1621,7 +1806,7 @@
             nud_personelMaas.Location = new Point(317, 216);
             nud_personelMaas.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nud_personelMaas.Name = "nud_personelMaas";
-            nud_personelMaas.Size = new Size(145, 23);
+            nud_personelMaas.Size = new Size(145, 22);
             nud_personelMaas.TabIndex = 32;
             // 
             // dtp_personelIstencikis
@@ -1629,7 +1814,7 @@
             dtp_personelIstencikis.Enabled = false;
             dtp_personelIstencikis.Location = new Point(277, 289);
             dtp_personelIstencikis.Name = "dtp_personelIstencikis";
-            dtp_personelIstencikis.Size = new Size(185, 23);
+            dtp_personelIstencikis.Size = new Size(185, 22);
             dtp_personelIstencikis.TabIndex = 31;
             // 
             // label40
@@ -1649,7 +1834,7 @@
             cb_personelCinsiyet.FormattingEnabled = true;
             cb_personelCinsiyet.Location = new Point(317, 156);
             cb_personelCinsiyet.Name = "cb_personelCinsiyet";
-            cb_personelCinsiyet.Size = new Size(145, 25);
+            cb_personelCinsiyet.Size = new Size(145, 24);
             cb_personelCinsiyet.TabIndex = 29;
             // 
             // label39
@@ -1667,7 +1852,7 @@
             // 
             dtp_personelIsegiris.Location = new Point(277, 260);
             dtp_personelIsegiris.Name = "dtp_personelIsegiris";
-            dtp_personelIsegiris.Size = new Size(185, 23);
+            dtp_personelIsegiris.Size = new Size(185, 22);
             dtp_personelIsegiris.TabIndex = 26;
             // 
             // label38
@@ -1698,7 +1883,7 @@
             cb_personelArac.FormattingEnabled = true;
             cb_personelArac.Location = new Point(88, 216);
             cb_personelArac.Name = "cb_personelArac";
-            cb_personelArac.Size = new Size(145, 25);
+            cb_personelArac.Size = new Size(145, 24);
             cb_personelArac.TabIndex = 22;
             // 
             // label37
@@ -1718,7 +1903,7 @@
             cb_personelSube.FormattingEnabled = true;
             cb_personelSube.Location = new Point(317, 186);
             cb_personelSube.Name = "cb_personelSube";
-            cb_personelSube.Size = new Size(145, 25);
+            cb_personelSube.Size = new Size(145, 24);
             cb_personelSube.TabIndex = 20;
             cb_personelSube.SelectedIndexChanged += cb_personelSube_SelectedIndexChanged;
             // 
@@ -1739,7 +1924,7 @@
             cb_personelRol.FormattingEnabled = true;
             cb_personelRol.Location = new Point(88, 186);
             cb_personelRol.Name = "cb_personelRol";
-            cb_personelRol.Size = new Size(145, 25);
+            cb_personelRol.Size = new Size(145, 24);
             cb_personelRol.TabIndex = 18;
             // 
             // label34
@@ -1781,7 +1966,7 @@
             tb_personelSifre.BorderStyle = BorderStyle.FixedSingle;
             tb_personelSifre.Location = new Point(88, 157);
             tb_personelSifre.Name = "tb_personelSifre";
-            tb_personelSifre.Size = new Size(107, 23);
+            tb_personelSifre.Size = new Size(107, 22);
             tb_personelSifre.TabIndex = 14;
             // 
             // tb_personelMail
@@ -1789,7 +1974,7 @@
             tb_personelMail.BorderStyle = BorderStyle.FixedSingle;
             tb_personelMail.Location = new Point(88, 126);
             tb_personelMail.Name = "tb_personelMail";
-            tb_personelMail.Size = new Size(145, 23);
+            tb_personelMail.Size = new Size(145, 22);
             tb_personelMail.TabIndex = 12;
             // 
             // label29
@@ -1808,7 +1993,7 @@
             tb_personelTel.BorderStyle = BorderStyle.FixedSingle;
             tb_personelTel.Location = new Point(88, 97);
             tb_personelTel.Name = "tb_personelTel";
-            tb_personelTel.Size = new Size(145, 23);
+            tb_personelTel.Size = new Size(145, 22);
             tb_personelTel.TabIndex = 9;
             // 
             // tb_personelSoyad
@@ -1816,7 +2001,7 @@
             tb_personelSoyad.BorderStyle = BorderStyle.FixedSingle;
             tb_personelSoyad.Location = new Point(88, 65);
             tb_personelSoyad.Name = "tb_personelSoyad";
-            tb_personelSoyad.Size = new Size(145, 23);
+            tb_personelSoyad.Size = new Size(145, 22);
             tb_personelSoyad.TabIndex = 8;
             // 
             // tb_personelAd
@@ -1824,7 +2009,7 @@
             tb_personelAd.BorderStyle = BorderStyle.FixedSingle;
             tb_personelAd.Location = new Point(88, 36);
             tb_personelAd.Name = "tb_personelAd";
-            tb_personelAd.Size = new Size(145, 23);
+            tb_personelAd.Size = new Size(145, 22);
             tb_personelAd.TabIndex = 1;
             // 
             // btn_personelFormTemizle
@@ -1899,10 +2084,10 @@
             // tabPage7
             // 
             tabPage7.Controls.Add(splitContainer4);
-            tabPage7.Location = new Point(4, 26);
+            tabPage7.Location = new Point(4, 25);
             tabPage7.Name = "tabPage7";
             tabPage7.Padding = new Padding(3);
-            tabPage7.Size = new Size(1354, 686);
+            tabPage7.Size = new Size(1354, 687);
             tabPage7.TabIndex = 1;
             tabPage7.Text = "Şube";
             tabPage7.UseVisualStyleBackColor = true;
@@ -1920,7 +2105,7 @@
             // splitContainer4.Panel2
             // 
             splitContainer4.Panel2.Controls.Add(groupBox14);
-            splitContainer4.Size = new Size(1348, 680);
+            splitContainer4.Size = new Size(1348, 681);
             splitContainer4.SplitterDistance = 842;
             splitContainer4.TabIndex = 3;
             // 
@@ -1931,7 +2116,7 @@
             groupBox13.Controls.Add(dgv_subeler);
             groupBox13.Controls.Add(label42);
             groupBox13.Dock = DockStyle.Bottom;
-            groupBox13.Location = new Point(0, -14);
+            groupBox13.Location = new Point(0, -13);
             groupBox13.Name = "groupBox13";
             groupBox13.Size = new Size(842, 694);
             groupBox13.TabIndex = 0;
@@ -1944,7 +2129,7 @@
             cb_subeFiltre.FormattingEnabled = true;
             cb_subeFiltre.Location = new Point(100, 28);
             cb_subeFiltre.Name = "cb_subeFiltre";
-            cb_subeFiltre.Size = new Size(121, 25);
+            cb_subeFiltre.Size = new Size(121, 24);
             cb_subeFiltre.TabIndex = 2;
             // 
             // btn_subeAra
@@ -2004,7 +2189,7 @@
             groupBox14.Dock = DockStyle.Right;
             groupBox14.Location = new Point(23, 0);
             groupBox14.Name = "groupBox14";
-            groupBox14.Size = new Size(479, 680);
+            groupBox14.Size = new Size(479, 681);
             groupBox14.TabIndex = 0;
             groupBox14.TabStop = false;
             groupBox14.Text = "Şube Bilgileri";
@@ -2034,7 +2219,7 @@
             nud_subeKapasite.Location = new Point(105, 214);
             nud_subeKapasite.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nud_subeKapasite.Name = "nud_subeKapasite";
-            nud_subeKapasite.Size = new Size(128, 23);
+            nud_subeKapasite.Size = new Size(128, 22);
             nud_subeKapasite.TabIndex = 45;
             // 
             // label45
@@ -2053,7 +2238,7 @@
             cb_subeCalismaSaat.FormattingEnabled = true;
             cb_subeCalismaSaat.Location = new Point(267, 179);
             cb_subeCalismaSaat.Name = "cb_subeCalismaSaat";
-            cb_subeCalismaSaat.Size = new Size(145, 25);
+            cb_subeCalismaSaat.Size = new Size(145, 24);
             cb_subeCalismaSaat.TabIndex = 42;
             // 
             // label44
@@ -2072,7 +2257,7 @@
             cb_subeIlce.FormattingEnabled = true;
             cb_subeIlce.Location = new Point(88, 184);
             cb_subeIlce.Name = "cb_subeIlce";
-            cb_subeIlce.Size = new Size(145, 25);
+            cb_subeIlce.Size = new Size(145, 24);
             cb_subeIlce.TabIndex = 40;
             // 
             // label58
@@ -2091,7 +2276,7 @@
             cb_subeIl.FormattingEnabled = true;
             cb_subeIl.Location = new Point(88, 154);
             cb_subeIl.Name = "cb_subeIl";
-            cb_subeIl.Size = new Size(145, 25);
+            cb_subeIl.Size = new Size(145, 24);
             cb_subeIl.TabIndex = 38;
             // 
             // label57
@@ -2110,7 +2295,7 @@
             cb_subeTip.FormattingEnabled = true;
             cb_subeTip.Location = new Point(88, 66);
             cb_subeTip.Name = "cb_subeTip";
-            cb_subeTip.Size = new Size(145, 25);
+            cb_subeTip.Size = new Size(145, 24);
             cb_subeTip.TabIndex = 36;
             // 
             // tb_subeMail
@@ -2118,7 +2303,7 @@
             tb_subeMail.BorderStyle = BorderStyle.FixedSingle;
             tb_subeMail.Location = new Point(99, 125);
             tb_subeMail.Name = "tb_subeMail";
-            tb_subeMail.Size = new Size(134, 23);
+            tb_subeMail.Size = new Size(134, 22);
             tb_subeMail.TabIndex = 12;
             // 
             // label52
@@ -2136,7 +2321,7 @@
             tb_subeTel.BorderStyle = BorderStyle.FixedSingle;
             tb_subeTel.Location = new Point(94, 96);
             tb_subeTel.Name = "tb_subeTel";
-            tb_subeTel.Size = new Size(139, 23);
+            tb_subeTel.Size = new Size(139, 22);
             tb_subeTel.TabIndex = 9;
             // 
             // tb_subeAd
@@ -2144,7 +2329,7 @@
             tb_subeAd.BorderStyle = BorderStyle.FixedSingle;
             tb_subeAd.Location = new Point(88, 37);
             tb_subeAd.Name = "tb_subeAd";
-            tb_subeAd.Size = new Size(145, 23);
+            tb_subeAd.Size = new Size(145, 22);
             tb_subeAd.TabIndex = 1;
             // 
             // btn_subeFormTemizle
@@ -2216,9 +2401,9 @@
             // tabPage8
             // 
             tabPage8.Controls.Add(splitContainer5);
-            tabPage8.Location = new Point(4, 26);
+            tabPage8.Location = new Point(4, 25);
             tabPage8.Name = "tabPage8";
-            tabPage8.Size = new Size(1354, 686);
+            tabPage8.Size = new Size(1354, 687);
             tabPage8.TabIndex = 2;
             tabPage8.Text = "Araç";
             tabPage8.UseVisualStyleBackColor = true;
@@ -2236,7 +2421,7 @@
             // splitContainer5.Panel2
             // 
             splitContainer5.Panel2.Controls.Add(groupBox16);
-            splitContainer5.Size = new Size(1354, 686);
+            splitContainer5.Size = new Size(1354, 687);
             splitContainer5.SplitterDistance = 845;
             splitContainer5.TabIndex = 4;
             // 
@@ -2247,7 +2432,7 @@
             groupBox15.Controls.Add(dgv_araclar);
             groupBox15.Controls.Add(label43);
             groupBox15.Dock = DockStyle.Bottom;
-            groupBox15.Location = new Point(0, -8);
+            groupBox15.Location = new Point(0, -7);
             groupBox15.Name = "groupBox15";
             groupBox15.Size = new Size(845, 694);
             groupBox15.TabIndex = 0;
@@ -2259,7 +2444,7 @@
             cb_aracFiltre.FormattingEnabled = true;
             cb_aracFiltre.Location = new Point(121, 30);
             cb_aracFiltre.Name = "cb_aracFiltre";
-            cb_aracFiltre.Size = new Size(121, 25);
+            cb_aracFiltre.Size = new Size(121, 24);
             cb_aracFiltre.TabIndex = 2;
             // 
             // btn_aracAra
@@ -2313,7 +2498,7 @@
             groupBox16.Dock = DockStyle.Right;
             groupBox16.Location = new Point(26, 0);
             groupBox16.Name = "groupBox16";
-            groupBox16.Size = new Size(479, 686);
+            groupBox16.Size = new Size(479, 687);
             groupBox16.TabIndex = 0;
             groupBox16.TabStop = false;
             groupBox16.Text = "Araç Bilgileri";
@@ -2334,7 +2519,7 @@
             cb_aracDurum.FormattingEnabled = true;
             cb_aracDurum.Location = new Point(92, 182);
             cb_aracDurum.Name = "cb_aracDurum";
-            cb_aracDurum.Size = new Size(149, 25);
+            cb_aracDurum.Size = new Size(149, 24);
             cb_aracDurum.TabIndex = 51;
             // 
             // tb_aracGps
@@ -2342,7 +2527,7 @@
             tb_aracGps.BorderStyle = BorderStyle.FixedSingle;
             tb_aracGps.Location = new Point(92, 153);
             tb_aracGps.Name = "tb_aracGps";
-            tb_aracGps.Size = new Size(149, 23);
+            tb_aracGps.Size = new Size(149, 22);
             tb_aracGps.TabIndex = 50;
             // 
             // cb_aracSube
@@ -2351,7 +2536,7 @@
             cb_aracSube.FormattingEnabled = true;
             cb_aracSube.Location = new Point(92, 94);
             cb_aracSube.Name = "cb_aracSube";
-            cb_aracSube.Size = new Size(149, 25);
+            cb_aracSube.Size = new Size(149, 24);
             cb_aracSube.TabIndex = 48;
             // 
             // tb_aracPlaka
@@ -2359,7 +2544,7 @@
             tb_aracPlaka.BorderStyle = BorderStyle.FixedSingle;
             tb_aracPlaka.Location = new Point(92, 35);
             tb_aracPlaka.Name = "tb_aracPlaka";
-            tb_aracPlaka.Size = new Size(149, 23);
+            tb_aracPlaka.Size = new Size(149, 22);
             tb_aracPlaka.TabIndex = 47;
             // 
             // label60
@@ -2377,7 +2562,7 @@
             nud_aracKapasite.Location = new Point(127, 124);
             nud_aracKapasite.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             nud_aracKapasite.Name = "nud_aracKapasite";
-            nud_aracKapasite.Size = new Size(114, 23);
+            nud_aracKapasite.Size = new Size(114, 22);
             nud_aracKapasite.TabIndex = 45;
             // 
             // label46
@@ -2406,7 +2591,7 @@
             cb_aracTip.FormattingEnabled = true;
             cb_aracTip.Location = new Point(105, 64);
             cb_aracTip.Name = "cb_aracTip";
-            cb_aracTip.Size = new Size(136, 25);
+            cb_aracTip.Size = new Size(136, 24);
             cb_aracTip.TabIndex = 36;
             // 
             // btn_aracFormTemizle
@@ -4061,7 +4246,12 @@
             groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgv_seciliGonderiDetay).EndInit();
             groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
+            groupBox28.ResumeLayout(false);
+            groupBox28.PerformLayout();
+            groupBox27.ResumeLayout(false);
+            groupBox27.PerformLayout();
+            groupBox21.ResumeLayout(false);
+            groupBox21.PerformLayout();
             tabPageMYonetim.ResumeLayout(false);
             splitContainer2.Panel1.ResumeLayout(false);
             splitContainer2.Panel2.ResumeLayout(false);
@@ -4205,12 +4395,6 @@
         private NumericUpDown nud_gonderiUcret;
         private TextBox tb_gonderiToplamFiyat;
         private GroupBox groupBox5;
-        private Label label19;
-        private DateTimePicker dtp_filtreIlkTarih;
-        private ComboBox cb_filtreIdTipSec;
-        private Label label18;
-        private TextBox tb_filtreTakipNo;
-        private Label label17;
         private GroupBox groupBox6;
         private DataGridView dgv_gonderiler;
         private GroupBox groupBox7;
@@ -4497,13 +4681,35 @@
         private Button btn_gonderiKayitSil;
         private Button btn_gonderiSurecYonetim;
         private Button btn_gonderiTarifeYonetim;
-        private Label label123;
-        private Label label122;
-        private TextBox tb_filtreId;
+        private GroupBox groupBox21;
+        private GroupBox groupBox28;
+        private GroupBox groupBox27;
+        private Label label18;
+        private TextBox tb_filtreTakipNo;
+        private Label label17;
         private DateTimePicker dtp_filtreSonTarih;
-        private TextBox tb_filtreIdAdSoyad;
-        private Label label124;
-        private TextBox tb_filtreTeslimAlanAdSoyad;
+        private Label label123;
+        private Label label19;
+        private DateTimePicker dtp_filtreIlkTarih;
+        private ComboBox cb_filtreDurumAd;
+        private TextBox tb_filtreGonderenAd;
+        private Label label126;
         private Label label125;
+        private Label label124;
+        private Label label122;
+        private Button btn_filtreRaporOlustur;
+        private TextBox tb_filtreAliciSoyad;
+        private TextBox tb_filtreAliciAd;
+        private TextBox tb_filtreGonderenSoyad;
+        private TextBox tb_filtreKuryeSoyad;
+        private TextBox tb_filtreKuryeAd;
+        private Label label128;
+        private Label label127;
+        private ComboBox cb_filtreIslemSonuc;
+        private Label label129;
+        private ComboBox cb_filtreAlanSehir;
+        private Label label131;
+        private ComboBox cb_filtreGonderenSehir;
+        private Label label130;
     }
 }
