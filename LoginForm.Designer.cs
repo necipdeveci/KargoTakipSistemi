@@ -153,7 +153,7 @@
             tb_loginEposta.Dock = DockStyle.Bottom;
             tb_loginEposta.Font = new Font("Consolas", 12F, FontStyle.Regular, GraphicsUnit.Point, 162);
             tb_loginEposta.Location = new Point(0, 20);
-            tb_loginEposta.MaxLength = 20;
+            tb_loginEposta.MaxLength = 50;
             tb_loginEposta.Name = "tb_loginEposta";
             tb_loginEposta.Size = new Size(237, 26);
             tb_loginEposta.TabIndex = 1;

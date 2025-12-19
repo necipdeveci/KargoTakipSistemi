@@ -1,11 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "sqn3QG94xpQ=",
+  "dgSpecHash": "Ucc8T5GEjBA=",
   "success": true,
   "projectFilePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\necip\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\closedxml\\0.105.0\\closedxml.0.105.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\closedxml.parser\\2.0.0\\closedxml.parser.2.0.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\documentformat.openxml\\3.1.1\\documentformat.openxml.3.1.1.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\documentformat.openxml.framework\\3.1.1\\documentformat.openxml.framework.3.1.1.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\epplus\\8.4.0\\epplus.8.4.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\epplus.interfaces\\8.4.0\\epplus.interfaces.8.4.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\excelnumberformat\\1.1.0\\excelnumberformat.1.1.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.build.framework\\17.8.3\\microsoft.build.framework.17.8.3.nupkg.sha512",
@@ -28,10 +35,16 @@
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\9.0.9\\microsoft.entityframeworkcore.tools.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\9.0.9\\microsoft.extensions.caching.abstractions.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.9\\microsoft.extensions.caching.memory.9.0.9.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.configuration\\9.0.3\\microsoft.extensions.configuration.9.0.3.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.9\\microsoft.extensions.configuration.abstractions.9.0.9.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\9.0.3\\microsoft.extensions.configuration.fileextensions.9.0.3.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.configuration.json\\9.0.3\\microsoft.extensions.configuration.json.9.0.3.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\9.0.9\\microsoft.extensions.dependencyinjection.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.9\\microsoft.extensions.dependencyinjection.abstractions.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.dependencymodel\\9.0.9\\microsoft.extensions.dependencymodel.9.0.9.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\9.0.3\\microsoft.extensions.fileproviders.abstractions.9.0.3.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\9.0.3\\microsoft.extensions.fileproviders.physical.9.0.3.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\9.0.3\\microsoft.extensions.filesystemglobbing.9.0.3.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.logging\\9.0.9\\microsoft.extensions.logging.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\9.0.9\\microsoft.extensions.logging.abstractions.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.extensions.options\\9.0.9\\microsoft.extensions.options.9.0.9.nupkg.sha512",
@@ -44,11 +57,16 @@
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.35.0\\microsoft.identitymodel.protocols.6.35.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.35.0\\microsoft.identitymodel.protocols.openidconnect.6.35.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.35.0\\microsoft.identitymodel.tokens.6.35.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.io.recyclablememorystream\\3.0.1\\microsoft.io.recyclablememorystream.3.0.1.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.reportingservices.reportviewercontrol.winforms\\150.1652.0\\microsoft.reportingservices.reportviewercontrol.winforms.150.1652.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\microsoft.sqlserver.types\\14.0.314.76\\microsoft.sqlserver.types.14.0.314.76.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\rbush.signed\\4.0.0\\rbush.signed.4.0.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\sixlabors.fonts\\1.0.0\\sixlabors.fonts.1.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.clientmodel\\1.0.0\\system.clientmodel.1.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.collections.immutable\\7.0.0\\system.collections.immutable.7.0.0.nupkg.sha512",
@@ -63,6 +81,7 @@
     "C:\\Users\\necip\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.formats.asn1\\9.0.9\\system.formats.asn1.9.0.9.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.identitymodel.tokens.jwt\\6.35.0\\system.identitymodel.tokens.jwt.6.35.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\system.io.packaging\\8.0.1\\system.io.packaging.8.0.1.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.memory.data\\1.0.2\\system.memory.data.1.0.2.nupkg.sha512",
@@ -73,7 +92,9 @@
     "C:\\Users\\necip\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.security.accesscontrol\\6.0.0\\system.security.accesscontrol.6.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.security.cryptography.cng\\5.0.0\\system.security.cryptography.cng.5.0.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\system.security.cryptography.pkcs\\9.0.3\\system.security.cryptography.pkcs.9.0.3.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.security.cryptography.protecteddata\\6.0.0\\system.security.cryptography.protecteddata.6.0.0.nupkg.sha512",
+    "C:\\Users\\necip\\.nuget\\packages\\system.security.cryptography.xml\\9.0.3\\system.security.cryptography.xml.9.0.3.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.security.permissions\\6.0.0\\system.security.permissions.6.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.security.principal.windows\\5.0.0\\system.security.principal.windows.5.0.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
@@ -84,5 +105,42 @@
     "C:\\Users\\necip\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "Microsoft.ReportingServices.ReportViewerControl.Winforms 150.1652.0, Microsoft.SqlServer.Types (>= 14.0.0) öğesine bağlı ancak Microsoft.SqlServer.Types 14.0.0 bulunamadı. Bunun yerine Microsoft.SqlServer.Types 14.0.314.76 çözümlendi.",
+      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "libraryId": "Microsoft.SqlServer.Types",
+      "targetGraphs": [
+        "net9.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "'Microsoft.ReportingServices.ReportViewerControl.Winforms 150.1652.0' paketi, proje hedef çerçevesi 'net9.0-windows7.0' yerine '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' kullanılarak geri yüklendi. Bu paket projenizle tamamen uyumlu olmayabilir.",
+      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "libraryId": "Microsoft.ReportingServices.ReportViewerControl.Winforms",
+      "targetGraphs": [
+        "net9.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "'Microsoft.SqlServer.Types 14.0.314.76' paketi, proje hedef çerçevesi 'net9.0-windows7.0' yerine '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' kullanılarak geri yüklendi. Bu paket projenizle tamamen uyumlu olmayabilir.",
+      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "libraryId": "Microsoft.SqlServer.Types",
+      "targetGraphs": [
+        "net9.0-windows7.0"
+      ]
+    }
+  ]
 }

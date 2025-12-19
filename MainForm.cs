@@ -4,10 +4,12 @@ using kargotakipsistemi.Forms;
 using kargotakipsistemi.Servisler;
 using kargotakipsistemi.Yardimcilar;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
+using ClosedXML.Excel;
 
 namespace kargotakipsistemi;
 
@@ -87,7 +89,7 @@ public partial class MainForm : Form
             // Rol 1: Sistem Yöneticisi -> SADECE ANA İŞLEVSEL SEKMELERE ERİŞİM (tabPage4 ve tabPage5 KALDIRILDI)
             { "Sistem Yöneticisi", new RoleTabPermissions
             {
-                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim"}, //, "tabPage4", "tabPage5" tabPage4 ve tabPage5 kaldırıldı
+                MainTabs = new[] { "tabPageGonderi", "tabPageOperasyon", "tabPageMYonetim","tabPageRapor"}, //, "tabPage4", "tabPage5" tabPage4 ve tabPage5 kaldırıldı
                 OperationTabs = _allTabPages2?.Select(t => t.Name).ToArray() ?? Array.Empty<string>()
             }},
             
@@ -789,6 +791,59 @@ public partial class MainForm : Form
         btn_aracSil.BackColor = Color.FromArgb(182, 176, 159);
         btn_aracFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
 
+        // ========== RAPORLAMA FİLTRELEME NESNE STİLLERİ ==========
+
+        // --- DateTimePicker Stilleri ---
+        dtp_raporIlkTarih.BackColor = Color.FromArgb(182, 176, 159);
+        dtp_raporSonTarih.BackColor = Color.FromArgb(182, 176, 159);
+
+        // --- TextBox Stilleri (Takip No, Ağırlık, Boyut, Ücret) ---
+        tb_raporGonderiTakipNo.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporGonderiTakipNo.BorderStyle = BorderStyle.FixedSingle;
+        tb_raporGonderiTakipNo.ForeColor = Color.Black;
+
+        tb_raporAgirlikAlt.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporAgirlikAlt.BorderStyle = BorderStyle.FixedSingle;
+
+        tb_raporAgirlikUst.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporAgirlikUst.BorderStyle = BorderStyle.FixedSingle;
+
+        tb_raporBoyutAlt.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporBoyutAlt.BorderStyle = BorderStyle.FixedSingle;
+
+        tb_raporBoyutUst.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporBoyutUst.BorderStyle = BorderStyle.FixedSingle;
+
+        tb_raporUcretAlt.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporUcretAlt.BorderStyle = BorderStyle.FixedSingle;
+
+        tb_raporUcretUst.BackColor = Color.FromArgb(182, 176, 159);
+        tb_raporUcretUst.BorderStyle = BorderStyle.FixedSingle;
+
+        // --- ComboBox Stilleri (Durum, Tip, Şehirler vb.) ---
+        cb_raporGonderiDurumAd.BackColor = Color.FromArgb(182, 176, 159);
+        cb_raporGonderiDurumAd.FlatStyle = FlatStyle.Flat;
+
+        cb_raporTeslimatTip.BackColor = Color.FromArgb(182, 176, 159);
+        cb_raporTeslimatTip.FlatStyle = FlatStyle.Flat;
+
+        cb_raporGonderiIslemSonuc.BackColor = Color.FromArgb(182, 176, 159);
+        cb_raporGonderiIslemSonuc.FlatStyle = FlatStyle.Flat;
+
+        cb_raporGonderenSehir.BackColor = Color.FromArgb(182, 176, 159);
+        cb_raporGonderenSehir.FlatStyle = FlatStyle.Flat;
+
+        cb_raporAlanSehir.BackColor = Color.FromArgb(182, 176, 159);
+        cb_raporAlanSehir.FlatStyle = FlatStyle.Flat;
+
+        splitContainer9.BackColor = Color.FromArgb(234, 228, 213);
+        dgv_raporGonderiler.BorderStyle = BorderStyle.None;
+        dgv_raporGonderiler.BackgroundColor = Color.FromArgb(182, 176, 159);
+        btn_raporOlustur.BackColor = Color.FromArgb(182, 176, 159); 
+        btn_raporFiltreTemizle.BackColor = Color.FromArgb(182, 176, 159);
+        btn_raporFiltre.BackColor = Color.FromArgb(182, 176, 159);
+        // =======================================================
+
 
         VeriBaglamaServisi.IzgaraBagla(dgv_personeller, ctx => _personelServisi.IzgaraIcinProjeksiyon(ctx));
         VeriBaglamaServisi.KomboyaBagla(cb_personelRol, ctx => ctx.Roller, "RolAd", "RolId");
@@ -942,6 +997,95 @@ public partial class MainForm : Form
         }
         // ============================================================
 
+        // RAPOR BÖLÜMÜ KONTROLLERİNİ DOLDUR    
+        // cb_raporGonderiDurumAd: GonderiDurumGecmisi tablosundan benzersiz durum adlarını al
+        using (var context = new KtsContext())
+        {
+            var raporDurumAdlari = context.GonderiDurumGecmisi
+            .Where(gdg => !string.IsNullOrEmpty(gdg.DurumAd))
+            .Select(gdg => gdg.DurumAd)
+            .Distinct()
+            .OrderBy(d => d)
+            .ToList();
+
+            cb_raporGonderiDurumAd.Items.Clear();
+            cb_raporGonderiDurumAd.Items.Add("-"); // Seçim yapılmadığında tüm kayıtları göster
+            if (raporDurumAdlari.Any())
+            {
+                cb_raporGonderiDurumAd.Items.AddRange(raporDurumAdlari.Cast<object>().ToArray());
+            }
+            cb_raporGonderiDurumAd.SelectedIndex = 0; // "-" seçili gelsin
+
+            // cb_raporTeslimatTip: FiyatlandirmaTarifeler tablosundan teslimat tiplerini al
+            var raporTeslimatTipleri = context.FiyatlandirmaTarifeler
+                .Where(t => t.TarifeTuru == "TeslimatCarpan"
+                         && t.Aktif
+                         && (t.GecerlilikBitis == null || t.GecerlilikBitis > DateTime.Now)
+                         && !string.IsNullOrEmpty(t.TeslimatTipi))
+                .GroupBy(t => t.TeslimatTipi)
+                .Select(g => new
+                {
+                    TeslimatTipi = g.Key,
+                    Oncelik = g.Min(x => x.Oncelik)
+                })
+                .OrderBy(t => t.Oncelik)
+                .ThenBy(t => t.TeslimatTipi)
+                .ToList();
+
+            cb_raporTeslimatTip.Items.Clear();
+            cb_raporTeslimatTip.Items.Add("-");
+            if (raporTeslimatTipleri.Any())
+            {
+                cb_raporTeslimatTip.Items.AddRange(raporTeslimatTipleri.Select(t => t.TeslimatTipi).ToArray());
+            }
+            cb_raporTeslimatTip.SelectedIndex = 0;
+
+            // cb_raporGonderiIslemSonuc: GonderiDurumGecmisi tablosundan işlem sonuçlarını al
+            var raporIslemSonuclari = context.GonderiDurumGecmisi
+                .Where(gdg => !string.IsNullOrEmpty(gdg.IslemSonucu))
+                .Select(gdg => gdg.IslemSonucu)
+                .Distinct()
+                .OrderBy(i => i)
+                .ToList();
+
+            cb_raporGonderiIslemSonuc.Items.Clear();
+            cb_raporGonderiIslemSonuc.Items.Add("-");
+            if (raporIslemSonuclari.Any())
+            {
+                cb_raporGonderiIslemSonuc.Items.AddRange(raporIslemSonuclari.Cast<object>().ToArray());
+            }
+            cb_raporGonderiIslemSonuc.SelectedIndex = 0;
+
+            // cb_raporGonderenSehir: Adresler tablosundan gönderen şehirlerini al
+            var raporGonderenSehirler = context.Adresler
+                .Include(a => a.Il)
+                .Where(a => a.Il != null && !string.IsNullOrEmpty(a.Il.IlAd))
+                .Select(a => a.Il.IlAd)
+                .Distinct()
+                .OrderBy(s => s)
+                .ToList();
+
+            cb_raporGonderenSehir.Items.Clear();
+            cb_raporGonderenSehir.Items.Add("-");
+            if (raporGonderenSehirler.Any())
+            {
+                cb_raporGonderenSehir.Items.AddRange(raporGonderenSehirler.Cast<object>().ToArray());
+            }
+            cb_raporGonderenSehir.SelectedIndex = 0;
+
+            // cb_raporAlanSehir: Adresler tablosundan alıcı şehirlerini al (aynı liste)
+            cb_raporAlanSehir.Items.Clear();
+            cb_raporAlanSehir.Items.Add("-");
+            if (raporGonderenSehirler.Any())
+            {
+                cb_raporAlanSehir.Items.AddRange(raporGonderenSehirler.Cast<object>().ToArray());
+            }
+            cb_raporAlanSehir.SelectedIndex = 0;
+
+            // dgv_raporGonderiler: Gönderiler grid'ini doldur
+            VeriBaglamaServisi.IzgaraBagla(dgv_raporGonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+
+        }
         // İlk yüklemede hesaplamayı tetikle
         GonderiFiyatHesaplaVeGuncelle();
 
@@ -2378,5 +2522,441 @@ public partial class MainForm : Form
     private void btn_filtreRaporOlustur_Click(object sender, EventArgs e)
     {
 
+    }
+
+    private void btn_raporFiltre_Click(object sender, EventArgs e)
+    {
+        using var ctx = new KtsContext();
+
+        // Temel sorgu - tüm gönderileri çek
+        var query = ctx.Gonderiler
+            .Include(g => g.Gonderen)
+            .Include(g => g.Alici)
+            .Include(g => g.Kurye)
+            .Include(g => g.GonderenAdres).ThenInclude(a => a.Il)
+            .Include(g => g.AliciAdres).ThenInclude(a => a.Il)
+            .AsQueryable();
+
+        // Tarih aralığı filtresi
+        DateTime ilkTarih = dtp_raporIlkTarih.Value.Date;
+        DateTime sonTarih = dtp_raporSonTarih.Value.Date.AddDays(1).AddSeconds(-1);
+        query = query.Where(g => g.GonderiTarihi >= ilkTarih && g.GonderiTarihi <= sonTarih);
+
+        // Takip No filtresi
+        if (!string.IsNullOrWhiteSpace(tb_raporGonderiTakipNo.Text))
+        {
+            string takipNo = tb_raporGonderiTakipNo.Text.Trim();
+            query = query.Where(g => g.TakipNo.Contains(takipNo));
+        }
+
+        // Durum Adı filtresi
+        if (cb_raporGonderiDurumAd.SelectedItem != null && cb_raporGonderiDurumAd.SelectedItem.ToString() != "-")
+        {
+            string durumAd = cb_raporGonderiDurumAd.SelectedItem.ToString();
+            var gonderilerWithDurum = ctx.GonderiDurumGecmisi
+                .Where(gdg => gdg.DurumAd == durumAd)
+                .Select(gdg => gdg.GonderiId)
+                .Distinct()
+                .ToList();
+            query = query.Where(g => gonderilerWithDurum.Contains(g.GonderiId));
+        }
+
+        // İşlem Sonucu filtresi
+        if (cb_raporGonderiIslemSonuc.SelectedItem != null && cb_raporGonderiIslemSonuc.SelectedItem.ToString() != "-")
+        {
+            string islemSonuc = cb_raporGonderiIslemSonuc.SelectedItem.ToString();
+            var gonderilerWithSonuc = ctx.GonderiDurumGecmisi
+                .Where(gdg => gdg.IslemSonucu == islemSonuc)
+                .Select(gdg => gdg.GonderiId)
+                .Distinct()
+                .ToList();
+            query = query.Where(g => gonderilerWithSonuc.Contains(g.GonderiId));
+        }
+
+        // Teslimat Tipi filtresi
+        if (cb_raporTeslimatTip.SelectedItem != null && cb_raporTeslimatTip.SelectedItem.ToString() != "-")
+        {
+            string teslimatTip = cb_raporTeslimatTip.SelectedItem.ToString();
+            query = query.Where(g => g.TeslimatTipi == teslimatTip);
+        }
+
+        // Ağırlık aralığı filtresi
+        if (decimal.TryParse(tb_raporAgirlikAlt.Text, out decimal agirlikAlt))
+        {
+            query = query.Where(g => g.Agirlik >= agirlikAlt);
+        }
+        if (decimal.TryParse(tb_raporAgirlikUst.Text, out decimal agirlikUst))
+        {
+            query = query.Where(g => g.Agirlik <= agirlikUst);
+        }
+
+        // Ücret aralığı filtresi (Toplam Ücret = Ucret - IndirimTutar + EkMasraf)
+        if (decimal.TryParse(tb_raporUcretAlt.Text, out decimal ucretAlt))
+        {
+            query = query.Where(g => (g.Ucret - (g.IndirimTutar ?? 0m) + (g.EkMasraf ?? 0m)) >= ucretAlt);
+        }
+        if (decimal.TryParse(tb_raporUcretUst.Text, out decimal ucretUst))
+        {
+            query = query.Where(g => (g.Ucret - (g.IndirimTutar ?? 0m) + (g.EkMasraf ?? 0m)) <= ucretUst);
+        }
+
+        // Gönderen Şehir filtresi
+        if (cb_raporGonderenSehir.SelectedItem != null && cb_raporGonderenSehir.SelectedItem.ToString() != "-")
+        {
+            string gonderenSehir = cb_raporGonderenSehir.SelectedItem.ToString();
+            query = query.Where(g => g.GonderenAdres != null && g.GonderenAdres.Il.IlAd == gonderenSehir);
+        }
+
+        // Alan Şehir filtresi
+        if (cb_raporAlanSehir.SelectedItem != null && cb_raporAlanSehir.SelectedItem.ToString() != "-")
+        {
+            string alanSehir = cb_raporAlanSehir.SelectedItem.ToString();
+            query = query.Where(g => g.AliciAdres != null && g.AliciAdres.Il.IlAd == alanSehir);
+        }
+
+        // Sonuçları sırala ve projeksiyon uygula
+        var sonuclar = query
+            .OrderByDescending(g => g.GonderiTarihi)
+            .Select(g => new
+            {
+                g.GonderiId,
+                g.TakipNo,
+                GonderenAd = g.Gonderen.Ad + " " + g.Gonderen.Soyad,
+                AliciAd = g.Alici.Ad + " " + g.Alici.Soyad,
+                KuryeAd = g.Kurye != null ? g.Kurye.Ad + " " + g.Kurye.Soyad : "",
+                GonderenSehir = g.GonderenAdres != null && g.GonderenAdres.Il != null ? g.GonderenAdres.Il.IlAd : "",
+                AliciSehir = g.AliciAdres != null && g.AliciAdres.Il != null ? g.AliciAdres.Il.IlAd : "",
+                g.GonderiTarihi,
+                g.TahminiTeslimTarihi,
+                g.TeslimTarihi,
+                g.TeslimatTipi,
+                g.Agirlik,
+                g.Boyut,
+                g.Ucret,
+                g.IndirimTutar,
+                g.EkMasraf,
+                ToplamUcret = g.Ucret - (g.IndirimTutar ?? 0m) + (g.EkMasraf ?? 0m),
+                g.IadeDurumu
+            })
+            .ToList();
+
+        // Boyut aralığı filtresi (hacim olarak hesapla) - Bellekte filtrele
+        if (decimal.TryParse(tb_raporBoyutAlt.Text, out decimal boyutAlt))
+        {
+            sonuclar = sonuclar.Where(s =>
+            {
+                if (s.Boyut == null) return false;
+                var boyutParts = s.Boyut.Split(new char[] { 'x', 'X' }, StringSplitOptions.RemoveEmptyEntries);
+                if (boyutParts.Length == 3 &&
+                    decimal.TryParse(boyutParts[0].Trim(), out decimal l) &&
+                    decimal.TryParse(boyutParts[1].Trim(), out decimal w) &&
+                    decimal.TryParse(boyutParts[2].Trim(), out decimal h))
+                {
+                    return l * w * h >= boyutAlt;
+                }
+                return false;
+            }).ToList();
+        }
+        if (decimal.TryParse(tb_raporBoyutUst.Text, out decimal boyutUst))
+        {
+            sonuclar = sonuclar.Where(s =>
+            {
+                if (s.Boyut == null) return false;
+                var boyutParts = s.Boyut.Split(new char[] { 'x', 'X' }, StringSplitOptions.RemoveEmptyEntries);
+                if (boyutParts.Length == 3 &&
+                    decimal.TryParse(boyutParts[0].Trim(), out decimal l) &&
+                    decimal.TryParse(boyutParts[1].Trim(), out decimal w) &&
+                    decimal.TryParse(boyutParts[2].Trim(), out decimal h))
+                {
+                    return l * w * h <= boyutUst;
+                }
+                return false;
+            }).ToList();
+        }
+
+        // Durum bilgilerini ayrı sorguda çek (performans için)
+        var gonderiIds = sonuclar.Select(s => s.GonderiId).ToList();
+        var durumBilgileri = ctx.GonderiDurumGecmisi
+            .Where(gdg => gonderiIds.Contains(gdg.GonderiId))
+            .GroupBy(gdg => gdg.GonderiId)
+            .Select(g => new
+            {
+                GonderiId = g.Key,
+                SonDurum = g.Where(x => x.SonDurumMu).Select(x => x.DurumAd).FirstOrDefault() ?? "",
+                IslemSonucu = g.OrderByDescending(x => x.Tarih).Select(x => x.IslemSonucu).FirstOrDefault() ?? ""
+            })
+            .ToList();
+
+        // Sonuçları birleştir
+        var sonuclarWithDurum = sonuclar.Select(s => new
+        {
+            s.GonderiId,
+            s.TakipNo,
+            s.GonderenAd,
+            s.AliciAd,
+            s.KuryeAd,
+            s.GonderenSehir,
+            s.AliciSehir,
+            s.GonderiTarihi,
+            s.TahminiTeslimTarihi,
+            s.TeslimTarihi,
+            s.TeslimatTipi,
+            s.Agirlik,
+            s.Boyut,
+            s.Ucret,
+            s.IndirimTutar,
+            s.EkMasraf,
+            s.ToplamUcret,
+            s.IadeDurumu,
+            SonDurum = durumBilgileri.FirstOrDefault(d => d.GonderiId == s.GonderiId)?.SonDurum ?? "",
+            IslemSonucu = durumBilgileri.FirstOrDefault(d => d.GonderiId == s.GonderiId)?.IslemSonucu ?? "",
+        }).ToList();
+        /*
+         // Filtrelenen alanların değerleri (rapor için özet bilgileri)
+            FiltreIlkTarih = dtp_raporIlkTarih.Value,
+            FiltreSonTarih = dtp_raporSonTarih.Value,
+            FiltreTakipNo = tb_raporGonderiTakipNo.Text,
+            FiltreDurumAd = cb_raporGonderiDurumAd.SelectedItem?.ToString(),
+            FiltreTeslimatTip = cb_raporTeslimatTip.SelectedItem?.ToString(),
+            FiltreIslemSonuc = cb_raporGonderiIslemSonuc.SelectedItem?.ToString(),
+            FiltreAgirlikAlt = tb_raporAgirlikAlt.Text,
+            FiltreAgirlikUst = tb_raporAgirlikUst.Text,
+            FiltreBoyutAlt = tb_raporBoyutAlt.Text,
+            FiltreBoyutUst = tb_raporBoyutUst.Text,
+            FiltreUcretAlt = tb_raporUcretAlt.Text,
+            FiltreUcretUst = tb_raporUcretUst.Text,
+            FiltreGonderenSehir = cb_raporGonderenSehir.SelectedItem?.ToString(),
+            FiltreAlanSehir = cb_raporAlanSehir.SelectedItem?.ToString()
+        
+         */
+        dgv_raporGonderiler.DataSource = sonuclarWithDurum;
+
+        if (sonuclarWithDurum.Count == 0)
+        {
+            MessageBox.Show("Filtreleme kriterlerine uygun gönderi bulunamadı.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        else
+        {
+            MessageBox.Show($"{sonuclarWithDurum.Count} adet gönderi bulundu.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+
+    private void dgv_raporGonderiler_SelectionChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void btn_raporFiltreTemizle_Click(object sender, EventArgs e)
+    {
+        // Filtre kontrollerini temizle
+        KontrolleriTemizle(
+            tb_raporGonderiTakipNo,
+            tb_raporAgirlikAlt,
+            tb_raporAgirlikUst,
+            tb_raporBoyutAlt,
+            tb_raporBoyutUst,
+            tb_raporUcretAlt,
+            tb_raporUcretUst
+        );
+
+        // Tarih filtrelerini bugüne ayarla
+        dtp_raporIlkTarih.Value = DateTime.Today;
+        dtp_raporSonTarih.Value = DateTime.Today;
+
+        // ComboBox'ları yeniden doldur
+        using (var context = new KtsContext())
+        {
+            // cb_raporGonderiDurumAd: GonderiDurumGecmisi tablosundan benzersiz durum adlarını al
+            var raporDurumAdlari = context.GonderiDurumGecmisi
+                .Where(gdg => !string.IsNullOrEmpty(gdg.DurumAd))
+                .Select(gdg => gdg.DurumAd)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
+
+            cb_raporGonderiDurumAd.Items.Clear();
+            cb_raporGonderiDurumAd.Items.Add("-"); // Seçim yapılmadığında tüm kayıtları göster
+            if (raporDurumAdlari.Any())
+            {
+                cb_raporGonderiDurumAd.Items.AddRange(raporDurumAdlari.Cast<object>().ToArray());
+            }
+            cb_raporGonderiDurumAd.SelectedIndex = 0; // "-" seçili gelsin
+
+            // cb_raporTeslimatTip: FiyatlandirmaTarifeler tablosundan teslimat tiplerini al
+            var raporTeslimatTipleri = context.FiyatlandirmaTarifeler
+                .Where(t => t.TarifeTuru == "TeslimatCarpan"
+                         && t.Aktif
+                         && (t.GecerlilikBitis == null || t.GecerlilikBitis > DateTime.Now)
+                         && !string.IsNullOrEmpty(t.TeslimatTipi))
+                .GroupBy(t => t.TeslimatTipi)
+                .Select(g => new
+                {
+                    TeslimatTipi = g.Key,
+                    Oncelik = g.Min(x => x.Oncelik)
+                })
+                .OrderBy(t => t.Oncelik)
+                .ThenBy(t => t.TeslimatTipi)
+                .ToList();
+
+            cb_raporTeslimatTip.Items.Clear();
+            cb_raporTeslimatTip.Items.Add("-");
+            if (raporTeslimatTipleri.Any())
+            {
+                cb_raporTeslimatTip.Items.AddRange(raporTeslimatTipleri.Select(t => t.TeslimatTipi).ToArray());
+            }
+            cb_raporTeslimatTip.SelectedIndex = 0;
+
+            // cb_raporGonderiIslemSonuc: GonderiDurumGecmisi tablosundan işlem sonuçlarını al
+            var raporIslemSonuclari = context.GonderiDurumGecmisi
+                .Where(gdg => !string.IsNullOrEmpty(gdg.IslemSonucu))
+                .Select(gdg => gdg.IslemSonucu)
+                .Distinct()
+                .OrderBy(i => i)
+                .ToList();
+
+            cb_raporGonderiIslemSonuc.Items.Clear();
+            cb_raporGonderiIslemSonuc.Items.Add("-");
+            if (raporIslemSonuclari.Any())
+            {
+                cb_raporGonderiIslemSonuc.Items.AddRange(raporIslemSonuclari.Cast<object>().ToArray());
+            }
+            cb_raporGonderiIslemSonuc.SelectedIndex = 0;
+
+            // cb_raporGonderenSehir: Adresler tablosundan gönderen şehirlerini al
+            var raporGonderenSehirler = context.Adresler
+                .Include(a => a.Il)
+                .Where(a => a.Il != null && !string.IsNullOrEmpty(a.Il.IlAd))
+                .Select(a => a.Il.IlAd)
+                .Distinct()
+                .OrderBy(s => s)
+                .ToList();
+
+            cb_raporGonderenSehir.Items.Clear();
+            cb_raporGonderenSehir.Items.Add("-");
+            if (raporGonderenSehirler.Any())
+            {
+                cb_raporGonderenSehir.Items.AddRange(raporGonderenSehirler.Cast<object>().ToArray());
+            }
+            cb_raporGonderenSehir.SelectedIndex = 0;
+
+            // cb_raporAlanSehir: Adresler tablosundan alıcı şehirlerini al (aynı liste)
+            cb_raporAlanSehir.Items.Clear();
+            cb_raporAlanSehir.Items.Add("-");
+            if (raporGonderenSehirler.Any())
+            {
+                cb_raporAlanSehir.Items.AddRange(raporGonderenSehirler.Cast<object>().ToArray());
+            }
+            cb_raporAlanSehir.SelectedIndex = 0;
+        }
+
+        // Rapor grid'ini yeniden yükle
+        VeriBaglamaServisi.IzgaraBagla(dgv_raporGonderiler, ctx => _gonderiServisi.IzgaraIcinProjeksiyon(ctx));
+    }
+
+    private void btn_raporOlustur_Click(object sender, EventArgs e)
+    {
+        // 1. Veri Kontrolü: Grid tamamen boş mu?
+        if (dgv_raporGonderiler.Rows.Count == 0 || (dgv_raporGonderiler.Rows.Count == 1 && dgv_raporGonderiler.Rows[0].IsNewRow))
+        {
+            MessageBox.Show("Aktarılacak herhangi bir kayıt bulunamadı! Lütfen önce filtreleme yapın.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        // --- 2. FİLTRELEME KONTROLÜ ---
+        // Filtre bileşenlerinin (TextBox, ComboBox vb.) dolu olup olmadığını kontrol ediyoruz
+        bool filtreUygulandiMi =
+            !string.IsNullOrWhiteSpace(tb_raporGonderiTakipNo.Text) ||
+            (cb_raporGonderiDurumAd.SelectedItem != null && cb_raporGonderiDurumAd.SelectedItem.ToString() != "-") ||
+            (cb_raporGonderiIslemSonuc.SelectedItem != null && cb_raporGonderiIslemSonuc.SelectedItem.ToString() != "-") ||
+            (cb_raporTeslimatTip.SelectedItem != null && cb_raporTeslimatTip.SelectedItem.ToString() != "-") ||
+            !string.IsNullOrWhiteSpace(tb_raporAgirlikAlt.Text) || !string.IsNullOrWhiteSpace(tb_raporAgirlikUst.Text) ||
+            !string.IsNullOrWhiteSpace(tb_raporUcretAlt.Text) || !string.IsNullOrWhiteSpace(tb_raporUcretUst.Text) ||
+            (cb_raporGonderenSehir.SelectedItem != null && cb_raporGonderenSehir.SelectedItem.ToString() != "-") ||
+            (cb_raporAlanSehir.SelectedItem != null && cb_raporAlanSehir.SelectedItem.ToString() != "-");
+
+        string raporKapsami = filtreUygulandiMi ? "Filtrelenmiş Veri Raporu" : "Tüm Kayıtlar Genel Raporu";
+
+        // Kullanıcıya bilgi/onay sorusu
+        var onay = MessageBox.Show($"{dgv_raporGonderiler.Rows.Count} adet kayıt '{raporKapsami}' olarak dışa aktarılacaktır. Devam etmek istiyor musunuz?",
+                                    "Rapor Onayı", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+        if (onay != DialogResult.Yes) return;
+
+        using (SaveFileDialog sfd = new SaveFileDialog())
+        {
+            sfd.Filter = "Excel Dosyası |*.xlsx";
+            sfd.Title = "Raporu Kaydet";
+            // Dosya ismine kapsamı ekliyoruz
+            string dosyaEki = filtreUygulandiMi ? "Filtreli" : "Genel";
+            sfd.FileName = $"Gonderi_Raporu_{dosyaEki}_" + DateTime.Now.ToString("dd_MM_yyyy_HHmm");
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        var worksheet = workbook.Worksheets.Add("Gönderi Listesi");
+
+                        // --- 3. RAPOR ÜST BİLGİSİ (Opsiyonel) ---
+                        // Raporun en üstüne hangi tarihler arasında ve ne tür bir rapor olduğunu yazalım
+                        worksheet.Cell(1, 1).Value = "Rapor Türü:";
+                        worksheet.Cell(1, 2).Value = raporKapsami;
+                        worksheet.Cell(2, 1).Value = "Oluşturma Tarihi:";
+                        worksheet.Cell(2, 2).Value = DateTime.Now.ToString("g");
+
+                        int tabloBaslangicSatiri = 4; // Tablo başlıkları 4. satırdan başlasın
+
+                        // --- 4. BAŞLIKLARI AKTAR ---
+                        for (int j = 0; j < dgv_raporGonderiler.Columns.Count; j++)
+                        {
+                            var cell = worksheet.Cell(tabloBaslangicSatiri, j + 1);
+                            cell.Value = dgv_raporGonderiler.Columns[j].HeaderText;
+                        }
+
+                        // Başlık Tasarımı
+                        var headerRow = worksheet.Row(tabloBaslangicSatiri);
+                        headerRow.Style.Font.Bold = true;
+                        headerRow.Style.Fill.BackgroundColor = XLColor.FromHtml("#2c3e50"); // Koyu şık bir renk
+                        headerRow.Style.Font.FontColor = XLColor.White;
+                        headerRow.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                        // --- 5. VERİLERİ AKTAR ---
+                        int excelSatirIndeksi = tabloBaslangicSatiri + 1;
+
+                        for (int i = 0; i < dgv_raporGonderiler.Rows.Count; i++)
+                        {
+                            if (dgv_raporGonderiler.Rows[i].IsNewRow) continue;
+
+                            for (int j = 0; j < dgv_raporGonderiler.Columns.Count; j++)
+                            {
+                                var deger = dgv_raporGonderiler.Rows[i].Cells[j].Value;
+                                var cell = worksheet.Cell(excelSatirIndeksi, j + 1);
+
+                                // Veri tipine göre atama (Sayısal verilerin Excel'de sayı olarak kalması için)
+                                if (deger is decimal || deger is double || deger is int)
+                                    cell.Value = Convert.ToDouble(deger);
+                                else
+                                    cell.Value = deger?.ToString() ?? "";
+
+                                cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                            }
+                            excelSatirIndeksi++;
+                        }
+
+                        // --- 6. SON DOKUNUŞLAR ---
+                        worksheet.Columns().AdjustToContents(); // Otomatik genişlik
+
+                        workbook.SaveAs(sfd.FileName);
+                    }
+
+                    MessageBox.Show("Rapor başarıyla oluşturuldu.", "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Hata oluştu: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
     }
 }
