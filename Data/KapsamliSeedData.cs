@@ -433,6 +433,7 @@ public static class KapsamliSeedData
             var kendiEvAdres = adresler.First(a => a.MusteriId == musteri.MusteriId && a.AdresTipi == "Ev");
             var kendiIsAdres = adresler.First(a => a.MusteriId == musteri.MusteriId && (a.AdresTipi == "Is" || a.AdresTipi == "İş"));
 
+            var baseTarih25 = new DateTime(2025, 10, 1);
             // 1. Kendine gönderi (ev -> iş)
             var kendiGonderi = new Gonderi
             {
@@ -442,8 +443,8 @@ public static class KapsamliSeedData
                 AliciId = musteri.MusteriId,
                 GonderenAdresId = kendiEvAdres.AdresId,
                 AliciAdresId = kendiIsAdres.AdresId,
-                GonderiTarihi = baseTarih.AddDays(gonderiIdCounter),
-                TahminiTeslimTarihi = baseTarih.AddDays(gonderiIdCounter + 3),
+                GonderiTarihi = baseTarih25.AddDays(gonderiIdCounter),
+                TahminiTeslimTarihi = baseTarih25.AddDays(gonderiIdCounter + 3),
                 TeslimTarihi = null,
                 TeslimEdilenKisi = string.Empty,
                 TeslimatTipi = teslimatTipleri[gonderiIdCounter % teslimatTipleri.Length],
@@ -453,7 +454,7 @@ public static class KapsamliSeedData
                 Ucret = 50m + (gonderiIdCounter * 10m),
                 IndirimTutar = gonderiIdCounter % 3 == 0 ? 10m : 0m,
                 EkMasraf = gonderiIdCounter % 5 == 0 ? 15m : 0m,
-                KayitTarihi = baseTarih.AddDays(gonderiIdCounter - 1),
+                KayitTarihi = baseTarih25.AddDays(gonderiIdCounter - 1),
                 GuncellemeTarihi = null,
                 IptalTarihi = null,
                 IadeDurumu = null
@@ -479,8 +480,8 @@ public static class KapsamliSeedData
                     AliciId = alici.MusteriId,
                     GonderenAdresId = kendiEvAdres.AdresId,
                     AliciAdresId = aliciEvAdres.AdresId,
-                    GonderiTarihi = baseTarih.AddDays(gonderiIdCounter),
-                    TahminiTeslimTarihi = baseTarih.AddDays(gonderiIdCounter + 4),
+                    GonderiTarihi = baseTarih25.AddDays(gonderiIdCounter),
+                    TahminiTeslimTarihi = baseTarih25.AddDays(gonderiIdCounter + 4),
                     TeslimTarihi = null,
                     TeslimEdilenKisi = string.Empty,
                     TeslimatTipi = teslimatTipleri[gonderiIdCounter % teslimatTipleri.Length],
@@ -490,7 +491,7 @@ public static class KapsamliSeedData
                     Ucret = 75m + (gonderiIdCounter * 8m),
                     IndirimTutar = gonderiIdCounter % 4 == 0 ? 20m : 0m,
                     EkMasraf = gonderiIdCounter % 6 == 0 ? 25m : 0m,
-                    KayitTarihi = baseTarih.AddDays(gonderiIdCounter - 1),
+                    KayitTarihi = baseTarih25.AddDays(gonderiIdCounter - 1),
                     GuncellemeTarihi = null,
                     IptalTarihi = null,
                     IadeDurumu = null
@@ -528,7 +529,7 @@ public static class KapsamliSeedData
                         : gonderi.GonderiTarihi.AddHours(6),
                     IslemTipi = gonderi.GonderenId == gonderi.AliciId ? "Hazırlık" : "Transfer",
                     SonDurumMu = true,
-                    IslemSonucu = "Başarılı",
+                    IslemSonucu = durumIdCounter % 2 == 0 ? "Başarılı" : "Başarısız",
                     TeslimatKodu = $"TSL{gonderi.GonderiId:D4}",
                     IlgiliKisiAd = gonderi.GonderenId == gonderi.AliciId 
                         ? $"{musteri.Ad} {musteri.Soyad}"

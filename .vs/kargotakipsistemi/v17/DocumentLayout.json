@@ -1,14 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\",
+  "WorkspaceRootPath": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\kts\\KargoTakipSistemi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kargotakipsistemi\\kargotakipsistemi\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|c:\\users\\necip\\onedrive\\masa\u00FCst\u00FC\\kts\\kargotakipsistemi\\data\\kapsamliseeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1A53515-4D63-494F-A73F-B21056C56357}|kargotakipsistemi.csproj|solutionrelative:data\\kapsamliseeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -25,35 +21,21 @@
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainForm.cs [Tasar\u0131m]",
-              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs [Tasar\u0131m]",
-              "RelativeToolTip": "MainForm.cs [Tasar\u0131m]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T09:27:21.928Z",
-              "IsPinned": true,
-              "EditorCaption": " [Tasar\u0131m]"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "MainForm.cs",
-              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\KargoTakipSistemi\\KargoTakipSistemi\\MainForm.cs",
-              "RelativeToolTip": "MainForm.cs",
-              "ViewState": "AgIAAHwLAAAAAAAAAAAkwJALAAAFAAAAAAAAAA==",
+              "Title": "KapsamliSeedData.cs",
+              "DocumentMoniker": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\kts\\KargoTakipSistemi\\Data\\KapsamliSeedData.cs",
+              "RelativeDocumentMoniker": "Data\\KapsamliSeedData.cs",
+              "ToolTip": "C:\\Users\\necip\\OneDrive\\Masa\u00FCst\u00FC\\kts\\KargoTakipSistemi\\Data\\KapsamliSeedData.cs",
+              "RelativeToolTip": "Data\\KapsamliSeedData.cs",
+              "ViewState": "AgIAAAcCAAAAAAAAAAAAABMCAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T11:05:41.323Z",
-              "IsPinned": true,
+              "WhenOpened": "2025-12-26T07:47:31.737Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
             }
           ]
         }

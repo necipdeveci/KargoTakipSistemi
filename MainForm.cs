@@ -796,7 +796,9 @@ public partial class MainForm : Form
         // --- DateTimePicker Stilleri ---
         dtp_raporIlkTarih.BackColor = Color.FromArgb(182, 176, 159);
         dtp_raporSonTarih.BackColor = Color.FromArgb(182, 176, 159);
-
+        // Tarih filtrelerini ayarla
+        dtp_raporIlkTarih.Value = DateTime.Today.AddYears(-1);
+        dtp_raporSonTarih.Value = DateTime.Today.AddYears(+1);
         // --- TextBox Stilleri (Takip No, Ağırlık, Boyut, Ücret) ---
         tb_raporGonderiTakipNo.BackColor = Color.FromArgb(182, 176, 159);
         tb_raporGonderiTakipNo.BorderStyle = BorderStyle.FixedSingle;
@@ -811,6 +813,11 @@ public partial class MainForm : Form
         tb_raporBoyutAlt.BackColor = Color.FromArgb(182, 176, 159);
         tb_raporBoyutAlt.BorderStyle = BorderStyle.FixedSingle;
 
+        btn_filtreRaporOlustur.Visible = false;
+        label135.Visible = false;
+        label136.Visible = false;
+        tb_raporBoyutUst.Visible = false;
+        tb_raporBoyutAlt.Visible = false;
         tb_raporBoyutUst.BackColor = Color.FromArgb(182, 176, 159);
         tb_raporBoyutUst.BorderStyle = BorderStyle.FixedSingle;
 
@@ -2759,9 +2766,9 @@ public partial class MainForm : Form
             tb_raporUcretUst
         );
 
-        // Tarih filtrelerini bugüne ayarla
-        dtp_raporIlkTarih.Value = DateTime.Today;
-        dtp_raporSonTarih.Value = DateTime.Today;
+        // Tarih filtrelerini ayarla
+        dtp_raporIlkTarih.Value = DateTime.Today.AddYears(-1);
+        dtp_raporSonTarih.Value = DateTime.Today.AddYears(+1);
 
         // ComboBox'ları yeniden doldur
         using (var context = new KtsContext())

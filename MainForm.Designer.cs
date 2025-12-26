@@ -4674,7 +4674,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "MainForm";
+            Text = "Kargo Takip Sistemi";
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             tabControl1.ResumeLayout(false);

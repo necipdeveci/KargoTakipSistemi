@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ucc8T5GEjBA=",
+  "dgSpecHash": "gkA3nY84Onk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+  "projectFilePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\necip\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\necip\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
@@ -110,9 +110,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "Microsoft.ReportingServices.ReportViewerControl.Winforms 150.1652.0, Microsoft.SqlServer.Types (>= 14.0.0) öğesine bağlı ancak Microsoft.SqlServer.Types 14.0.0 bulunamadı. Bunun yerine Microsoft.SqlServer.Types 14.0.314.76 çözümlendi.",
-      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
       "libraryId": "Microsoft.SqlServer.Types",
       "targetGraphs": [
         "net9.0-windows7.0"
@@ -122,9 +122,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "'Microsoft.ReportingServices.ReportViewerControl.Winforms 150.1652.0' paketi, proje hedef çerçevesi 'net9.0-windows7.0' yerine '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' kullanılarak geri yüklendi. Bu paket projenizle tamamen uyumlu olmayabilir.",
-      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
       "libraryId": "Microsoft.ReportingServices.ReportViewerControl.Winforms",
       "targetGraphs": [
         "net9.0-windows7.0"
@@ -134,9 +134,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "'Microsoft.SqlServer.Types 14.0.314.76' paketi, proje hedef çerçevesi 'net9.0-windows7.0' yerine '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' kullanılarak geri yüklendi. Bu paket projenizle tamamen uyumlu olmayabilir.",
-      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "projectPath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\KargoTakipSistemi\\KargoTakipSistemi\\kargotakipsistemi.csproj",
+      "filePath": "C:\\Users\\necip\\OneDrive\\Masaüstü\\kts\\KargoTakipSistemi\\kargotakipsistemi.csproj",
       "libraryId": "Microsoft.SqlServer.Types",
       "targetGraphs": [
         "net9.0-windows7.0"

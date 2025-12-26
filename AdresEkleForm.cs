@@ -65,6 +65,7 @@ public partial class AdresEkleForm : Form
         if (_referansId.HasValue)
         {
             if (_referansTipi == "Personel")
+            {
                 VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
                     .Where(a => a.PersonelId == _referansId)
                     .Select(a => new
@@ -78,7 +79,9 @@ public partial class AdresEkleForm : Form
                         a.AdresTipi,
                         a.Aktif
                     }));
+            }
             else
+            {
                 VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
                     .Where(a => a.MusteriId == _referansId)
                     .Select(a => new
@@ -92,6 +95,7 @@ public partial class AdresEkleForm : Form
                         a.AdresTipi,
                         a.Aktif
                     }));
+            }
         }
 
         // Kayıt sonrası yeni ekleme için adres tipi seçeneklerini güncelle
@@ -269,10 +273,10 @@ public partial class AdresEkleForm : Form
     {
         // Renk teması ayarları (MainForm ile tutarlı)
         this.BackColor = Color.FromArgb(242, 242, 242);
-        
+
         // SplitContainer renklendirme
         splitContainer1.BackColor = Color.FromArgb(234, 228, 213);
-        
+
         // DataGridView renklendirme
         dgv_adresler.BackgroundColor = Color.FromArgb(234, 228, 213);
         dgv_adresler.DefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
@@ -280,56 +284,56 @@ public partial class AdresEkleForm : Form
         dgv_adresler.EnableHeadersVisualStyles = false;
         dgv_adresler.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(182, 176, 159);
         dgv_adresler.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-        
+
         // ComboBox kontrolleri
         cb_adresTip.BackColor = Color.FromArgb(182, 176, 159);
         cb_adresTip.ForeColor = Color.FromArgb(0, 0, 0);
         cb_adresTip.FlatStyle = FlatStyle.Flat;
-        
+
         cb_adresIl.BackColor = Color.FromArgb(182, 176, 159);
         cb_adresIl.ForeColor = Color.FromArgb(0, 0, 0);
         cb_adresIl.FlatStyle = FlatStyle.Flat;
-        
+
         cb_adresIlce.BackColor = Color.FromArgb(182, 176, 159);
         cb_adresIlce.ForeColor = Color.FromArgb(0, 0, 0);
         cb_adresIlce.FlatStyle = FlatStyle.Flat;
-        
+
         cb_adresMahalle.BackColor = Color.FromArgb(182, 176, 159);
         cb_adresMahalle.ForeColor = Color.FromArgb(0, 0, 0);
         cb_adresMahalle.FlatStyle = FlatStyle.Flat;
-        
+
         // TextBox kontrolleri
         tb_adresBaslik.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresBaslik.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresPostaKodu.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresPostaKodu.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresKapiNo.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresKapiNo.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresBinaAd.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresBinaAd.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresKat.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresKat.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresDaire.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresDaire.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresAciklama.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresAciklama.BorderStyle = BorderStyle.FixedSingle;
-        
+
         tb_adresAcikAdres.BackColor = Color.FromArgb(182, 176, 159);
         tb_adresAcikAdres.BorderStyle = BorderStyle.FixedSingle;
-        
+
         // Button kontrolleri
         btn_adresKaydet.BackColor = Color.FromArgb(182, 176, 159);
         btn_adresKaydet.FlatStyle = FlatStyle.Flat;
-        
+
         btn_adresKayitSil.BackColor = Color.FromArgb(182, 176, 159);
         btn_adresKayitSil.FlatStyle = FlatStyle.Flat;
-        
+
         btn_adresFormTemizle.BackColor = Color.FromArgb(182, 176, 159);
         btn_adresFormTemizle.FlatStyle = FlatStyle.Flat;
 
@@ -341,6 +345,7 @@ public partial class AdresEkleForm : Form
         if (_referansId.HasValue)
         {
             if (_referansTipi == "Personel")
+            {
                 VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
                     .Where(a => a.PersonelId == _referansId)
                     .Select(a => new
@@ -354,7 +359,10 @@ public partial class AdresEkleForm : Form
                         a.AdresTipi,
                         a.Aktif
                     }));
+                this.Text = "Personel Adresleri";
+            }
             else
+            {
                 VeriBaglamaServisi.IzgaraBagla(dgv_adresler, ctx => ctx.Adresler
                     .Where(a => a.MusteriId == _referansId)
                     .Select(a => new
@@ -368,6 +376,9 @@ public partial class AdresEkleForm : Form
                         a.AdresTipi,
                         a.Aktif
                     }));
+                this.Text = "Müşteri Adresleri";
+
+            }
         }
     }
 
